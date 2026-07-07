@@ -1,4 +1,4 @@
-# atomik 0.3 — pocket spec (for generators)
+# atomik 0.3 — pocket spec (for generators · spec v0.3.1)
 
 You write atomik: a line-oriented DSL for small visual explanations. One statement per line. `#` comments. First line: `atomik 0.3`. Ids: letters/digits/_/-. Strings in double quotes (Unicode ok, escape \" \\). `[[Wiki Link]]` = reference to an existing note — NEVER invent one; if unsure, use a plain string. Any statement may end with attributes: `[key]` or `[key value]` or `[key "text"]`.
 
@@ -19,11 +19,12 @@ data <id> row  "<c1>" | "<c2>" | ...
 project as <archetype> [from <dataset>] [<lo>..<hi>] [scale log] [suggested]
 input <id> = slider <lo>..<hi> [default <v>] | choice "a" | "b" | ... | toggle  [label "<q>"]
 derive <id> = <expr>                                  # + - * / ( ) only
-rule <expr> => <effect>                               # ==,!=,<,<=,>,>=,and,or,not
-step <n> <effect>                                     # authored teaching sequence
+rule <expr> => <effect>                               # reactive while true; ==,!=,<,<=,>,>=,and,or,not
+step <n> <effect>                                     # authored teaching sequence, cumulative
 mark meter "<label>" value <id> [max <v>]
 
-Effects: note "<text>" · reveal <ids> · hide <ids> · highlight <ids> · set <input> <v> · require <input>
+Effects: note "<text>" (transient) · reveal <ids> · hide <ids> · highlight <ids> · set <input> <v> (step-only) · require <input> (step-only)
+Every reveal target (step or rule) starts hidden. A step with require applies its own effects only once every required input is committed (predict-then-see), and blocks advancing until then.
 
 ## Closed vocabularies
 
@@ -70,6 +71,6 @@ node truth "Both land together"
 relation vacuum -> belief refutes [as refutation]
 step 1 reveal belief
 step 2 require guess
-step 2 reveal vacuum
+step 2 reveal vacuum   # stays hidden until guess is committed
 step 3 reveal truth
 step 3 highlight truth

@@ -7,7 +7,7 @@ timestamp: 2026-07-07T00:00:00Z
 atomik:
   id: CP-DSL-001
   status: active
-  current_step: S02
+  current_step: S03
   base_commit: ba27ef9
 ---
 
@@ -55,7 +55,7 @@ Completeness rule: every document of this repository appears below at least once
 # Execution
 
 - [x] S01 Initialize the repository from the dual-plane template; record `base_commit` in the frontmatter and ledger; verify `npm test` green from the package layout.
-- [ ] S02 Fold C1–C4 into the language spec → v0.3.1 (normative sections + changelog); update the pocket spec accordingly; re-check its token budget.
+- [x] S02 Fold C1–C4 into the language spec → v0.3.1 (normative sections + changelog); update the pocket spec accordingly; re-check its token budget.
 - [ ] S03 Add render-core §6.2 implementation notes (cycle entry); mark C1–C4 in §10 as "folded at v0.3.1".
 - [ ] S04 Split `src/atomik_core.js` → `src/lang.js` / `src/render.js` / `src/index.js`; keep the UMD/public surface identical; `npm test` and `npm run build:prototype` both green.
 - [ ] S05 Add `index.d.ts`; verify guide cross-references against v0.3.1 wording.
@@ -65,9 +65,14 @@ Completeness rule: every document of this repository appears below at least once
 
 ```text
 base commit : ba27ef9 (ba27ef97060069d36d14c7da6674be29ce7d9e21, branch master — template init)
-changed     : none — S01 committed at init
-tests       : 41 passing / 0 failed (node, packages/dsl-core), fixture parity green
-next action : S02 — fold C1–C4 into the language spec (v0.3.1) + pocket spec
+changed     : S02 — atomik_dsl_spec_v0_3.md → v0.3.1 (C1–C4 folded into §2–§6, split
+              effect grammar, changelog §14); atomik_pocket_spec_v0_3.md (effects line,
+              visibility+gate note, ≈1.2K tokens ≤ 2K budget); filenames unchanged
+              (orientation: cross-reference preservation rule)
+tests       : 41 passing / 0 failed (node, packages/dsl-core), fixture parity green,
+              fixture file untouched
+next action : S03 — render-core §6.2 implementation notes (cycle); mark C1–C4 in §10
+              as folded at v0.3.1 (§10 must also gain C4, currently listed only in §5)
 blockers    : none
 ```
 

@@ -1,6 +1,6 @@
-# atomik DSL — Specification v0.3 (draft for testing)
+# atomik DSL — Specification v0.3.1 (consolidated draft)
 
-Status: draft produced from corpus batches 01–04. Not frozen. Every design decision below is traceable to a named rupture (A–R expressivity, G1–G6 generability, Ped-1–5 pedagogy). Section 11 is the full traceability table.
+Status: consolidated draft. v0.3.1 folds the errata fed back by the render-core spec and the shipped `cycle` kernel (C1–C4) into the normative sections; the surface language is unchanged and files still begin `atomik 0.3` (changelog: §14). Produced from corpus batches 01–04. Not frozen. Every design decision below is traceable to a named rupture (A–R expressivity, G1–G6 generability, Ped-1–5 pedagogy). Section 11 is the full traceability table.
 
 ---
 
@@ -24,7 +24,7 @@ Non-goals for v0.3: function plotting, arbitrary programmability, pixel-level co
 
 - **Line-oriented.** One statement per line. Each line is independently parseable and independently repairable. Blank lines ignored.
 - **Comments**: `#` to end of line.
-- **Version pragma**: first line of a block is `atomik 0.3`.
+- **Version pragma**: first line of a block is `atomik 0.3` — the *surface* version, unchanged at spec v0.3.1 (§14).
 - **Identifiers**: `[A-Za-z_][A-Za-z0-9_-]*`. Reserved id: `claim` (addressable endpoint, §5.3).
 - **Strings**: double quotes, `\"` and `\\` escapes. Full Unicode; accents, apostrophes, CJK, RTL text are plain content.
 - **Wikilinks**: `[[Page name]]` — a reference into the note graph. In generated scenes, only emitted when resolved (§10).
@@ -45,7 +45,7 @@ Non-goals for v0.3: function plotting, arbitrary programmability, pixel-level co
 | **Model** (content) | `node` `evidence` `relation` `group` `place` `data` | the knowledge structure — no visuals |
 | **Projection** (rendering choice) | `project` | which archetype renders the model; flippable |
 | **Reactive + choreography** | `input` `derive` `rule` `step` `mark` | learner inputs, computed values, conditions, authored reveal sequence |
-| Effects (inside rule/step only) | `note` `reveal` `hide` `highlight` `set` `require` | bounded verbs |
+| Effects (inside rule/step; `set`/`require` step-only — C2) | `note` `reveal` `hide` `highlight` `set` `require` | bounded verbs |
 
 The model plane is the spine. Everything else annotates or projects it. A minimal valid scene is `scene <id>` + `claim "<text>"` + at least one model statement.
 
@@ -84,10 +84,11 @@ input     = "input" ID "=" ( "slider" RANGE
                            | "choice" STRING ( "|" STRING )*
                            | "toggle" ) attrs ;
 derive    = "derive" ID "=" expr ;
-rule      = "rule" expr "=>" effect ;
-step      = "step" INT effect ;
-effect    = "note" STRING | "reveal" ID+ | "hide" ID+
-          | "highlight" ID+ | "set" ID SCALAR | "require" ID ;
+rule      = "rule" expr "=>" rule-effect ;             (* C2: set/require step-only *)
+step      = "step" INT step-effect ;
+rule-effect = "note" STRING | "reveal" ID+ | "hide" ID+
+            | "highlight" ID+ ;
+step-effect = rule-effect | "set" ID SCALAR | "require" ID ;
 mark      = "mark" "meter" STRING "value" ID attrs ;
 
 expr      = or ; or = and ( "or" and )* ; and = cmp ( "and" cmp )* ;
@@ -97,6 +98,8 @@ fact      = SCALAR | STRING | ID | "not" fact | "(" expr ")" ;
 ```
 
 The expression grammar is deliberately this small and closed. There is no user-defined function, no loop, no string manipulation. That is the "no arbitrary script" invariant, kept.
+
+The effect grammar splits by host (v0.3.1 — C2): `set` writes an input, and a rule that fires on input change could re-trigger itself, so `set` is step-only (applied once, on step entry); `require` declares a step's gate — a property of the step, not a reactive effect — and is step-only too. Either inside a `rule` is a validator **error, in both profiles**.
 
 ---
 
@@ -145,16 +148,22 @@ Closed set, each with a dedicated, tuned layout engine. **Same model, flippable 
 
 ### 5.7 Inputs and effects
 
-Input types: `slider <range>` · `choice "a" | "b" | …` · `toggle`.
-Effects: `note` (transient message) · `reveal` / `hide` (structural visibility) · `highlight` (emphasis, the "active element") · `set` (write an input) · `require` (gate: the step's reveals stay locked until the input has a committed value).
+Input types: `slider <range>` · `choice "a" | "b" | …` · `toggle`. An input is **committed** once the learner has interacted with it. Sliders, toggles, and a `choice` with `[default]` count as committed from the start; a bare `choice` starts uncommitted — that is what makes prediction gates bite (C4, §6).
+Effects: `note` (transient message — C3, §6) · `reveal` / `hide` (structural visibility; every `reveal` target starts hidden — C1, §6) · `highlight` (emphasis, the "active element") · `set` (write an input; step-only, applied once on step entry — C2, §4) · `require` (declare a step's gate; step-only — the step's own effects wait for commitment and advancing past it is blocked — C4, §6).
 
 ---
 
 ## 6. Semantics that need stating
 
-**Steps and visibility.** If any `step n reveal X` exists in a scene, every id named in some `reveal` starts hidden; everything else is visible from step 1. The learner navigates steps in order (UI: next/prev). `step n require <input>` blocks advancing past n until the input is committed. Steps are **authored sequence** (the teaching choreography); `input` is **learner-driven**. The two are distinct and may coexist.
+**Initial visibility (C1).** Every id named as a target of any `reveal` effect — in a `step` **or** a `rule` — starts hidden; everything else is visible from step 1. An id targeted by both `reveal` and `hide` starts hidden. The flag is computed per element by lang-core (render-core D4); a rule's reveal would be meaningless if its target began visible.
 
-**Rules.** `rule <expr> => <effect>` re-evaluates whenever an input or derived value changes. Rules may `reveal/hide/highlight` — this is how learner actions can alter structure (prediction gates, branch on wrong guess).
+**Steps.** The learner navigates steps in order (UI: next/prev; backward navigation is always free and never un-commits an input). Step effects are cumulative: at step *n*, the effects of steps 1…*n* have applied. Steps are **authored sequence** (the teaching choreography); `input` is **learner-driven**. The two are distinct and may coexist.
+
+**Gated steps (C4).** A step with one or more `require <input>` lines is a *gated step*. Its **own effects apply only while every required input is committed** — `step 2 require guess` + `step 2 reveal vacuum` keeps the evidence hidden until the learner has predicted (predict-then-see, the north-star shape) — and advancing past it is blocked until then (the UI shows the lock and names the input). Commitment is defined in §5.7. Export/print renders the all-revealed state, gates ignored, with step badges on step-revealed elements: a printed scene must not silently hide teaching content.
+
+**Rules.** `rule <expr> => <effect>` re-evaluates whenever an input or derived value changes. Rules may `note/reveal/hide/highlight` — this is how learner actions can alter structure (prediction gates, branch on wrong guess). Rule effects are **reactive, not latched**: they hold while the condition holds and release when it stops; presentation stays a pure function of `(currentStep, inputs, committed)`. `set` and `require` are illegal inside a rule — validator error, in both profiles (C2, §4).
+
+**Notes (C3).** A `note` is transient: the visible notes are the current step's notes plus the notes of currently-true rules, nothing older. A note is voice-over for the moment, not a persistent annotation on the scene.
 
 **Groups.** `group <id> "<label>"` + membership via `[in <id>]` on nodes. `[kind lane]` for side-by-side regions (the two halves of an analogy), `[kind loop] [polarity reinforcing]` for causal-loop labeling.
 
@@ -324,7 +333,7 @@ MUST NOT: fabricate wikilinks; upgrade hedged→established; choose the projecti
 
 ---
 
-## 12. Deferred / reserved (explicitly out of v0.3)
+## 12. Deferred / reserved (explicitly out of v0.3.x)
 
 `chart`/`plot` (function curves, tangents, intersections — a second engine; delegate or defer) · `repeat` (parametric/recursive expansion — tension with no-script) · `frame` (small multiples with cross-frame identity) · `venn` · `gantt` · rich cardinalities · relation-to-relation layout beyond midpoint attachment · style theming beyond `tone`.
 
@@ -332,10 +341,23 @@ Each is reserved as a keyword so future versions don't break v0.3 files (unknown
 
 ---
 
-## 13. What would falsify v0.3 (the tests that matter)
+## 13. What would falsify v0.3.1 (the tests that matter)
 
 1. **Corpus re-encode**: re-write all 20+ batch cases in v0.3; every previously-inexpressible line must now be expressible or explicitly deferred in §12. (Paper test — can be done now.)
 2. **Generability eval** (from batch 03): real small models, logged highlights, multiple runs; score archetype stability (should approach 100% under model-only generation), reference accuracy, epistemic fidelity, confabulation rate, one-pass repairability. Compare model-chooses-projection vs model-emits-model-only regimes.
 3. **Pocket-spec budget**: the model-facing spec must fit the founding constraint (≈≤2K tokens). Measured in the companion file.
 4. **Misconception acceptance**: a strict-profile generation over a misconception-teaching passage must yield §9.1-grade output (marked falsehood preserved, no flattening) in ≥ an agreed threshold of runs.
 5. **Degradation read-aloud**: unrendered v0.3 files given to a reader cold; if they can't summarize the scene, the outline invariant fails.
+
+---
+
+## 14. Changelog
+
+### v0.3 → v0.3.1 (2026-07-07, consolidation — CP-DSL-001)
+
+Writing the render-core spec and shipping the `cycle` kernel fed four errata back into the language (render-core §2.3 D4/D11 and §5; C4 was found while writing the golden fixture's runtime oracle). v0.3.1 folds them into the normative sections. **The surface language is unchanged**: files still begin `atomik 0.3`, no keyword or vocabulary moved, and the Scene IR (irVersion 0.1) and golden fixture are untouched. One validation rule is tightened (C2).
+
+- **C1 — initial visibility generalized** (§6). Any target of any `reveal` — step *or* rule — starts hidden; a reveal+hide conflict resolves to hidden. v0.3 said only "named in some `step n reveal`", which made a rule's reveal meaningless.
+- **C2 — `set` illegal in rules** (§3, §4, §5.7, §6). Validator **error in both profiles**: a rule that writes an input can loop; runtime purity (render-core D11) forbids it. In a `step`, `set` stays legal and applies once, on entry. The split effect grammar additionally records what the kernel always enforced: `require` (a gate declaration, not a reactive effect) is step-only too.
+- **C3 — note lifetime defined** (§5.7, §6). Notes are transient: the current step's notes plus currently-true rules' notes; nothing persists across steps.
+- **C4 — gated-step semantics** (§5.7, §6). A step with `require` withholds its **own effects** until every required input is committed, and blocks advancing. Replaces v0.3's weaker "blocks advancing past *n*" reading, under which a same-step reveal could spoil the prediction. Commitment-by-default is spelled out: sliders, toggles, and `choice` with `[default]` yes; bare `choice` no.

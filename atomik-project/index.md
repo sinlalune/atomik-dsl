@@ -12,7 +12,7 @@ The atomik DSL (language + kernels) for the Atomik workbench, maturing in its ow
 
 ## Current state
 
-Language **v0.3** · Scene IR **0.1** · `cycle` archetype end-to-end (prototype in `apps/prototype-cycle/`) · **41/41 tests** green including golden-fixture byte parity and the A1–A7 runtime oracle · errata **C1–C4** documented in the render-core spec, **not yet folded** into the language spec (that is CP-DSL-001).
+Language **v0.3.1** (surface `atomik 0.3` unchanged) · Scene IR **0.1** · `cycle` archetype end-to-end (prototype in `apps/prototype-cycle/`) · **41/41 tests** green including golden-fixture byte parity and the A1–A7 runtime oracle · errata **C1–C4 folded** into the language spec at v0.3.1 (CP-DSL-001 S02); render-core §10 marking + §6.2 cycle notes pending (S03).
 
 ## Canonical files
 
