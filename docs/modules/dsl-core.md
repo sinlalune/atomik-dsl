@@ -10,7 +10,7 @@ timestamp: 2026-07-07T00:00:00Z
 
 ## What it owns
 
-Tokenize/parse/ground(stub)/validate of atomik v0.3 source (spec v0.3.1); Scene IR assembly (irVersion 0.1, fully explicit, line-provenanced); both validation profiles (`authored` / `generated`); the pure runtime `present()` (visibility, gated steps per C4, reactive rules, notes, edge effective visibility); `layout()` with the `cycle` archetype (ring + satellites, deterministic; formulas in render-core §6.2) and the `flow` archetype (layered: deterministic DFS cycle-breaking, longest-path ranks, mean-field ordering; lanes and routed back-edges land in CP-DSL-002 S03), plus an announced fallback grid; label wrapping and node sizing.
+Tokenize/parse/ground(stub)/validate of atomik v0.3 source (spec v0.3.1); Scene IR assembly (irVersion 0.1, fully explicit, line-provenanced); both validation profiles (`authored` / `generated`); the pure runtime `present()` (visibility, gated steps per C4, reactive rules, notes, edge effective visibility); `layout()` with the `cycle` archetype (ring + satellites, deterministic; formulas in render-core §6.2) and the `flow` archetype (layered: deterministic DFS cycle-breaking, longest-path ranks, mean-field ordering, declaration-ordered lane bands, back-edges routed around the right flank through the inter-row corridors), plus an announced fallback grid; label wrapping and node sizing.
 
 Internal layout (not part of the contract): `src/lang.js` (text → IR) / `src/render.js` (pure runtime + layout) / `src/index.js` (assembles the public `Atomik` surface; package `main`). In the browser the files load in that order and expose `AtomikLang` / `AtomikRender` / `Atomik`.
 
@@ -57,7 +57,7 @@ Mermaid/D2-class languages (no epistemic layer, layout semantics leak into sourc
 
 ## Tests
 
-`npm test` → `test/test_atomik_core.js`, 54 assertions in six suites: golden-fixture deep-equal parity (§9.1 of the render-core spec), runtime oracle A1–A7 (§9.2), demo-scene parsing + cycle geometry (ring equidistance, satellite orbit, arc edges), diagnostics/C2/profile guards, and the flow layered-layout contract (rank order, determinism, no-overlap, back-edge flagging). The fixture parity test is a merge gate.
+`npm test` → `test/test_atomik_core.js`, 62 assertions in seven suites: golden-fixture deep-equal parity (§9.1 of the render-core spec), runtime oracle A1–A7 (§9.2), demo-scene parsing + cycle geometry (ring equidistance, satellite orbit, arc edges), diagnostics/C2/profile guards, and the flow layered-layout contract in two suites (rank order, determinism, no-overlap, lane bands, routed back-edge clearance). The fixture parity test is a merge gate.
 
 ## Example usage
 

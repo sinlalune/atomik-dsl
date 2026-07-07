@@ -395,26 +395,101 @@
       });
     }
 
-    /* coordinates: rows top-down, centered; no overlap by construction (L2) */
-    var rowGap = 84, colGap = 46;
+    /* lanes (§6: lanes honored): declaration-ordered x-bands; laneless nodes
+       fall into one trailing band. Without lanes, rows are simply centered. */
+    var lanes = ir.groups.filter(function (g) { return g.kind === 'lane'; });
+    var laneIdx = {};
+    lanes.forEach(function (g, i) { laneIdx[g.id] = i; });
+    function bandOf(id) {
+      var n = ir.nodes[idx[id]];
+      return (n.group !== undefined && laneIdx[n.group] !== undefined) ? laneIdx[n.group] : lanes.length;
+    }
+    var haveLanes = lanes.length > 0;
+    var rowGap = 84, colGap = 46, laneGap = 72;
+    if (haveLanes) {
+      rows.forEach(function (row) {
+        var cur = {};
+        row.forEach(function (id, i) { cur[id] = i; });
+        row.sort(function (a, b) { return (bandOf(a) - bandOf(b)) || (cur[a] - cur[b]); });
+      });
+    }
+    var bandCount = haveLanes ? lanes.length + 1 : 1;
+    var bandW = [];
+    for (var bi = 0; bi < bandCount; bi++) bandW.push(0);
+    rows.forEach(function (row) {
+      var sums = [];
+      for (var b2 = 0; b2 < bandCount; b2++) sums.push({ w: 0, n: 0 });
+      row.forEach(function (id) {
+        var s = sums[haveLanes ? bandOf(id) : 0];
+        s.w += boxes[id].w; s.n++;
+      });
+      sums.forEach(function (s2, b3) {
+        bandW[b3] = Math.max(bandW[b3], s2.w + colGap * Math.max(0, s2.n - 1));
+      });
+    });
+    var bandX = [], acc = 0;
+    bandW.forEach(function (w) { bandX.push(acc); if (w > 0) acc += w + laneGap; });
+    var shift = -Math.max(0, acc - laneGap) / 2;
+
+    /* coordinates: rows top-down; per-band centering; no overlap by construction (L2) */
     var pos = {};
+    var rowBands = [];
     var y = 0;
     rows.forEach(function (row) {
-      var rowH = 0, totalW = 0;
-      row.forEach(function (id) {
-        rowH = Math.max(rowH, boxes[id].h);
-        totalW += boxes[id].w;
-      });
-      totalW += colGap * Math.max(0, row.length - 1);
-      var x = -totalW / 2;
-      row.forEach(function (id) {
-        pos[id] = { x: x + boxes[id].w / 2, y: y + rowH / 2 };
-        x += boxes[id].w + colGap;
-      });
+      var rowH = 0;
+      row.forEach(function (id) { rowH = Math.max(rowH, boxes[id].h); });
+      var yC = y + rowH / 2;
+      for (var b4 = 0; b4 < bandCount; b4++) {
+        var members = row.filter(function (id) { return (haveLanes ? bandOf(id) : 0) === b4; });
+        if (!members.length) continue;
+        var mw = 0;
+        members.forEach(function (id) { mw += boxes[id].w; });
+        mw += colGap * (members.length - 1);
+        var x = shift + bandX[b4] + (bandW[b4] - mw) / 2;
+        members.forEach(function (id) {
+          pos[id] = { x: x + boxes[id].w / 2, y: yC };
+          x += boxes[id].w + colGap;
+        });
+      }
+      rowBands.push({ top: y, h: rowH });
       y += rowH + rowGap;
     });
+    var laneRegions = lanes.map(function (g, i) {
+      return { id: g.id, label: g.label, x0: shift + bandX[i], x1: shift + bandX[i] + bandW[i] };
+    }).filter(function (L) { return L.x1 > L.x0; });
 
-    /* edges: straight segments; back-edges flagged (routed in a later step) */
+    /* back-edge routing (§6: routed around, never through the rows):
+       drop into the corridor below the source row, run along the right
+       flank, re-enter along the corridor above the target row */
+    var nodeMaxX = -Infinity;
+    ir.nodes.forEach(function (n) { nodeMaxX = Math.max(nodeMaxX, pos[n.id].x + boxes[n.id].w / 2); });
+    var backSeq = 0;
+    var routeExtent = { maxX: -Infinity, minY: Infinity, maxY: -Infinity };
+    function routeBack(r) {
+      var u = r.from.id, v = r.to.id;
+      var k = backSeq++;
+      var flankX = nodeMaxX + 46 + k * 30;
+      var yOut = rowBands[rank[u]].top + rowBands[rank[u]].h + rowGap * 0.4 + k * 8;
+      var yIn = rowBands[rank[v]].top - rowGap * 0.4 - k * 8;
+      var pts = [
+        { x: pos[u].x, y: pos[u].y + boxes[u].h / 2 },
+        { x: pos[u].x, y: yOut },
+        { x: flankX, y: yOut },
+        { x: flankX, y: yIn },
+        { x: pos[v].x, y: yIn },
+        { x: pos[v].x, y: pos[v].y - boxes[v].h / 2 }
+      ];
+      routeExtent.maxX = Math.max(routeExtent.maxX, flankX + 18);
+      routeExtent.minY = Math.min(routeExtent.minY, yIn);
+      routeExtent.maxY = Math.max(routeExtent.maxY, yOut);
+      return {
+        path: 'M ' + pts.map(function (p) { return p.x.toFixed(1) + ' ' + p.y.toFixed(1); }).join(' L '),
+        labelAt: { x: flankX + 10, y: (yOut + yIn) / 2 }
+      };
+    }
+
+    /* edges: straight segments; back-edges additionally carry a routed path
+       (painters that understand `path` prefer it) */
     var geoEdges = ir.relations.map(function (r) {
       if (r.from.kind !== 'node' || r.to.kind !== 'node' || !pos[r.from.id] || !pos[r.to.id])
         return { id: r.id, skip: true };
@@ -427,23 +502,33 @@
         x1: e1.x, y1: e1.y, x2: e2.x, y2: e2.y,
         labelAt: { x: (e1.x + e2.x) / 2, y: (e1.y + e2.y) / 2 - 6 }
       };
-      if (back[r.id]) ge.back = true;
+      if (back[r.id]) {
+        var rt = routeBack(r);
+        ge.back = true;
+        ge.path = rt.path;
+        ge.labelAt = rt.labelAt;
+      }
       return ge;
     });
 
-    /* bounds */
+    /* bounds (nodes + routed flanks) */
     var minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
     ir.nodes.forEach(function (n) {
       var p = pos[n.id], b = boxes[n.id];
       minX = Math.min(minX, p.x - b.w / 2); maxX = Math.max(maxX, p.x + b.w / 2);
       minY = Math.min(minY, p.y - b.h / 2); maxY = Math.max(maxY, p.y + b.h / 2);
     });
+    if (backSeq > 0) {
+      maxX = Math.max(maxX, routeExtent.maxX);
+      minY = Math.min(minY, routeExtent.minY);
+      maxY = Math.max(maxY, routeExtent.maxY);
+    }
     if (!ir.nodes.length) { minX = 0; minY = 0; maxX = 10; maxY = 10; }
     var pad = 46;
     return {
       fallback: false, notices: notices,
       layout: {
-        archetype: 'flow', rows: rows, backEdges: Object.keys(back),
+        archetype: 'flow', rows: rows, backEdges: Object.keys(back), lanes: laneRegions,
         pos: pos, boxes: boxes, edges: geoEdges,
         viewBox: [minX - pad, minY - pad, (maxX - minX) + 2 * pad, (maxY - minY) + 2 * pad]
       }

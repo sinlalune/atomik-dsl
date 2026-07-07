@@ -173,5 +173,47 @@ ok(flowDemo.nodes.every(n => FD.layout.pos[n.id]), 'L4: hidden nodes positioned 
 const backGe = FD.layout.edges.find(e => e.back);
 ok(!!backGe && !backGe.skip, 'back-edge flagged in the geometry');
 
+console.log('\n== 7. Flow lanes + routed back-edges (CP-DSL-002 S03) ==');
+const laneSrc = [
+  'atomik 0.3', 'scene analogy', 'claim "Two sides."',
+  'group piece "Pièce" [kind lane]', 'group qubit "Qubit" [kind lane]',
+  'node coin "Pile ou face" [in piece]', 'node spin "Spin up/down" [in qubit]',
+  'node turn "Pièce qui tourne" [in piece]', 'node sup "Superposition" [in qubit]',
+  'relation coin -> turn devient', 'relation spin -> sup devient',
+  'project as flow'
+].join('\n');
+const lIr = clean(Atomik.parse(laneSrc));
+ok(lIr.diagnostics.length === 0, 'lane scene parses clean');
+const LF = Atomik.layout(lIr).layout;
+ok(LF.lanes.length === 2 && LF.lanes[0].id === 'piece' && LF.lanes[0].x1 < LF.lanes[1].x0,
+  'lanes: declaration-ordered, disjoint x-bands');
+const inBand = (id, i) =>
+  LF.pos[id].x - LF.boxes[id].w / 2 >= LF.lanes[i].x0 - 0.01 &&
+  LF.pos[id].x + LF.boxes[id].w / 2 <= LF.lanes[i].x1 + 0.01;
+ok(inBand('coin', 0) && inBand('turn', 0), 'lane 1 members stay inside their band');
+ok(inBand('spin', 1) && inBand('sup', 1), 'lane 2 members stay inside their band');
+ok(overlappingPair(LF) === null, 'L2 holds with lanes');
+
+const rb = Atomik.layout(flowDemo).layout;
+const routed = rb.edges.find(e => e.back);
+ok(/^M /.test(routed.path) && routed.path.split(' L ').length === 6,
+  'back-edge routed as a 6-point orthogonal path');
+function segHitsBoxInterior(x1, y1, x2, y2, b) {
+  const eps = 0.5;
+  const rx1 = b.cx - b.w / 2 + eps, rx2 = b.cx + b.w / 2 - eps;
+  const ry1 = b.cy - b.h / 2 + eps, ry2 = b.cy + b.h / 2 - eps;
+  return Math.min(x1, x2) < rx2 && Math.max(x1, x2) > rx1 &&
+         Math.min(y1, y2) < ry2 && Math.max(y1, y2) > ry1;
+}
+const rpts = routed.path.slice(2).split(' L ').map(s => s.split(' ').map(Number));
+let clear = true;
+for (let i = 1; i < rpts.length; i++)
+  for (const id of Object.keys(rb.pos))
+    if (segHitsBoxInterior(rpts[i - 1][0], rpts[i - 1][1], rpts[i][0], rpts[i][1],
+        { cx: rb.pos[id].x, cy: rb.pos[id].y, w: rb.boxes[id].w, h: rb.boxes[id].h })) clear = false;
+ok(clear, 'routed back-edge clears every node box (around, never through)');
+ok(JSON.stringify(Atomik.layout(flowDemo)) === JSON.stringify(Atomik.layout(flowDemo)),
+  'L1 holds with lanes + routing');
+
 console.log('\n' + pass + ' passed, ' + fail + ' failed');
 process.exit(fail ? 1 : 0);
