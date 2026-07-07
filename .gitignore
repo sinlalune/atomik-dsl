@@ -2,3 +2,8 @@
 node_modules/
 .atomik/
 .DS_Store
+
+# Eval: dry-run output is synthetic + regenerable; batch bodies are regenerable.
+# Live results (results/live-*/) are the real data and ARE committed (CP-DSL-003 S04).
+apps/eval-generability/results/dry-run/
+apps/eval-generability/results/batch-*/

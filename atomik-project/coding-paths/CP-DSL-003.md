@@ -7,7 +7,7 @@ timestamp: 2026-07-07T00:00:00Z
 atomik:
   id: CP-DSL-003
   status: active
-  current_step: S03
+  current_step: S04
   base_commit: e0dc2ef
 ---
 
@@ -68,7 +68,7 @@ Completeness rule: every document of this repository appears below at least once
 
 - [x] S01 Open the path: ledger with base commit and owner decisions; register D3 → active; ACTIVE.md; orientation roadmap; log. Record the credentials blocker (no ANTHROPIC_API_KEY in the environment yet — blocks S04 only).
 - [x] S02 Task corpus: 16 annotated tasks under `apps/eval-generability/tasks/` + a task-schema note; validate annotations mechanically (vault indexes well-formed, property checks executable, status ceilings in the closed vocabulary).
-- [ ] S03 Harness: prompt builder (R1/R2), Batches API client (official SDK, root devDependency), kernel-as-grader scorer, repair round, stability aggregation, judge-pass builder, JSONL logging; dry-run mode (no API) proves the full pipeline on canned outputs; npm script.
+- [x] S03 Harness: prompt builder (R1/R2), Batches API client (official SDK, root devDependency), kernel-as-grader scorer, repair round, stability aggregation, judge-pass builder, JSONL logging; dry-run mode (no API) proves the full pipeline on canned outputs; npm script.
 - [ ] S04 Execute: generation batch (Haiku 4.5, full matrix) → repair batch → judge batch (Sonnet 5); commit raw logs. **Blocked on owner-provided API key.**
 - [ ] S05 Score + report: aggregate, write the findings document (template check first), annotate spec §13, thresholds verdict; guide check if author-facing findings.
 - [ ] S06 Same-work-unit docs audit and close: register, ACTIVE.md, orientation, log, ledger; fixture-diff gate re-check.
@@ -77,20 +77,29 @@ Completeness rule: every document of this repository appears below at least once
 
 ```text
 base commit : e0dc2ef (branch master — CP-DSL-002 closed, 65/65 green)
-changed     : S02 — 16 annotated tasks in apps/eval-generability/tasks/
-              (batch-03 A/B/C, batch-04 P1/P2/P4/P5, spec §9 cases, fresh FR/EN
-              passages); tasks/README.md schema + 15 property-check types;
-              validate_tasks.mjs (schema/status-ceiling/regex/param checks) wired
-              as npm run eval:validate — 16/16 valid. Proved achievability +
-              scorer logic against a hand-authored ideal for task 05 (0 error
-              diagnostics, status in ceiling, 0 fabricated links, all 3
-              properties PASS) and the G2 fabrication detector fires on an
-              out-of-vault link. Corpus spans all six G-ruptures + the archetype
-              set; four teaching tasks exercise misconception+refutation+gate.
-tests       : 65 passing / 0 failed; eval:validate 16/16; no kernel change
-next action : S03 — harness (prompt builder R1/R2, Batches client, kernel-as-
-              grader scorer, repair round, stability + judge builders, JSONL);
-              dry-run mode proves the pipeline with no API
+changed     : S03 — harness under apps/eval-generability/ as pure, dependency-
+              free ES modules: scorer.mjs (kernel-as-grader: parse under the
+              generated profile + vault resolver → validity, grounding,
+              status ceiling, choreography-rule, 15 property checks, structural
+              signatures), prompt.mjs (system = pocket spec VERBATIM; R1 model-
+              plane-only / R2 free; repair + judge builders), stability.mjs
+              (archetype mode share, node/relation Jaccard, pass/fabrication
+              rates), batch.mjs (custom-id-keyed body builders, scene
+              extraction, results parsing, and a dynamically-imported live
+              submit so dry-run needs no node_modules), run.mjs orchestrator
+              (--dry-run | build | live). test_harness.mjs = 24 assertions
+              (npm eval:test). Dry-run over synthetic fixtures scores 10 canned
+              runs end-to-end and correctly surfaces every failure mode: 1
+              parse failure, 1 G2 fabrication, 1 G4 ceiling breach, archetype
+              drift 0.67 on water-cycle. build mode assembles the real 160-
+              request matrix (16×2×5); live blocks cleanly without a key.
+              SDK stays out of the kernel (dynamic import in the submit path
+              only); dry-run/batch results gitignored, live results committable.
+tests       : 65 passing; eval:test 24/24; eval:validate 16/16; dry-run +
+              build green; fixture untouched; no dep added to dsl-core
+next action : S04 — install @anthropic-ai/sdk as root devDependency, run
+              `npm run eval:live` (generation → repair → judge), commit raw
+              results. BLOCKED on owner-provided ANTHROPIC_API_KEY.
 blockers    : S04 requires an Anthropic API key; environment has none
               (ANTHROPIC_API_KEY unset, no ant CLI). Owner provides before S04.
 ```

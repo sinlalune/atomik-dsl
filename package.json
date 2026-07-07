@@ -10,6 +10,10 @@
   "scripts": {
     "test": "node packages/dsl-core/test/test_atomik_core.js",
     "build:prototype": "node apps/prototype-cycle/build.mjs",
-    "eval:validate": "node apps/eval-generability/validate_tasks.mjs"
+    "eval:validate": "node apps/eval-generability/validate_tasks.mjs",
+    "eval:test": "node apps/eval-generability/test_harness.mjs",
+    "eval:dry-run": "node apps/eval-generability/run.mjs --dry-run",
+    "eval:build": "node apps/eval-generability/run.mjs build",
+    "eval:live": "node apps/eval-generability/run.mjs live"
   }
 }
