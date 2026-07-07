@@ -1,0 +1,14 @@
+{
+  "name": "atomik-dsl",
+  "private": true,
+  "version": "0.3.0",
+  "description": "atomik \u2014 the learning-visualization DSL for Atomik (lang-core + render-core kernels, M12 target).",
+  "type": "commonjs",
+  "workspaces": [
+    "packages/*"
+  ],
+  "scripts": {
+    "test": "node packages/dsl-core/test/test_atomik_core.js",
+    "build:prototype": "node apps/prototype-cycle/build.mjs"
+  }
+}

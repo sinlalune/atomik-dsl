@@ -1,0 +1,10 @@
+atomik 0.3
+scene demo_erreurs
+claim "Scène volontairement cassée pour montrer les diagnostics ligne à ligne."
+node alpha "Alpha"
+node beta "Bêta"
+relation alpha -> alfa cause
+input x = slider 0..10 [default 3]
+rule x > 5 => set x 0
+foobar hello world
+step 1 reveal alpha

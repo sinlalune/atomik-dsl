@@ -1,0 +1,1590 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>atomik — prototype cycle de bout en bout (v0.3 / IR 0.1)</title>
+<style>
+  :root{
+    --bg:#f6f4ef; --panel:#ffffff; --ink:#22252a; --muted:#6b7280;
+    --line:#e3ded4; --accent:#4457c5; --warn:#b45309; --err:#b91c1c;
+    --edge:#5b6470; --refute:#b91c1c; --hi:#d97706; --good:#15803d;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;font:14px/1.45 -apple-system,'Segoe UI',Roboto,'Helvetica Neue',sans-serif;
+       background:var(--bg);color:var(--ink)}
+  header{display:flex;gap:12px;align-items:center;padding:10px 16px;
+         background:var(--panel);border-bottom:1px solid var(--line);flex-wrap:wrap}
+  header h1{font-size:15px;margin:0;font-weight:650}
+  header .sub{color:var(--muted);font-size:12px}
+  header select,header button{font:inherit;padding:5px 9px;border:1px solid var(--line);
+         border-radius:8px;background:#fff;cursor:pointer}
+  header button:hover{border-color:var(--accent)}
+  main{display:flex;gap:0;height:calc(100vh - 55px)}
+  #left{width:44%;min-width:380px;display:flex;flex-direction:column;border-right:1px solid var(--line);background:var(--panel)}
+  .tabs{display:flex;gap:2px;padding:8px 10px 0}
+  .tabs button{font:inherit;border:1px solid var(--line);border-bottom:none;background:#f1ede4;
+               padding:6px 12px;border-radius:8px 8px 0 0;cursor:pointer;color:var(--muted)}
+  .tabs button.active{background:#fff;color:var(--ink);font-weight:600}
+  .tabs .spacer{flex:1}
+  #diagcount{align-self:center;font-size:12px;padding:2px 8px;border-radius:10px}
+  #diagcount.good{background:#dcfce7;color:var(--good)}
+  #diagcount.meh{background:#fef3c7;color:var(--warn)}
+  #diagcount.bad{background:#fee2e2;color:var(--err)}
+  .pane{flex:1;overflow:auto;border-top:1px solid var(--line)}
+  textarea#src{width:100%;height:100%;border:none;resize:none;outline:none;
+    font:13px/1.5 ui-monospace,'SF Mono',Menlo,Consolas,monospace;padding:12px;background:#fffdf8;color:#1f2430}
+  #irjson{margin:0;padding:12px;font:12px/1.45 ui-monospace,Menlo,Consolas,monospace;white-space:pre;color:#333}
+  .diag{padding:7px 12px;border-bottom:1px solid var(--line);cursor:pointer;font-size:13px}
+  .diag.error{border-left:4px solid var(--err)}
+  .diag.warning{border-left:4px solid var(--warn)}
+  .diag.ok{border-left:4px solid var(--good);cursor:default;color:var(--good)}
+  .diag:hover{background:#faf7f0}
+
+  #right{flex:1;display:flex;flex-direction:column;overflow:auto}
+  #claimbar{display:flex;gap:10px;align-items:center;padding:12px 16px;flex-wrap:wrap}
+  #claimbar .claimtext{font-size:15px;font-weight:650}
+  #claimbar .subject{color:var(--muted);font-size:12px}
+  .chip{display:inline-flex;gap:6px;align-items:center;padding:3px 10px;border-radius:999px;
+        font-size:12px;border:1.4px solid var(--line);background:#fff;white-space:nowrap}
+  .chip.warn{border-color:#f2d9a4;background:#fef8e7;color:var(--warn)}
+  .chip.proj select{font:inherit;border:none;background:transparent}
+  .chip.proj.suggested{border-color:var(--accent);box-shadow:0 0 0 3px #4457c522}
+  .chip.proj em{color:var(--accent);font-style:normal;font-size:11px}
+  .status-established{border-style:solid;border-color:#9bb69e;background:#eef6ee}
+  .status-supported{border-style:solid}
+  .status-contested{border-style:dashed;border-color:#d9a441;background:#fdf6e8}
+  .status-hypothesis{border-style:dashed}
+  .status-speculative{border-style:dotted}
+  .status-reported{border-style:solid;border-color:#a8b6d9;background:#eef1fb}
+  .status-unspecified{color:var(--muted)}
+  #notices{display:flex;gap:8px;padding:0 16px 8px;flex-wrap:wrap;align-items:center}
+  #stage{padding:4px 16px}
+  svg.scene{width:100%;max-height:62vh;background:#fffdf8;border:1px solid var(--line);border-radius:14px}
+  #notes{padding:2px 16px;display:flex;flex-direction:column;gap:6px}
+  .note{background:#f0f3ff;border:1px solid #d8def7;border-radius:10px;padding:7px 10px;font-size:13px}
+  .note .origin{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.04em;margin-right:8px}
+  #inputs{padding:8px 16px;display:flex;gap:16px;flex-wrap:wrap}
+  .input{background:#fff;border:1px solid var(--line);border-radius:12px;padding:10px 12px;min-width:220px}
+  .input.locked{border-color:var(--hi);box-shadow:0 0 0 3px #d9770622}
+  .input>label{display:block;font-weight:600;margin-bottom:6px}
+  .input .opt{display:block;margin:3px 0;cursor:pointer}
+  .input .val{font-variant-numeric:tabular-nums;color:var(--muted)}
+  #meters{padding:0 16px 8px;display:flex;gap:16px;flex-wrap:wrap}
+  .meter{min-width:240px}
+  .meter .bar{height:10px;background:#eee7d8;border-radius:6px;overflow:hidden;margin-top:4px}
+  .meter .fill{height:100%;background:var(--accent)}
+  #stepnav{display:flex;gap:12px;align-items:center;padding:10px 16px 18px}
+  #stepnav.empty{display:none}
+  #stepnav button{font:inherit;padding:7px 14px;border:1px solid var(--line);border-radius:10px;background:#fff;cursor:pointer}
+  #stepnav button:disabled{opacity:.4;cursor:default}
+  #stepnav .steplabel{font-weight:650}
+  #stepnav .lock{color:var(--hi);font-size:13px}
+</style>
+<style id="scene-css">
+  .box{fill:#ffffff;stroke:#5b6470;stroke-width:1.6}
+  .node.role-evidence .box{fill:#f4f7ff}
+  .node .fold{fill:#dbe3f5;stroke:#5b6470;stroke-width:1.2}
+  .node.role-assumption .box{stroke-dasharray:5 4}
+  .node.role-start .box,.node.role-terminal .box{fill:#f2efe7}
+  .node .inner{fill:none}
+  .label{font:13px -apple-system,'Segoe UI',sans-serif;fill:#22252a;text-anchor:middle;dominant-baseline:middle}
+  .edge path{stroke:#5b6470;stroke-width:1.8}
+  .edge.cls-refutation path{stroke:#b91c1c;stroke-dasharray:7 4}
+  .edge.cls-analogy path{stroke-dasharray:2 4}
+  .edge.cls-boundary path{stroke-dasharray:2 3}
+  .edge.cls-hypothesis path{stroke-dasharray:8 3;opacity:.85}
+  .edgelabel{font:10.5px -apple-system,sans-serif;fill:#6b7280;text-anchor:middle}
+  .breakglyph{font-size:13px;text-anchor:middle;fill:#b45309}
+  .strike{stroke:#b91c1c;stroke-width:2.4;stroke-linecap:round}
+  .falsebadge{fill:#b91c1c}
+  .falsebadgetext{font:600 10px -apple-system,sans-serif;fill:#fff;text-anchor:middle}
+  .glow{fill:none;stroke:#d97706;stroke-width:3;opacity:.55}
+  .node.hi .box{stroke:#d97706;stroke-width:2.4}
+  .edge.hi path{stroke-width:3}
+  .node.criterial .box{stroke-width:2.6}
+  .node.incidental{opacity:.62}
+  .stepbadge{fill:#4457c5}
+  .stepbadgetext{font:700 10px -apple-system,sans-serif;fill:#fff;text-anchor:middle}
+</style>
+</head>
+<body>
+<header>
+  <h1>atomik — prototype « cycle » de bout en bout</h1>
+  <span class="sub">texte → IR 0.1 → layout → runtime pur · C1–C4 appliqués</span>
+  <span style="flex:1"></span>
+  <select id="preset" title="Préréglages"></select>
+  <button id="export" title="Export SVG : tout révélé + badges d'étape (render-core §5)">SVG ⭳</button>
+</header>
+<main>
+  <section id="left">
+    <div class="tabs">
+      <button id="tab-source" class="active">Source</button>
+      <button id="tab-ir">IR</button>
+      <button id="tab-diag">Diagnostics</button>
+      <span class="spacer"></span>
+      <span id="diagcount" class="good">✓</span>
+    </div>
+    <div id="pane-source" class="pane"><textarea id="src" spellcheck="false"></textarea></div>
+    <div id="pane-ir" class="pane" style="display:none"><pre id="irjson"></pre></div>
+    <div id="pane-diag" class="pane" style="display:none"><div id="diags"></div></div>
+  </section>
+  <section id="right">
+    <div id="claimbar"></div>
+    <div id="notices"></div>
+    <div id="stage"></div>
+    <div id="notes"></div>
+    <div id="inputs"></div>
+    <div id="meters"></div>
+    <div id="stepnav"></div>
+  </section>
+</main>
+<script>
+/* atomik core — prototype implementation of:
+ *   - lang-core subset: parse + ground(stub) + validate + IR build (irVersion 0.1)
+ *   - render-core subset: pure runtime present(), cycle layout (+ fallback grid)
+ * Conforms to atomik_dsl_spec_v0_3.md and atomik_render_core_spec_v0_1.md,
+ * including errata C1 (reveal-anywhere hides initially), C2 (set forbidden in
+ * rules), C3 (transient notes), C4 (gated-step semantics).
+ * UMD-ish: usable from Node (tests) and the browser (prototype UI).
+ */
+(function (root, factory) {
+  if (typeof module !== 'undefined' && module.exports) module.exports = factory();
+  else root.Atomik = factory();
+})(typeof self !== 'undefined' ? self : this, function () {
+  'use strict';
+
+  var STATUSES = ['established', 'supported', 'contested', 'hypothesis',
+    'speculative', 'reported', 'misconception', 'unspecified'];
+  var CLASSES = ['fact', 'inference', 'hypothesis', 'analogy',
+    'interpretation', 'refutation', 'boundary', 'unspecified'];
+  var ROLES = ['process', 'decision', 'start', 'terminal',
+    'question', 'evidence', 'assumption', 'contradiction'];
+  var ARCHETYPES = ['graph', 'flow', 'cycle', 'tree', 'nested', 'concentric',
+    'timeline', 'axis', 'matrix', 'bar', 'map'];
+  var RELPOS = ['above', 'below', 'left-of', 'right-of', 'inside', 'adjacent'];
+  var EFFECTS = ['note', 'reveal', 'hide', 'highlight', 'set', 'require'];
+
+  /* ---------------- small utils ---------------- */
+
+  function isIdent(s) { return /^[A-Za-z_][A-Za-z0-9_-]*$/.test(s); }
+
+  function unquote(s) {
+    // s includes the surrounding double quotes
+    var out = '', i;
+    for (i = 1; i < s.length - 1; i++) {
+      var c = s[i];
+      if (c === '\\' && i + 1 < s.length - 1) { out += s[i + 1]; i++; }
+      else out += c;
+    }
+    return out;
+  }
+
+  /* strip a `#` comment, respecting "…" strings and [[…]] links */
+  function stripComment(line) {
+    var inStr = false, i;
+    for (i = 0; i < line.length; i++) {
+      var c = line[i];
+      if (inStr) {
+        if (c === '\\') i++;
+        else if (c === '"') inStr = false;
+      } else if (c === '"') inStr = true;
+      else if (c === '#') return line.slice(0, i);
+    }
+    return line;
+  }
+
+  /* pull trailing [key], [key value], [key "value"], [key [[Wiki]]] attrs */
+  var ATTR_RE = /\s*\[([A-Za-z_][A-Za-z0-9_-]*)(?:\s+("(?:[^"\\]|\\.)*"|\[\[[^\]]+\]\]|[^\]"]+?))?\s*\]\s*$/;
+  function extractAttrs(rest) {
+    var attrs = {}, order = [];
+    for (;;) {
+      var m = ATTR_RE.exec(rest);
+      if (!m) break;
+      var key = m[1];
+      var val = true;
+      if (m[2] !== undefined) {
+        var raw = m[2].trim();
+        if (raw[0] === '"') val = unquote(raw);
+        else val = raw;
+      }
+      attrs[key] = val; order.unshift(key);
+      rest = rest.slice(0, m.index);
+    }
+    return { head: rest.trim(), attrs: attrs, order: order };
+  }
+
+  /* tokenizer for statement heads (after keyword, before attrs) */
+  function Scanner(s) { this.s = s; this.i = 0; }
+  Scanner.prototype.ws = function () { while (this.i < this.s.length && /\s/.test(this.s[this.i])) this.i++; };
+  Scanner.prototype.eof = function () { this.ws(); return this.i >= this.s.length; };
+  Scanner.prototype.peek = function () { this.ws(); return this.s[this.i]; };
+  Scanner.prototype.rest = function () { this.ws(); return this.s.slice(this.i); };
+  Scanner.prototype.tryLit = function (lit) {
+    this.ws();
+    if (this.s.startsWith(lit, this.i)) { this.i += lit.length; return true; }
+    return false;
+  };
+  Scanner.prototype.word = function () {
+    this.ws();
+    var m = /^[^\s"]+/.exec(this.s.slice(this.i));
+    if (!m) return null;
+    this.i += m[0].length; return m[0];
+  };
+  Scanner.prototype.string = function () {
+    this.ws();
+    if (this.s[this.i] !== '"') return null;
+    var j = this.i + 1;
+    while (j < this.s.length) {
+      if (this.s[j] === '\\') j += 2;
+      else if (this.s[j] === '"') { var raw = this.s.slice(this.i, j + 1); this.i = j + 1; return unquote(raw); }
+      else j++;
+    }
+    return null; // unterminated
+  };
+  Scanner.prototype.wikilink = function () {
+    this.ws();
+    if (!this.s.startsWith('[[', this.i)) return null;
+    var end = this.s.indexOf(']]', this.i + 2);
+    if (end < 0) return null;
+    var inner = this.s.slice(this.i + 2, end); this.i = end + 2;
+    return inner.trim();
+  };
+
+  /* ---------------- expression parser ---------------- */
+  function tokenizeExpr(s, err) {
+    var toks = [], i = 0;
+    var re2 = ['==', '!=', '<=', '>='];
+    while (i < s.length) {
+      var c = s[i];
+      if (/\s/.test(c)) { i++; continue; }
+      if (c === '"') {
+        var j = i + 1;
+        while (j < s.length && !(s[j] === '"' && s[j - 1] !== '\\')) j++;
+        if (j >= s.length) { err('unterminated-string'); return toks; }
+        toks.push({ t: 'str', v: unquote(s.slice(i, j + 1)) }); i = j + 1; continue;
+      }
+      var two = s.slice(i, i + 2);
+      if (re2.indexOf(two) >= 0) { toks.push({ t: 'op', v: two }); i += 2; continue; }
+      if ('<>+-*/()'.indexOf(c) >= 0) { toks.push({ t: 'op', v: c }); i++; continue; }
+      var m = /^[A-Za-z_][A-Za-z0-9_-]*/.exec(s.slice(i));
+      if (m) {
+        var w = m[0];
+        if (w === 'and' || w === 'or' || w === 'not') toks.push({ t: 'op', v: w });
+        else toks.push({ t: 'id', v: w });
+        i += w.length; continue;
+      }
+      var n = /^-?\d+(\.\d+)?/.exec(s.slice(i));
+      if (n) { toks.push({ t: 'num', v: parseFloat(n[0]) }); i += n[0].length; continue; }
+      err('bad-char', c); i++;
+    }
+    return toks;
+  }
+
+  function parseExpr(src, onErr) {
+    var bad = false;
+    var toks = tokenizeExpr(src, function () { bad = true; });
+    var p = 0;
+    function peek() { return toks[p]; }
+    function eat(v) { if (toks[p] && toks[p].t === 'op' && toks[p].v === v) { p++; return true; } return false; }
+    function fact() {
+      var t = peek();
+      if (!t) { bad = true; return { op: 'lit', value: 0 }; }
+      if (eat('not')) return { op: 'not', a: fact() };
+      if (eat('(')) { var e = or(); if (!eat(')')) bad = true; return e; }
+      if (t.t === 'num') { p++; return { op: 'lit', value: t.v }; }
+      if (t.t === 'str') { p++; return { op: 'lit', value: t.v }; }
+      if (t.t === 'id') { p++; return { op: 'ref', id: t.v }; }
+      bad = true; p++; return { op: 'lit', value: 0 };
+    }
+    function term() { var a = fact(); for (;;) { if (eat('*')) a = { op: '*', a: a, b: fact() }; else if (eat('/')) a = { op: '/', a: a, b: fact() }; else return a; } }
+    function sum() { var a = term(); for (;;) { if (eat('+')) a = { op: '+', a: a, b: term() }; else if (eat('-')) a = { op: '-', a: a, b: term() }; else return a; } }
+    function cmp() {
+      var a = sum(); var t = peek();
+      if (t && t.t === 'op' && ['==', '!=', '<', '<=', '>', '>='].indexOf(t.v) >= 0) { p++; return { op: t.v, a: a, b: sum() }; }
+      return a;
+    }
+    function and() { var a = cmp(); while (eat('and')) a = { op: 'and', a: a, b: cmp() }; return a; }
+    function or() { var a = and(); while (eat('or')) a = { op: 'or', a: a, b: and() }; return a; }
+    var e = or();
+    if (p < toks.length) bad = true;
+    if (bad && onErr) onErr();
+    return e;
+  }
+
+  function exprRefs(e, out) {
+    out = out || [];
+    if (!e) return out;
+    if (e.op === 'ref') out.push(e.id);
+    if (e.a) exprRefs(e.a, out);
+    if (e.b) exprRefs(e.b, out);
+    return out;
+  }
+
+  /* ---------------- effect parser ---------------- */
+  function parseEffect(sc, diag, line) {
+    var w = sc.word();
+    if (!w || EFFECTS.indexOf(w) < 0) { diag(line, 'bad-effect', 'error', 'expected an effect: ' + EFFECTS.join(' | ')); return null; }
+    if (w === 'note') {
+      var s = sc.string();
+      if (s === null) { diag(line, 'note-string', 'error', 'note expects a quoted string'); return null; }
+      return { type: 'note', text: s };
+    }
+    if (w === 'set') {
+      var id = sc.word(); var v = sc.string();
+      if (v === null) { var wv = sc.word(); v = wv !== null && /^-?\d+(\.\d+)?$/.test(wv) ? parseFloat(wv) : wv; }
+      if (!id || v === null || v === undefined) { diag(line, 'set-args', 'error', 'set expects: set <input> <value>'); return null; }
+      return { type: 'set', input: id, value: v };
+    }
+    if (w === 'require') {
+      var rid = sc.word();
+      if (!rid) { diag(line, 'require-args', 'error', 'require expects an input id'); return null; }
+      return { type: 'require', input: rid };
+    }
+    var targets = [];
+    for (;;) { var t = sc.word(); if (!t) break; targets.push(t); }
+    if (!targets.length) { diag(line, 'targets', 'error', w + ' expects at least one id'); return null; }
+    return { type: w, targets: targets };
+  }
+
+  /* ---------------- ground (stub) ---------------- */
+  /* Prototype grounding: every wikilink resolves to a note named by its text.
+   * A real lang-core resolves against the vault index; authored links to
+   * missing notes become { kind:"unresolved" } (render-core spec D3). */
+  function groundLink(inner, resolver) {
+    if (resolver) return resolver(inner);
+    return { kind: 'note', target: inner };
+  }
+
+  /* ---------------- parse → IR ---------------- */
+  function parse(text, opts) {
+    opts = opts || {};
+    var diagnostics = [];
+    function diag(line, code, severity, message, hint) {
+      var d = { line: line, code: code, severity: severity, message: message };
+      if (hint) d.hint = hint;
+      diagnostics.push(d);
+    }
+
+    var ir = {
+      irVersion: '0.1',
+      surface: { language: 'atomik', version: '0.0' },
+      origin: 'authored',
+      diagnostics: diagnostics,
+      scene: null, claim: null,
+      groups: [], nodes: [], relations: [], places: [], data: [],
+      inputs: [], deriveds: [], rules: [], steps: [], marks: []
+    };
+    var stepsRaw = {}; // sourceStep -> {effects, requires, lines}
+    var dataById = {};
+    var synth = 0;
+
+    var lines = text.split(/\r?\n/);
+    for (var ln = 1; ln <= lines.length; ln++) {
+      var raw = stripComment(lines[ln - 1]);
+      if (!raw.trim()) continue;
+      var ex = extractAttrs(raw);
+      var head = ex.head, attrs = ex.attrs;
+      var sc = new Scanner(head);
+      var kw = sc.word();
+      if (!kw) continue;
+
+      switch (kw) {
+        case 'atomik': {
+          var v = sc.word();
+          ir.surface.version = v || '0.0';
+          break;
+        }
+        case 'scene': {
+          var sid = sc.word();
+          if (!sid || !isIdent(sid)) { diag(ln, 'scene-id', 'error', 'scene expects an identifier'); break; }
+          ir.scene = { id: sid, line: ln };
+          if (attrs.origin === 'generated' || attrs.origin === 'authored') ir.origin = attrs.origin;
+          break;
+        }
+        case 'claim': {
+          var ct = sc.string();
+          if (ct === null) { diag(ln, 'claim-string', 'error', 'claim expects a quoted string'); break; }
+          var cst = attrs.status;
+          if (cst && STATUSES.indexOf(cst) < 0) { diag(ln, 'bad-status', 'warning', 'unknown status "' + cst + '"', 'one of: ' + STATUSES.join(' ')); cst = 'unspecified'; }
+          ir.claim = { text: ct, status: cst || 'unspecified', line: ln };
+          break;
+        }
+        case 'subject': {
+          var wl = sc.wikilink();
+          var lbl;
+          if (wl !== null) lbl = { text: wl, ref: groundLink(wl, opts.resolver) };
+          else { var ss = sc.string(); if (ss === null) { diag(ln, 'subject-arg', 'error', 'subject expects [[Note]] or "text"'); break; } lbl = { text: ss, ref: { kind: 'literal' } }; }
+          ir.subject = { label: lbl, line: ln };
+          break;
+        }
+        case 'node': case 'evidence': {
+          var nid = sc.word();
+          if (!nid || !isIdent(nid)) { diag(ln, kw + '-id', 'error', kw + ' expects an identifier'); break; }
+          var nwl = sc.wikilink(); var nlbl;
+          if (nwl !== null) nlbl = { text: nwl, ref: groundLink(nwl, opts.resolver) };
+          else { var ns = sc.string(); if (ns === null) { diag(ln, kw + '-label', 'error', kw + ' expects a "label" or [[Note]]'); break; } nlbl = { text: ns, ref: { kind: 'literal' } }; }
+          var role = kw === 'evidence' ? 'evidence' : (attrs.role || 'process');
+          if (ROLES.indexOf(role) < 0) { diag(ln, 'bad-role', 'warning', 'unknown role "' + role + '"'); role = 'process'; }
+          var nst = attrs.status || 'unspecified';
+          if (STATUSES.indexOf(nst) < 0) { diag(ln, 'bad-status', 'warning', 'unknown status "' + nst + '"'); nst = 'unspecified'; }
+          var node = { id: nid, label: nlbl, role: role, status: nst };
+          if (attrs['in']) node.group = String(attrs['in']);
+          if (attrs.salience === 'criterial' || attrs.salience === 'incidental') node.salience = attrs.salience;
+          if (typeof attrs.tone === 'string') node.tone = attrs.tone;
+          if (attrs.source !== undefined) {
+            var sv = String(attrs.source);
+            var mlink = /^\[\[([^\]]+)\]\]$/.exec(sv);
+            node.source = mlink ? { text: mlink[1].trim(), ref: groundLink(mlink[1].trim(), opts.resolver) }
+                                : { text: sv, ref: { kind: 'literal' } };
+          }
+          if (attrs.date !== undefined) node.date = String(attrs.date);
+          node.initiallyHidden = false; // computed after full pass (D4)
+          node.line = ln;
+          node.extras = {};
+          var known = ['role', 'status', 'in', 'salience', 'tone', 'source', 'date'];
+          for (var k in attrs) if (known.indexOf(k) < 0) node.extras[k] = attrs[k];
+          ir.nodes.push(node);
+          break;
+        }
+        case 'relation': {
+          // optional "<id>:" prefix
+          var relId = null;
+          var save = sc.i;
+          var maybe = sc.word();
+          if (maybe && maybe.slice(-1) === ':' && isIdent(maybe.slice(0, -1))) relId = maybe.slice(0, -1);
+          else if (maybe && sc.tryLit(':') && isIdent(maybe)) relId = maybe;
+          else sc.i = save;
+          function endpoint() {
+            var w2 = sc.word();
+            if (!w2) return null;
+            // arrow may be glued: a->b handled by requiring spaces in v0.3 canonical;
+            // tolerate glued arrows:
+            var g = /^(.*?)(->|~)(.*)$/.exec(w2);
+            if (g && g[1] && g[3]) { sc.i -= (w2.length - g[1].length); w2 = g[1]; }
+            else if (g && g[1] && !g[3]) { sc.i -= (w2.length - g[1].length); w2 = g[1]; }
+            if (w2 === 'claim') return { kind: 'claim' };
+            if (!isIdent(w2)) return null;
+            return { kind: 'pending', id: w2 };
+          }
+          var from = endpoint();
+          var arrow = null;
+          if (sc.tryLit('->')) arrow = '->';
+          else if (sc.tryLit('~')) arrow = '~';
+          else { var aw = sc.word(); if (aw === '->' || aw === '~') arrow = aw; }
+          var to = arrow ? endpoint() : null;
+          if (!from || !arrow || !to) { diag(ln, 'relation-shape', 'error', 'relation expects: [id:] a -> b <kind>  or  a ~ b <kind>'); break; }
+          var kind = '';
+          if (!sc.eof()) { var kwd = sc.word(); if (kwd) kind = kwd; }
+          var cls = attrs['as'] || 'unspecified';
+          if (CLASSES.indexOf(cls) < 0) { diag(ln, 'bad-class', 'warning', 'unknown class "' + cls + '"', 'one of: ' + CLASSES.slice(0, -1).join(' ')); cls = 'unspecified'; }
+          var rst = attrs.status || 'unspecified';
+          if (STATUSES.indexOf(rst) < 0) { diag(ln, 'bad-status', 'warning', 'unknown status "' + rst + '"'); rst = 'unspecified'; }
+          var rel = {
+            id: relId || ('~r' + (++synth)),
+            idSource: relId ? 'authored' : 'synthetic',
+            from: from, to: to, directed: arrow === '->',
+            kind: kind, 'class': cls, status: rst,
+            initiallyHidden: false, line: ln, extras: {}
+          };
+          if (attrs.sign === '+' || attrs.sign === '-') rel.sign = attrs.sign;
+          if (attrs.weight !== undefined && !isNaN(parseFloat(attrs.weight))) rel.weight = parseFloat(attrs.weight);
+          if (attrs.many === true) rel.many = true;
+          if (typeof attrs.label === 'string') rel.label = attrs.label;
+          var knownR = ['as', 'status', 'sign', 'weight', 'many', 'label'];
+          for (var k2 in attrs) if (knownR.indexOf(k2) < 0) rel.extras[k2] = attrs[k2];
+          ir.relations.push(rel);
+          break;
+        }
+        case 'group': {
+          var gid = sc.word();
+          if (!gid || !isIdent(gid)) { diag(ln, 'group-id', 'error', 'group expects an identifier'); break; }
+          var glabel = sc.string();
+          var g2 = { id: gid, kind: 'cluster', line: ln };
+          if (glabel !== null) g2.label = glabel;
+          if (['cluster', 'lane', 'loop'].indexOf(attrs.kind) >= 0) g2.kind = attrs.kind;
+          if (attrs.polarity === 'reinforcing' || attrs.polarity === 'balancing') g2.polarity = attrs.polarity;
+          ir.groups.push(g2);
+          break;
+        }
+        case 'place': {
+          var pid = sc.word();
+          var nx = sc.word();
+          if (!pid || !nx) { diag(ln, 'place-shape', 'error', 'place expects: place <id> at <value> | place <id> <relpos> <id>'); break; }
+          if (nx === 'at') {
+            var val = sc.word();
+            var num = parseFloat(val);
+            if (isNaN(num)) { diag(ln, 'place-value', 'error', 'place ... at expects a number'); break; }
+            ir.places.push({ node: pid, mode: 'value', at: num, line: ln });
+          } else if (RELPOS.indexOf(nx) >= 0) {
+            var anc = sc.word();
+            if (!anc) { diag(ln, 'place-anchor', 'error', 'place <id> ' + nx + ' expects an anchor id'); break; }
+            ir.places.push({ node: pid, mode: 'relative', rel: nx, anchor: anc, line: ln });
+          } else diag(ln, 'place-shape', 'error', 'unknown place form "' + nx + '"');
+          break;
+        }
+        case 'data': {
+          var did = sc.word(); var mode = sc.word();
+          if (!did || (mode !== 'cols' && mode !== 'row')) { diag(ln, 'data-shape', 'error', 'data expects: data <id> cols|row "a" | "b" | ...'); break; }
+          var cells = sc.rest().split('|').map(function (c) {
+            c = c.trim();
+            if (c[0] === '"' && c.slice(-1) === '"') return unquote(c);
+            return c;
+          }).filter(function (c) { return c.length > 0; });
+          var tb = dataById[did];
+          if (!tb) { tb = dataById[did] = { id: did, cols: [], rows: [], lines: [] }; ir.data.push(tb); }
+          if (mode === 'cols') tb.cols = cells; else tb.rows.push(cells);
+          tb.lines.push(ln);
+          break;
+        }
+        case 'project': {
+          if (!sc.tryLit('as')) { var w3 = sc.word(); if (w3 !== 'as') { diag(ln, 'project-as', 'error', 'project expects: project as <archetype>'); break; } }
+          var arch = sc.word();
+          if (ARCHETYPES.indexOf(arch) < 0) { diag(ln, 'bad-archetype', 'warning', 'unknown archetype "' + arch + '"', 'one of: ' + ARCHETYPES.join(' ')); arch = 'graph'; }
+          var proj = { archetype: arch, suggested: attrs.suggested === true, line: ln };
+          // optional "from <id>" and "lo..hi"
+          for (;;) {
+            var save2 = sc.i; var t2 = sc.word();
+            if (!t2) break;
+            if (t2 === 'from') { var fid = sc.word(); if (fid) proj.from = fid; }
+            else {
+              var mr = /^(-?\d+(?:\.\d+)?)\.\.(-?\d+(?:\.\d+)?)$/.exec(t2);
+              if (mr) proj.range = [parseFloat(mr[1]), parseFloat(mr[2])];
+              else { sc.i = save2; break; }
+            }
+          }
+          if (attrs.scale === 'linear' || attrs.scale === 'log') proj.scale = attrs.scale;
+          if (typeof attrs.label === 'string') proj.label = attrs.label;
+          ir.projection = proj;
+          break;
+        }
+        case 'input': {
+          var iid = sc.word();
+          if (!iid || !isIdent(iid)) { diag(ln, 'input-id', 'error', 'input expects an identifier'); break; }
+          if (!sc.tryLit('=')) { diag(ln, 'input-eq', 'error', 'input expects: input <id> = slider|choice|toggle …'); break; }
+          var ity = sc.word();
+          var control = null;
+          if (ity === 'slider') {
+            var rw = sc.word();
+            var mr2 = /^(-?\d+(?:\.\d+)?)\.\.(-?\d+(?:\.\d+)?)$/.exec(rw || '');
+            if (!mr2) { diag(ln, 'slider-range', 'error', 'slider expects lo..hi'); break; }
+            control = { type: 'slider', min: parseFloat(mr2[1]), max: parseFloat(mr2[2]) };
+            if (attrs['default'] !== undefined) control['default'] = parseFloat(attrs['default']);
+          } else if (ity === 'choice') {
+            var optsArr = [];
+            for (;;) {
+              var s3 = sc.string();
+              if (s3 === null) break;
+              optsArr.push(s3);
+              if (!sc.tryLit('|')) break;
+            }
+            if (!optsArr.length) { diag(ln, 'choice-options', 'error', 'choice expects "a" | "b" | …'); break; }
+            control = { type: 'choice', options: optsArr };
+            if (typeof attrs['default'] === 'string') control['default'] = attrs['default'];
+          } else if (ity === 'toggle') {
+            control = { type: 'toggle' };
+            if (attrs['default'] !== undefined) control['default'] = (attrs['default'] === true || attrs['default'] === 'true');
+          } else { diag(ln, 'input-type', 'error', 'input type must be slider, choice, or toggle'); break; }
+          var inp = { id: iid, control: control };
+          if (typeof attrs.label === 'string') inp.label = attrs.label;
+          inp.committedByDefault = control.type === 'slider' || control.type === 'toggle'
+            ? true : (control['default'] !== undefined);
+          inp.line = ln;
+          ir.inputs.push(inp);
+          break;
+        }
+        case 'derive': {
+          var did2 = sc.word();
+          if (!did2 || !isIdent(did2)) { diag(ln, 'derive-id', 'error', 'derive expects an identifier'); break; }
+          if (!sc.tryLit('=')) { diag(ln, 'derive-eq', 'error', 'derive expects: derive <id> = <expr>'); break; }
+          var bad1 = false;
+          var e1 = parseExpr(sc.rest(), function () { bad1 = true; });
+          if (bad1) diag(ln, 'expr', 'error', 'could not parse expression');
+          ir.deriveds.push({ id: did2, expr: e1, line: ln });
+          break;
+        }
+        case 'rule': {
+          var restLine = sc.rest();
+          var idx = -1, inS = false;
+          for (var i3 = 0; i3 < restLine.length - 1; i3++) {
+            var c3 = restLine[i3];
+            if (inS) { if (c3 === '\\') i3++; else if (c3 === '"') inS = false; }
+            else if (c3 === '"') inS = true;
+            else if (c3 === '=' && restLine[i3 + 1] === '>') { idx = i3; break; }
+          }
+          if (idx < 0) { diag(ln, 'rule-arrow', 'error', 'rule expects: rule <expr> => <effect>'); break; }
+          var bad2 = false;
+          var cond = parseExpr(restLine.slice(0, idx), function () { bad2 = true; });
+          if (bad2) diag(ln, 'expr', 'error', 'could not parse rule condition');
+          var eff = parseEffect(new Scanner(restLine.slice(idx + 2)), diag, ln);
+          if (!eff) break;
+          if (eff.type === 'set') { diag(ln, 'set-in-rule', 'error', 'set is not allowed in rules (C2) — use it in a step', 'move this set into a step'); break; }
+          if (eff.type === 'require') { diag(ln, 'require-in-rule', 'error', 'require only makes sense in a step'); break; }
+          ir.rules.push({ when: cond, effect: eff, line: ln });
+          break;
+        }
+        case 'step': {
+          var nw = sc.word();
+          var sn = parseInt(nw, 10);
+          if (isNaN(sn) || sn < 1) { diag(ln, 'step-n', 'error', 'step expects a positive integer'); break; }
+          var eff2 = parseEffect(sc, diag, ln);
+          if (!eff2) break;
+          var slot = stepsRaw[sn] || (stepsRaw[sn] = { sourceStep: sn, effects: [], requires: [], lines: [] });
+          if (eff2.type === 'require') { if (slot.requires.indexOf(eff2.input) < 0) slot.requires.push(eff2.input); }
+          else slot.effects.push(eff2);
+          slot.lines.push(ln);
+          break;
+        }
+        case 'mark': {
+          var mk = sc.word();
+          if (mk !== 'meter') { diag(ln, 'mark-kind', 'warning', 'only "mark meter" exists in v0.3 — line skipped'); break; }
+          var mlabel = sc.string();
+          var vword = sc.word(); // "value"
+          var vref = sc.word();
+          if (mlabel === null || vword !== 'value' || !vref) { diag(ln, 'mark-shape', 'error', 'mark expects: mark meter "label" value <id> [max n]'); break; }
+          var mark = { kindOfMark: 'meter', label: mlabel, value: vref, line: ln };
+          if (attrs.max !== undefined && !isNaN(parseFloat(attrs.max))) mark.max = parseFloat(attrs.max);
+          ir.marks.push(mark);
+          break;
+        }
+        default:
+          diag(ln, 'unknown-keyword', 'warning', 'unknown keyword "' + kw + '" — line skipped (forward compatibility)');
+      }
+    }
+
+    /* ---- steps normalization ---- */
+    var stepNums = Object.keys(stepsRaw).map(Number).sort(function (a, b) { return a - b; });
+    ir.steps = stepNums.map(function (n2, i4) {
+      var s4 = stepsRaw[n2];
+      s4.lines.sort(function (a, b) { return a - b; });
+      return { index: i4 + 1, sourceStep: n2, effects: s4.effects, requires: s4.requires, lines: s4.lines };
+    });
+
+    /* ---- resolve endpoints + validate ids ---- */
+    var nodeById = {}, relByAuthored = {}, inputById = {}, deriveById = {};
+    ir.nodes.forEach(function (n3) {
+      if (nodeById[n3.id]) diag(n3.line, 'dup-id', 'error', 'duplicate node id "' + n3.id + '"');
+      nodeById[n3.id] = n3;
+    });
+    ir.relations.forEach(function (r3) {
+      if (r3.idSource === 'authored') {
+        if (relByAuthored[r3.id] || nodeById[r3.id]) diag(r3.line, 'dup-id', 'error', 'duplicate id "' + r3.id + '"');
+        relByAuthored[r3.id] = r3;
+      }
+    });
+    ir.inputs.forEach(function (x) { if (inputById[x.id]) diag(x.line, 'dup-id', 'error', 'duplicate input id "' + x.id + '"'); inputById[x.id] = x; });
+    ir.deriveds.forEach(function (x) { if (deriveById[x.id] || inputById[x.id]) diag(x.line, 'dup-id', 'error', 'duplicate id "' + x.id + '"'); deriveById[x.id] = x; });
+
+    function resolveEndpoint(ep, line) {
+      if (ep.kind === 'claim') return ep;
+      var id = ep.id;
+      if (nodeById[id]) return { kind: 'node', id: id };
+      if (relByAuthored[id]) return { kind: 'relation', id: id };
+      var near = nearest(id, Object.keys(nodeById).concat(Object.keys(relByAuthored)));
+      diag(line, 'unknown-id', 'error', 'unknown id "' + id + '"', near ? 'nearest: "' + near + '"' : undefined);
+      return { kind: 'node', id: id };
+    }
+    ir.relations.forEach(function (r4) {
+      r4.from = resolveEndpoint(r4.from, r4.line);
+      r4.to = resolveEndpoint(r4.to, r4.line);
+    });
+
+    /* effect target / input checks */
+    function checkTargets(eff3, line) {
+      if (eff3.type === 'reveal' || eff3.type === 'hide' || eff3.type === 'highlight') {
+        eff3.targets.forEach(function (t3) {
+          if (!nodeById[t3] && !relByAuthored[t3]) {
+            var near2 = nearest(t3, Object.keys(nodeById).concat(Object.keys(relByAuthored)));
+            diag(line, 'unknown-id', 'error', 'unknown id "' + t3 + '" in ' + eff3.type, near2 ? 'nearest: "' + near2 + '"' : undefined);
+          }
+        });
+      }
+      if (eff3.type === 'set' && !inputById[eff3.input]) diag(line, 'unknown-input', 'error', 'unknown input "' + eff3.input + '"');
+    }
+    ir.steps.forEach(function (s5) {
+      s5.effects.forEach(function (e5) { checkTargets(e5, s5.lines[0]); });
+      s5.requires.forEach(function (rq) { if (!inputById[rq]) diag(s5.lines[0], 'unknown-input', 'error', 'require: unknown input "' + rq + '"'); });
+    });
+    ir.rules.forEach(function (r5) {
+      checkTargets(r5.effect, r5.line);
+      exprRefs(r5.when).forEach(function (ref) {
+        if (!inputById[ref] && !deriveById[ref]) diag(r5.line, 'unknown-ref', 'error', 'rule references unknown value "' + ref + '"');
+      });
+    });
+    ir.deriveds.forEach(function (d5) {
+      exprRefs(d5.expr).forEach(function (ref) {
+        if (!inputById[ref] && !deriveById[ref]) diag(d5.line, 'unknown-ref', 'error', 'derive references unknown value "' + ref + '"');
+      });
+    });
+    ir.marks.forEach(function (m5) {
+      if (!inputById[m5.value] && !deriveById[m5.value]) diag(m5.line, 'unknown-ref', 'error', 'mark references unknown value "' + m5.value + '"');
+    });
+    ir.nodes.forEach(function (n5) {
+      if (n5.group && !ir.groups.some(function (g5) { return g5.id === n5.group; }))
+        diag(n5.line, 'unknown-group', 'warning', 'unknown group "' + n5.group + '"');
+    });
+
+    /* ---- D4 / C1: initial visibility ---- */
+    var revealed = {};
+    ir.steps.forEach(function (s6) { s6.effects.forEach(function (e6) { if (e6.type === 'reveal') e6.targets.forEach(function (t6) { revealed[t6] = true; }); }); });
+    ir.rules.forEach(function (r6) { if (r6.effect.type === 'reveal') r6.effect.targets.forEach(function (t6) { revealed[t6] = true; }); });
+    ir.nodes.forEach(function (n6) { n6.initiallyHidden = !!revealed[n6.id]; });
+    ir.relations.forEach(function (r7) { r7.initiallyHidden = !!revealed[r7.id]; });
+
+    /* ---- required frame ---- */
+    if (!ir.scene) diag(1, 'missing-scene', 'error', 'missing "scene <id>" statement');
+    if (!ir.claim) diag(1, 'missing-claim', 'error', 'missing claim — a scene asserts exactly one thing');
+    if (ir.origin === 'generated' && ir.claim && ir.claim.status === 'unspecified')
+      diag(ir.claim.line, 'claim-status-required', 'error', 'generated profile: claim [status …] is required (dsl spec §8)');
+
+    return ir;
+  }
+
+  /* tiny Levenshtein-lite for hints */
+  function nearest(id, ids) {
+    var best = null, bestD = 3;
+    ids.forEach(function (c) {
+      var d = lev(id, c);
+      if (d < bestD) { bestD = d; best = c; }
+    });
+    return best;
+  }
+  function lev(a, b) {
+    if (Math.abs(a.length - b.length) > 2) return 9;
+    var m = [], i, j;
+    for (i = 0; i <= a.length; i++) { m[i] = [i]; }
+    for (j = 0; j <= b.length; j++) { m[0][j] = j; }
+    for (i = 1; i <= a.length; i++) for (j = 1; j <= b.length; j++)
+      m[i][j] = Math.min(m[i - 1][j] + 1, m[i][j - 1] + 1, m[i - 1][j - 1] + (a[i - 1] === b[j - 1] ? 0 : 1));
+    return m[a.length][b.length];
+  }
+
+  /* ---------------- runtime: pure present() ---------------- */
+  function evalExpr(e, env) {
+    switch (e.op) {
+      case 'lit': return e.value;
+      case 'ref': return env[e.id];
+      case 'not': return !truthy(evalExpr(e.a, env));
+      case 'and': return truthy(evalExpr(e.a, env)) && truthy(evalExpr(e.b, env));
+      case 'or': return truthy(evalExpr(e.a, env)) || truthy(evalExpr(e.b, env));
+      default: {
+        var a = evalExpr(e.a, env), b = evalExpr(e.b, env);
+        switch (e.op) {
+          case '+': return num(a) + num(b);
+          case '-': return num(a) - num(b);
+          case '*': return num(a) * num(b);
+          case '/': return num(b) === 0 ? 0 : num(a) / num(b);
+          case '==': return a === b || String(a) === String(b);
+          case '!=': return !(a === b || String(a) === String(b));
+          case '<': return num(a) < num(b);
+          case '<=': return num(a) <= num(b);
+          case '>': return num(a) > num(b);
+          case '>=': return num(a) >= num(b);
+        }
+      }
+    }
+    return null;
+  }
+  function truthy(v) { return v === true || (typeof v === 'number' && v !== 0) || (typeof v === 'string' && v.length > 0); }
+  function num(v) { var n = parseFloat(v); return isNaN(n) ? 0 : n; }
+
+  function defaultInputValue(inp) {
+    var c = inp.control;
+    if (c.type === 'slider') return c['default'] !== undefined ? c['default'] : c.min;
+    if (c.type === 'toggle') return c['default'] !== undefined ? c['default'] : false;
+    return c['default'] !== undefined ? c['default'] : null; // choice: uncommitted
+  }
+
+  /* present(ir, state[, opts]) — RS1 pure.
+   * state = { currentStep, inputs: {id:value}, committed: [ids] }
+   * opts  = { ignoreGates: bool }  (export mode)
+   */
+  function present(ir, state, opts) {
+    opts = opts || {};
+    var committed = {};
+    (state.committed || []).forEach(function (c) { committed[c] = true; });
+    ir.inputs.forEach(function (inp) { if (inp.committedByDefault) committed[inp.id] = true; });
+
+    var env = {};
+    ir.inputs.forEach(function (inp) {
+      env[inp.id] = (state.inputs && state.inputs[inp.id] !== undefined)
+        ? state.inputs[inp.id] : defaultInputValue(inp);
+    });
+    ir.deriveds.forEach(function (d) { env[d.id] = evalExpr(d.expr, env); });
+
+    var visible = {}, highlight = {};
+    ir.nodes.forEach(function (n) { visible[n.id] = !n.initiallyHidden; });
+    ir.relations.forEach(function (r) { visible[r.id] = !r.initiallyHidden; });
+
+    function gateOpen(step) {
+      if (opts.ignoreGates) return true;
+      return step.requires.every(function (rq) { return committed[rq]; });
+    }
+    function applyEffect(e) {
+      if (e.type === 'reveal') e.targets.forEach(function (t) { visible[t] = true; });
+      else if (e.type === 'hide') e.targets.forEach(function (t) { visible[t] = false; });
+      else if (e.type === 'highlight') e.targets.forEach(function (t) { highlight[t] = true; });
+    }
+
+    var notes = [];
+    var maxStep = ir.steps.length ? ir.steps[ir.steps.length - 1].index : 1;
+    var cur = opts.ignoreGates ? maxStep : Math.max(1, Math.min(state.currentStep || 1, maxStep));
+
+    ir.steps.forEach(function (s) {
+      if (s.index > cur) return;
+      if (!gateOpen(s)) return;              // C4: a gated step's effects wait for commitment
+      s.effects.forEach(function (e) {
+        applyEffect(e);
+        if (e.type === 'note' && s.index === cur) notes.push({ text: e.text, origin: 'step ' + s.sourceStep });
+      });
+    });
+    ir.rules.forEach(function (r, i) {
+      if (truthy(evalExpr(r.when, env))) {
+        applyEffect(r.effect);
+        if (r.effect.type === 'note') notes.push({ text: r.effect.text, origin: 'rule L' + r.line });
+      }
+    });
+
+    /* edge effective visibility (own flag AND endpoints) */
+    var relById = {};
+    ir.relations.forEach(function (r) { relById[r.id] = r; });
+    var effMemo = {};
+    function endVisible(ep, seen) {
+      if (ep.kind === 'claim') return true;
+      if (ep.kind === 'node') return !!visible[ep.id];
+      return relEffective(ep.id, seen);
+    }
+    function relEffective(id, seen) {
+      if (effMemo[id] !== undefined) return effMemo[id];
+      seen = seen || {};
+      if (seen[id]) return false;
+      seen[id] = true;
+      var r = relById[id];
+      var v = !!(r && visible[id] && endVisible(r.from, seen) && endVisible(r.to, seen));
+      effMemo[id] = v;
+      return v;
+    }
+
+    var visibleNodes = ir.nodes.filter(function (n) { return visible[n.id]; }).map(function (n) { return n.id; });
+    var visibleRelations = ir.relations.filter(function (r) { return relEffective(r.id); }).map(function (r) { return r.id; });
+    var highlighted = Object.keys(highlight).filter(function (id) {
+      return relById[id] ? relEffective(id) : visible[id];
+    });
+
+    var curStepObj = ir.steps.filter(function (s) { return s.index === cur; })[0];
+    var unmet = curStepObj ? curStepObj.requires.filter(function (rq) { return !committed[rq]; }) : [];
+
+    return {
+      currentStep: cur, maxStep: maxStep,
+      env: env, notes: notes,
+      visibleNodes: visibleNodes, visibleRelations: visibleRelations,
+      highlighted: highlighted,
+      lockedInputs: unmet,
+      canPrev: cur > 1,
+      canNext: cur < maxStep && unmet.length === 0
+    };
+  }
+
+  /* ---------------- text measurement + wrapping ---------------- */
+  function wrapLabel(text, maxChars) {
+    maxChars = maxChars || 16;
+    var words = text.split(/\s+/), lines = [], cur = '';
+    words.forEach(function (w) {
+      if (!cur.length) { cur = w; return; }
+      if ((cur + ' ' + w).length <= maxChars) cur += ' ' + w;
+      else { lines.push(cur); cur = w; }
+    });
+    if (cur.length) lines.push(cur);
+    if (!lines.length) lines = [''];
+    return lines;
+  }
+  function nodeBox(n) {
+    var lines = wrapLabel(n.label.text, 16);
+    var longest = lines.reduce(function (m, l) { return Math.max(m, l.length); }, 4);
+    var w = Math.max(88, Math.min(200, longest * 7.6 + 26));
+    var h = lines.length * 16 + 22;
+    if (n.status === 'misconception') h += 18; // room for the "false belief" badge
+    if (n.role === 'decision') { w += 24; h += 14; }
+    return { w: w, h: h, lines: lines };
+  }
+
+  /* ---------------- cycle layout ---------------- */
+  function findLongestCycle(ir) {
+    var adj = {};
+    ir.nodes.forEach(function (n) { adj[n.id] = []; });
+    ir.relations.forEach(function (r) {
+      if (r.directed && r.from.kind === 'node' && r.to.kind === 'node' &&
+          adj[r.from.id] && adj[r.to.id] !== undefined) adj[r.from.id].push(r.to.id);
+    });
+    var best = null;
+    var order = ir.nodes.map(function (n) { return n.id; });
+    order.forEach(function (start) {
+      var path = [start], inPath = {}; inPath[start] = true;
+      (function dfs(u) {
+        (adj[u] || []).forEach(function (v) {
+          if (v === start && path.length >= 2) {
+            if (!best || path.length > best.length) best = path.slice();
+          } else if (!inPath[v]) {
+            path.push(v); inPath[v] = true;
+            dfs(v);
+            path.pop(); delete inPath[v];
+          }
+        });
+      })(start);
+    });
+    if (!best) return null;
+    // deterministic rotation: start at the ring node that appears first in IR order
+    var firstIdx = 0, firstPos = Infinity;
+    best.forEach(function (id, i) {
+      var pos = order.indexOf(id);
+      if (pos < firstPos) { firstPos = pos; firstIdx = i; }
+    });
+    return best.slice(firstIdx).concat(best.slice(0, firstIdx));
+  }
+
+  function rectExit(cx, cy, hw, hh, tx, ty) {
+    var dx = tx - cx, dy = ty - cy;
+    if (dx === 0 && dy === 0) return { x: cx, y: cy };
+    var t = Infinity;
+    if (dx !== 0) t = Math.min(t, hw / Math.abs(dx));
+    if (dy !== 0) t = Math.min(t, hh / Math.abs(dy));
+    return { x: cx + dx * t, y: cy + dy * t };
+  }
+
+  function layoutCycle(ir) {
+    var notices = [];
+    var ring = findLongestCycle(ir);
+    if (!ring) return { fallback: true, notices: ['aucun cycle trouvé — rendu de secours (graph)'], layout: layoutFallback(ir, 'no-cycle') };
+
+    var boxes = {};
+    ir.nodes.forEach(function (n) { boxes[n.id] = nodeBox(n); });
+
+    var N = ring.length;
+    var sumW = ring.reduce(function (s, id) { return s + boxes[id].w; }, 0);
+    var R = Math.max(130, sumW / (2 * Math.PI) * 1.55 + 44, N * 44);
+    var cx = 0, cy = 0;
+    var angle = {};
+    ring.forEach(function (id, i) { angle[id] = -Math.PI / 2 + (2 * Math.PI * i) / N; });
+
+    var pos = {};
+    ring.forEach(function (id) {
+      pos[id] = { x: cx + R * Math.cos(angle[id]), y: cy + R * Math.sin(angle[id]) };
+    });
+
+    /* satellites: non-ring nodes attached to a ring node */
+    var ringSet = {}; ring.forEach(function (id) { ringSet[id] = true; });
+    var satsByAnchor = {};
+    var parked = [];
+    ir.nodes.forEach(function (n) {
+      if (ringSet[n.id]) return;
+      var anchor = null;
+      for (var i = 0; i < ir.relations.length; i++) {
+        var r = ir.relations[i];
+        if (r.from.kind !== 'node' || r.to.kind !== 'node') continue;
+        if (r.from.id === n.id && ringSet[r.to.id]) { anchor = r.to.id; break; }
+        if (r.to.id === n.id && ringSet[r.from.id]) { anchor = r.from.id; break; }
+      }
+      if (!anchor) { parked.push(n.id); return; }
+      (satsByAnchor[anchor] = satsByAnchor[anchor] || []).push(n.id);
+    });
+    Object.keys(satsByAnchor).forEach(function (anchor) {
+      var list = satsByAnchor[anchor];
+      list.forEach(function (id, k) {
+        var spread = (k - (list.length - 1) / 2) * 0.42;
+        var a = angle[anchor] + spread;
+        var dist = R + boxes[anchor].h / 2 + 78 + boxes[id].h / 2;
+        pos[id] = { x: cx + dist * Math.cos(a), y: cy + dist * Math.sin(a) };
+        angle[id] = a;
+      });
+    });
+    if (parked.length) {
+      notices.push('nœuds hors cycle non rattachés : ' + parked.join(', ') + ' (rangée basse)');
+      var px = -((parked.length - 1) * 110) / 2;
+      parked.forEach(function (id, i) {
+        pos[id] = { x: cx + px + i * 220, y: cy + R + 170 };
+      });
+    }
+
+    /* edges */
+    var ringPair = {};
+    ring.forEach(function (id, i) { ringPair[id + '→' + ring[(i + 1) % N]] = true; });
+    var edges = ir.relations.map(function (r) {
+      if (r.from.kind !== 'node' || r.to.kind !== 'node' || !pos[r.from.id] || !pos[r.to.id]) {
+        return { id: r.id, skip: true };
+      }
+      var isRingEdge = r.directed && ringPair[r.from.id + '→' + r.to.id];
+      if (isRingEdge) {
+        var aFrom = angle[r.from.id], aTo = angle[r.to.id];
+        var mFrom = (boxes[r.from.id].w / 2 + 12) / R;
+        var mTo = (boxes[r.to.id].w / 2 + 16) / R;
+        var a1 = aFrom + mFrom;
+        var a2raw = aTo; while (a2raw <= aFrom) a2raw += 2 * Math.PI;
+        var a2 = a2raw - mTo;
+        var p1 = { x: cx + R * Math.cos(a1), y: cy + R * Math.sin(a1) };
+        var p2 = { x: cx + R * Math.cos(a2), y: cy + R * Math.sin(a2) };
+        var large = (a2 - a1) > Math.PI ? 1 : 0;
+        var mid = (a1 + a2) / 2;
+        return {
+          id: r.id, ring: true,
+          path: 'M ' + p1.x.toFixed(1) + ' ' + p1.y.toFixed(1) +
+                ' A ' + R.toFixed(1) + ' ' + R.toFixed(1) + ' 0 ' + large + ' 1 ' +
+                p2.x.toFixed(1) + ' ' + p2.y.toFixed(1),
+          labelAt: { x: cx + (R + 16) * Math.cos(mid), y: cy + (R + 16) * Math.sin(mid) }
+        };
+      }
+      var bF = boxes[r.from.id], bT = boxes[r.to.id];
+      var pF = pos[r.from.id], pT = pos[r.to.id];
+      var e1 = rectExit(pF.x, pF.y, bF.w / 2, bF.h / 2, pT.x, pT.y);
+      var e2 = rectExit(pT.x, pT.y, bT.w / 2, bT.h / 2, pF.x, pF.y);
+      return {
+        id: r.id, ring: false,
+        x1: e1.x, y1: e1.y, x2: e2.x, y2: e2.y,
+        labelAt: { x: (e1.x + e2.x) / 2, y: (e1.y + e2.y) / 2 - 6 }
+      };
+    });
+
+    /* bounds */
+    var minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
+    ir.nodes.forEach(function (n) {
+      var p = pos[n.id], b = boxes[n.id];
+      if (!p) return;
+      minX = Math.min(minX, p.x - b.w / 2); maxX = Math.max(maxX, p.x + b.w / 2);
+      minY = Math.min(minY, p.y - b.h / 2); maxY = Math.max(maxY, p.y + b.h / 2);
+    });
+    var pad = 46;
+    return {
+      fallback: false, notices: notices,
+      layout: {
+        archetype: 'cycle', ring: ring, parked: parked,
+        pos: pos, boxes: boxes, edges: edges,
+        viewBox: [minX - pad, minY - pad, (maxX - minX) + 2 * pad, (maxY - minY) + 2 * pad]
+      }
+    };
+  }
+
+  /* minimal fallback (prototype): rows grid + straight edges */
+  function layoutFallback(ir, reason) {
+    var boxes = {}, pos = {};
+    ir.nodes.forEach(function (n) { boxes[n.id] = nodeBox(n); });
+    var perRow = Math.max(2, Math.ceil(Math.sqrt(ir.nodes.length)));
+    ir.nodes.forEach(function (n, i) {
+      var r = Math.floor(i / perRow), c = i % perRow;
+      pos[n.id] = { x: c * 240, y: r * 150 };
+    });
+    var edges = ir.relations.map(function (r) {
+      if (r.from.kind !== 'node' || r.to.kind !== 'node' || !pos[r.from.id] || !pos[r.to.id]) return { id: r.id, skip: true };
+      var bF = boxes[r.from.id], bT = boxes[r.to.id];
+      var pF = pos[r.from.id], pT = pos[r.to.id];
+      var e1 = rectExit(pF.x, pF.y, bF.w / 2, bF.h / 2, pT.x, pT.y);
+      var e2 = rectExit(pT.x, pT.y, bT.w / 2, bT.h / 2, pF.x, pF.y);
+      return { id: r.id, ring: false, x1: e1.x, y1: e1.y, x2: e2.x, y2: e2.y, labelAt: { x: (e1.x + e2.x) / 2, y: (e1.y + e2.y) / 2 - 6 } };
+    });
+    var minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
+    ir.nodes.forEach(function (n) {
+      var p = pos[n.id], b = boxes[n.id];
+      minX = Math.min(minX, p.x - b.w / 2); maxX = Math.max(maxX, p.x + b.w / 2);
+      minY = Math.min(minY, p.y - b.h / 2); maxY = Math.max(maxY, p.y + b.h / 2);
+    });
+    if (!ir.nodes.length) { minX = 0; minY = 0; maxX = 10; maxY = 10; }
+    var pad = 46;
+    return {
+      archetype: 'graph', reason: reason, ring: [], parked: [],
+      pos: pos, boxes: boxes, edges: edges,
+      viewBox: [minX - pad, minY - pad, (maxX - minX) + 2 * pad, (maxY - minY) + 2 * pad]
+    };
+  }
+
+  /* resolve projection + layout — render-core §3 (no hard failures) */
+  function layout(ir) {
+    var arch = ir.projection ? ir.projection.archetype : 'graph';
+    var notices = [];
+    if (!ir.projection) notices.push('pas de ligne project — archétype par défaut : graph');
+    if (arch === 'cycle') {
+      var r = layoutCycle(ir);
+      return { layout: r.layout, notices: notices.concat(r.notices), requested: arch };
+    }
+    if (arch !== 'graph') notices.push('prototype : seul « cycle » est implémenté — « ' + arch + ' » rendu en secours minimal (graph)');
+    return { layout: layoutFallback(ir, 'prototype-scope'), notices: notices, requested: arch };
+  }
+
+  return {
+    parse: parse,
+    present: present,
+    layout: layout,
+    layoutCycle: layoutCycle,
+    wrapLabel: wrapLabel,
+    nodeBox: nodeBox,
+    constants: { STATUSES: STATUSES, CLASSES: CLASSES, ROLES: ROLES, ARCHETYPES: ARCHETYPES }
+  };
+});
+
+</script>
+<script>
+/* atomik prototype UI — browser only (syntax-checkable in node). */
+(function () {
+  'use strict';
+  var $ = function (id) { return document.getElementById(id); };
+  var SVGNS = 'http://www.w3.org/2000/svg';
+
+  var PRESETS = {
+    demo: { label: '1 · Démo complète (cycle + méprise + porte)', src: "atomik 0.3\nscene cycle_eau_demo [origin authored]\nclaim \"L'eau ne disparaît jamais : elle circule en boucle en changeant d'état.\" [status established]\nsubject [[Cycle de l'eau]]\n\nnode gone \"L'eau d'une flaque séchée a disparu pour toujours\" [status misconception]\nnode evap \"Évaporation\"\nnode cond \"Condensation\"\nnode pluie \"Précipitations\"\nnode coll \"Ruissellement\"\n\nrelation evap -> cond puis [as fact]\nrelation cond -> pluie puis [as fact]\nrelation pluie -> coll puis [as fact]\nrelation coll -> evap puis [as fact]\nrelation evap -> gone réfute [as refutation]\n\nproject as cycle\n\ninput devine = choice \"elle a disparu\" | \"elle est passée dans l'air\" [label \"Une flaque sèche au soleil. Où est passée l'eau ?\"]\n\nrule devine == \"elle est passée dans l'air\" => note \"Exactement — suivons-la.\"\nrule devine != \"elle est passée dans l'air\" => note \"Intuition très répandue. Suivons l'eau pour voir.\"\n\nstep 1 reveal gone\nstep 1 note \"Beaucoup pensent que l'eau séchée est perdue.\"\nstep 2 require devine\nstep 2 reveal evap\nstep 3 reveal cond pluie\nstep 4 reveal coll\nstep 4 highlight evap\n" },
+    simple: { label: '2 · Cycle simple + curseur (projection suggérée)', src: "atomik 0.3\nscene cycle_simple\nclaim \"Le cycle de l'eau est entretenu par l'énergie solaire.\" [status established]\nsubject [[Cycle de l'eau]]\n\nnode evap \"Évaporation\"\nnode cond \"Condensation\"\nnode pluie \"Précipitations\"\nnode coll \"Ruissellement\"\n\nrelation evap -> cond puis [as fact]\nrelation cond -> pluie puis [as fact]\nrelation pluie -> coll puis [as fact]\nrelation coll -> evap puis [as fact]\n\nproject as cycle [suggested]\n\ninput soleil = slider 0..100 [default 60] [label \"Énergie solaire %\"]\nderive evaporation = soleil * 0.9\nmark meter \"Taux d'évaporation\" value evaporation [max 100]\nrule soleil < 15 => note \"Presque plus d'évaporation : le cycle ralentit fortement.\"\nrule soleil > 85 => highlight evap\n" },
+    northstar: { label: '3 · Étoile polaire (fixture, rendu de secours)', src: "atomik 0.3\nscene falling_objects [origin authored]\nclaim \"In the absence of air, all objects fall at the same rate.\" [status established]\nsubject [[Free fall]]\n\nnode belief \"Heavy objects fall faster\" [status misconception]\nnode vacuum \"Hammer and feather dropped in a vacuum\" [role evidence]\nnode truth \"Both land together\" [role terminal]\nnode reason \"Air resistance, not mass, caused the difference\"\nrelation vacuum -> belief refutes [as refutation]\nrelation vacuum -> truth shows [as fact]\nrelation reason -> truth explains [as inference]\n\ninput guess = choice \"hammer first\" | \"together\" | \"feather first\" [label \"Predict:\"]\nrule guess == \"together\" => note \"You predicted it — now here's why.\"\nrule guess != \"together\" => note \"A very common intuition. Watch what actually happens.\"\nstep 1 reveal belief\nstep 1 note \"Most people expect the heavy object to win.\"\nstep 2 require guess\nstep 2 reveal vacuum\nstep 3 reveal truth\nstep 3 highlight truth\nstep 4 reveal reason\n" },
+    broken: { label: '4 · Diagnostics (scène volontairement cassée)', src: "atomik 0.3\nscene demo_erreurs\nclaim \"Scène volontairement cassée pour montrer les diagnostics ligne à ligne.\"\nnode alpha \"Alpha\"\nnode beta \"Bêta\"\nrelation alpha -> alfa cause\ninput x = slider 0..10 [default 3]\nrule x > 5 => set x 0\nfoobar hello world\nstep 1 reveal alpha\n" }
+  };
+
+  var STATUS_GLYPH = {
+    established: '●', supported: '◉', contested: '◐', hypothesis: '?',
+    speculative: '≈', reported: 'ℹ', misconception: '✕', unspecified: '·'
+  };
+  var STATUS_FR = {
+    established: 'établi', supported: 'étayé', contested: 'contesté', hypothesis: 'hypothèse',
+    speculative: 'spéculatif', reported: 'rapporté', misconception: 'croyance fausse', unspecified: 'non précisé'
+  };
+
+  var state = { currentStep: 1, inputs: {}, committed: [] };
+  var ir = null, geo = null, notices = [], compiled = false;
+
+  /* ---------- compile ---------- */
+  var debounceTimer = null;
+  function onEdit() {
+    clearTimeout(debounceTimer);
+    debounceTimer = setTimeout(compile, 220);
+  }
+
+  function compile() {
+    var src = $('src').value;
+    ir = Atomik.parse(src);
+    var L = Atomik.layout(ir);
+    geo = L.layout; notices = L.notices.slice();
+    var skipped = geo.edges.filter(function (e) { return e.skip; }).length;
+    if (skipped) notices.push(skipped + ' arête(s) vers claim/relation non tracée(s) (prototype)');
+    state = { currentStep: 1, inputs: {}, committed: [] };
+    compiled = true;
+    renderAll();
+  }
+
+  /* ---------- render ---------- */
+  function renderAll() {
+    if (!compiled) return;
+    renderDiagnostics();
+    renderIRTab();
+    renderClaimBar();
+    renderNotices();
+    var pres = Atomik.present(ir, state);
+    renderStage(pres, { badges: false });
+    renderNotes(pres);
+    renderInputs(pres);
+    renderMeters(pres);
+    renderStepNav(pres);
+  }
+
+  function renderClaimBar() {
+    var bar = $('claimbar');
+    bar.innerHTML = '';
+    if (!ir.claim) { bar.textContent = '— pas de claim —'; return; }
+    var chip = document.createElement('span');
+    chip.className = 'chip status-' + ir.claim.status;
+    chip.textContent = STATUS_GLYPH[ir.claim.status] + ' ' + STATUS_FR[ir.claim.status];
+    var txt = document.createElement('span');
+    txt.className = 'claimtext';
+    txt.textContent = ir.claim.text;
+    bar.appendChild(chip); bar.appendChild(txt);
+    if (ir.subject) {
+      var sub = document.createElement('span');
+      sub.className = 'subject';
+      sub.textContent = '⌘ ' + ir.subject.label.text;
+      bar.appendChild(sub);
+    }
+  }
+
+  function renderNotices() {
+    var row = $('notices'); row.innerHTML = '';
+    /* projection selector (I4): prominent when suggested */
+    var projWrap = document.createElement('span');
+    projWrap.className = 'chip proj' + (ir.projection && ir.projection.suggested ? ' suggested' : '');
+    projWrap.appendChild(document.createTextNode('projection : '));
+    var sel = document.createElement('select');
+    Atomik.constants.ARCHETYPES.forEach(function (a) {
+      var o = document.createElement('option');
+      o.value = a; o.textContent = a;
+      sel.appendChild(o);
+    });
+    sel.value = ir.projection ? ir.projection.archetype : 'graph';
+    sel.onchange = function () { flipProjection(sel.value); };
+    projWrap.appendChild(sel);
+    if (ir.projection && ir.projection.suggested) {
+      var st = document.createElement('em'); st.textContent = ' suggérée par l’IA — à toi de trancher';
+      projWrap.appendChild(st);
+    }
+    row.appendChild(projWrap);
+    notices.forEach(function (n) {
+      var c = document.createElement('span');
+      c.className = 'chip warn'; c.textContent = n;
+      row.appendChild(c);
+    });
+  }
+
+  /* I4: flipping rewrites exactly the project line in the source */
+  function flipProjection(arch) {
+    var ta = $('src');
+    var lines = ta.value.split('\n');
+    if (ir.projection && ir.projection.line) {
+      var i = ir.projection.line - 1;
+      lines[i] = lines[i].replace(/project\s+as\s+[A-Za-z-]+/, 'project as ' + arch);
+    } else {
+      lines.push('project as ' + arch);
+    }
+    ta.value = lines.join('\n');
+    compile();
+  }
+
+  function renderStage(pres, opts) {
+    var host = $('stage');
+    host.innerHTML = '';
+    host.appendChild(buildSVG(pres, opts));
+  }
+
+  function buildSVG(pres, opts) {
+    opts = opts || {};
+    var svg = document.createElementNS(SVGNS, 'svg');
+    var vb = geo.viewBox;
+    svg.setAttribute('viewBox', vb.join(' '));
+    svg.setAttribute('class', 'scene');
+    svg.setAttribute('role', 'img');
+    if (ir.claim) svg.setAttribute('aria-label', ir.claim.text + ' (statut : ' + STATUS_FR[ir.claim.status] + ')');
+
+    var defs = document.createElementNS(SVGNS, 'defs');
+    defs.innerHTML =
+      '<marker id="m-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">' +
+      '<path d="M0,0 L10,5 L0,10 z" fill="var(--edge)"/></marker>' +
+      '<marker id="m-tbar" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="8" markerHeight="8" orient="auto">' +
+      '<path d="M8,0 L8,10" stroke="var(--refute)" stroke-width="2.6"/></marker>';
+    svg.appendChild(defs);
+
+    var visN = {}, visR = {}, hi = {};
+    pres.visibleNodes.forEach(function (id) { visN[id] = true; });
+    pres.visibleRelations.forEach(function (id) { visR[id] = true; });
+    pres.highlighted.forEach(function (id) { hi[id] = true; });
+
+    var relById = {};
+    ir.relations.forEach(function (r) { relById[r.id] = r; });
+
+    /* edges under nodes */
+    geo.edges.forEach(function (e) {
+      if (e.skip) return;
+      var r = relById[e.id];
+      var g = document.createElementNS(SVGNS, 'g');
+      g.setAttribute('class', 'edge cls-' + r['class'] + (hi[r.id] ? ' hi' : ''));
+      if (!visR[r.id]) g.setAttribute('display', 'none');
+      var p = document.createElementNS(SVGNS, 'path');
+      p.setAttribute('d', e.ring ? e.path : ('M ' + e.x1 + ' ' + e.y1 + ' L ' + e.x2 + ' ' + e.y2));
+      p.setAttribute('fill', 'none');
+      if (r.directed) p.setAttribute('marker-end', r['class'] === 'refutation' ? 'url(#m-tbar)' : 'url(#m-arrow)');
+      g.appendChild(p);
+      if (r['class'] === 'boundary') {
+        var bx = e.ring ? e.labelAt.x : (e.x1 + e.x2) / 2;
+        var by = e.ring ? e.labelAt.y : (e.y1 + e.y2) / 2;
+        var brk = document.createElementNS(SVGNS, 'text');
+        brk.setAttribute('x', bx); brk.setAttribute('y', by);
+        brk.setAttribute('class', 'breakglyph'); brk.textContent = '✂';
+        g.appendChild(brk);
+      }
+      if (r.kind || r.sign || r.label) {
+        var t = document.createElementNS(SVGNS, 'text');
+        t.setAttribute('x', e.labelAt.x); t.setAttribute('y', e.labelAt.y);
+        t.setAttribute('class', 'edgelabel');
+        t.textContent = (r.kind || '') + (r.sign ? ' ' + r.sign : '') + (r.label ? ' — ' + r.label : '');
+        g.appendChild(t);
+      }
+      svg.appendChild(g);
+    });
+
+    /* first-revealing step per id (for export badges) */
+    var firstStep = {};
+    ir.steps.forEach(function (s) {
+      s.effects.forEach(function (e) {
+        if (e.type === 'reveal') e.targets.forEach(function (t) {
+          if (firstStep[t] === undefined) firstStep[t] = s.sourceStep;
+        });
+      });
+    });
+
+    ir.nodes.forEach(function (n) {
+      var p = geo.pos[n.id], b = geo.boxes[n.id];
+      if (!p) return;
+      var g = document.createElementNS(SVGNS, 'g');
+      g.setAttribute('class', 'node role-' + n.role + ' status-' + n.status +
+        (hi[n.id] ? ' hi' : '') + (n.salience === 'criterial' ? ' criterial' : '') +
+        (n.salience === 'incidental' ? ' incidental' : ''));
+      if (!visN[n.id]) g.setAttribute('display', 'none');
+      g.setAttribute('aria-label', n.label.text);
+      var x = p.x - b.w / 2, y = p.y - b.h / 2;
+
+      if (hi[n.id]) {
+        var glow = document.createElementNS(SVGNS, 'rect');
+        glow.setAttribute('x', x - 5); glow.setAttribute('y', y - 5);
+        glow.setAttribute('width', b.w + 10); glow.setAttribute('height', b.h + 10);
+        glow.setAttribute('rx', 14); glow.setAttribute('class', 'glow');
+        g.appendChild(glow);
+      }
+
+      var shape;
+      if (n.role === 'decision') {
+        shape = document.createElementNS(SVGNS, 'polygon');
+        shape.setAttribute('points',
+          p.x + ',' + y + ' ' + (x + b.w) + ',' + p.y + ' ' + p.x + ',' + (y + b.h) + ' ' + x + ',' + p.y);
+      } else {
+        shape = document.createElementNS(SVGNS, 'rect');
+        shape.setAttribute('x', x); shape.setAttribute('y', y);
+        shape.setAttribute('width', b.w); shape.setAttribute('height', b.h);
+        shape.setAttribute('rx', (n.role === 'start' || n.role === 'terminal') ? b.h / 2 : 10);
+      }
+      shape.setAttribute('class', 'box');
+      g.appendChild(shape);
+
+      if (n.role === 'contradiction') {
+        var inner = document.createElementNS(SVGNS, 'rect');
+        inner.setAttribute('x', x + 4); inner.setAttribute('y', y + 4);
+        inner.setAttribute('width', b.w - 8); inner.setAttribute('height', b.h - 8);
+        inner.setAttribute('rx', 8); inner.setAttribute('class', 'box inner');
+        g.appendChild(inner);
+      }
+      if (n.role === 'evidence') {
+        var fold = document.createElementNS(SVGNS, 'path');
+        fold.setAttribute('d', 'M ' + (x + b.w - 16) + ' ' + y + ' L ' + (x + b.w) + ' ' + (y + 16) +
+          ' L ' + (x + b.w - 16) + ' ' + (y + 16) + ' Z');
+        fold.setAttribute('class', 'fold');
+        g.appendChild(fold);
+      }
+
+      var badgeRoom = n.status === 'misconception' ? 18 : 0;
+      var textTop = y + (b.h - badgeRoom) / 2 - (b.lines.length - 1) * 8;
+      b.lines.forEach(function (lineTxt, i) {
+        var t = document.createElementNS(SVGNS, 'text');
+        t.setAttribute('x', p.x); t.setAttribute('y', textTop + i * 16);
+        t.setAttribute('class', 'label');
+        t.textContent = lineTxt;
+        g.appendChild(t);
+      });
+
+      if (n.status === 'misconception') {
+        var strike = document.createElementNS(SVGNS, 'line');
+        strike.setAttribute('x1', x + 8); strike.setAttribute('y1', y + (b.h - badgeRoom) - 4);
+        strike.setAttribute('x2', x + b.w - 8); strike.setAttribute('y2', y + 6);
+        strike.setAttribute('class', 'strike');
+        g.appendChild(strike);
+        var bw = 118, bh2 = 16;
+        var br = document.createElementNS(SVGNS, 'rect');
+        br.setAttribute('x', p.x - bw / 2); br.setAttribute('y', y + b.h - bh2 - 4);
+        br.setAttribute('width', bw); br.setAttribute('height', bh2);
+        br.setAttribute('rx', 8); br.setAttribute('class', 'falsebadge');
+        g.appendChild(br);
+        var bt = document.createElementNS(SVGNS, 'text');
+        bt.setAttribute('x', p.x); bt.setAttribute('y', y + b.h - 8);
+        bt.setAttribute('class', 'falsebadgetext');
+        bt.textContent = '✕ croyance fausse';
+        g.appendChild(bt);
+      }
+
+      if (opts.badges && firstStep[n.id] !== undefined) {
+        var bc = document.createElementNS(SVGNS, 'circle');
+        bc.setAttribute('cx', x + 2); bc.setAttribute('cy', y + 2); bc.setAttribute('r', 10);
+        bc.setAttribute('class', 'stepbadge');
+        g.appendChild(bc);
+        var bn = document.createElementNS(SVGNS, 'text');
+        bn.setAttribute('x', x + 2); bn.setAttribute('y', y + 6);
+        bn.setAttribute('class', 'stepbadgetext');
+        bn.textContent = String(firstStep[n.id]);
+        g.appendChild(bn);
+      }
+      svg.appendChild(g);
+    });
+    return svg;
+  }
+
+  function renderNotes(pres) {
+    var host = $('notes'); host.innerHTML = '';
+    pres.notes.forEach(function (n) {
+      var d = document.createElement('div');
+      d.className = 'note';
+      d.innerHTML = '<span class="origin"></span>';
+      d.firstChild.textContent = n.origin;
+      d.appendChild(document.createTextNode(' ' + n.text));
+      host.appendChild(d);
+    });
+  }
+
+  function renderInputs(pres) {
+    var host = $('inputs'); host.innerHTML = '';
+    ir.inputs.forEach(function (inp) {
+      var wrap = document.createElement('div');
+      wrap.className = 'input' + (pres.lockedInputs.indexOf(inp.id) >= 0 ? ' locked' : '');
+      var lab = document.createElement('label');
+      lab.textContent = inp.label || inp.id;
+      wrap.appendChild(lab);
+      var cur = pres.env[inp.id];
+      if (inp.control.type === 'choice') {
+        inp.control.options.forEach(function (opt) {
+          var l2 = document.createElement('label'); l2.className = 'opt';
+          var r = document.createElement('input');
+          r.type = 'radio'; r.name = 'in-' + inp.id; r.value = opt;
+          r.checked = cur === opt;
+          r.onchange = function () { commit(inp.id, opt); };
+          l2.appendChild(r); l2.appendChild(document.createTextNode(' ' + opt));
+          wrap.appendChild(l2);
+        });
+      } else if (inp.control.type === 'slider') {
+        var s = document.createElement('input');
+        s.type = 'range'; s.min = inp.control.min; s.max = inp.control.max; s.step = 'any';
+        s.value = cur;
+        var v = document.createElement('span'); v.className = 'val';
+        v.textContent = ' ' + (Math.round(cur * 10) / 10);
+        s.oninput = function () { commit(inp.id, parseFloat(s.value)); };
+        wrap.appendChild(s); wrap.appendChild(v);
+      } else {
+        var c = document.createElement('input');
+        c.type = 'checkbox'; c.checked = !!cur;
+        c.onchange = function () { commit(inp.id, c.checked); };
+        wrap.appendChild(c);
+      }
+      host.appendChild(wrap);
+    });
+  }
+
+  function commit(id, val) {
+    state.inputs[id] = val;
+    if (state.committed.indexOf(id) < 0) state.committed.push(id);
+    renderAll();
+  }
+
+  function renderMeters(pres) {
+    var host = $('meters'); host.innerHTML = '';
+    ir.marks.forEach(function (m) {
+      var v = pres.env[m.value];
+      var max = m.max !== undefined ? m.max : 100;
+      var pct = Math.max(0, Math.min(100, (parseFloat(v) / max) * 100));
+      var d = document.createElement('div'); d.className = 'meter';
+      var lab = document.createElement('span'); lab.textContent = m.label + ' : ' + (Math.round(parseFloat(v) * 10) / 10);
+      var bar = document.createElement('div'); bar.className = 'bar';
+      var fill = document.createElement('div'); fill.className = 'fill'; fill.style.width = pct + '%';
+      bar.appendChild(fill);
+      d.appendChild(lab); d.appendChild(bar);
+      host.appendChild(d);
+    });
+  }
+
+  function renderStepNav(pres) {
+    var host = $('stepnav'); host.innerHTML = '';
+    if (pres.maxStep <= 1 && !ir.steps.length) { host.classList.add('empty'); return; }
+    host.classList.remove('empty');
+    var prev = document.createElement('button');
+    prev.textContent = '◀ Préc.'; prev.disabled = !pres.canPrev;
+    prev.onclick = function () { state.currentStep = Math.max(1, state.currentStep - 1); renderAll(); };
+    var next = document.createElement('button');
+    next.textContent = 'Suiv. ▶'; next.disabled = !pres.canNext;
+    next.onclick = function () { state.currentStep = Math.min(pres.maxStep, state.currentStep + 1); renderAll(); };
+    var lab = document.createElement('span'); lab.className = 'steplabel';
+    lab.textContent = 'Étape ' + pres.currentStep + ' / ' + pres.maxStep;
+    host.appendChild(prev); host.appendChild(lab); host.appendChild(next);
+    if (pres.lockedInputs.length) {
+      var lock = document.createElement('span'); lock.className = 'lock';
+      var names = pres.lockedInputs.map(function (id) {
+        var inp = ir.inputs.filter(function (x) { return x.id === id; })[0];
+        return inp && inp.label ? inp.label : id;
+      });
+      lock.textContent = '🔒 engage-toi d’abord : ' + names.join(', ');
+      host.appendChild(lock);
+    }
+  }
+
+  function renderDiagnostics() {
+    var host = $('diags'); host.innerHTML = '';
+    var count = $('diagcount');
+    var errs = ir.diagnostics.filter(function (d) { return d.severity === 'error'; }).length;
+    var warns = ir.diagnostics.length - errs;
+    count.textContent = ir.diagnostics.length ? (errs + ' err · ' + warns + ' warn') : '✓';
+    count.className = errs ? 'bad' : (warns ? 'meh' : 'good');
+    if (!ir.diagnostics.length) {
+      var okd = document.createElement('div'); okd.className = 'diag ok';
+      okd.textContent = '✓ aucun diagnostic — scène valide';
+      host.appendChild(okd); return;
+    }
+    ir.diagnostics.forEach(function (d) {
+      var el = document.createElement('div');
+      el.className = 'diag ' + d.severity;
+      el.textContent = 'L' + d.line + ' · ' + d.code + ' — ' + d.message + (d.hint ? '  ↳ ' + d.hint : '');
+      el.onclick = function () { focusLine(d.line); };
+      host.appendChild(el);
+    });
+  }
+
+  function focusLine(line) {
+    var ta = $('src');
+    var lines = ta.value.split('\n');
+    var start = 0;
+    for (var i = 0; i < line - 1 && i < lines.length; i++) start += lines[i].length + 1;
+    var end = start + (lines[line - 1] || '').length;
+    ta.focus(); ta.setSelectionRange(start, end);
+  }
+
+  function renderIRTab() {
+    $('irjson').textContent = JSON.stringify(JSON.parse(JSON.stringify(ir)), null, 2);
+  }
+
+  /* export: all-revealed + step badges (render-core §5) */
+  function exportSVG() {
+    var pres = Atomik.present(ir, state, { ignoreGates: true });
+    var svg = buildSVG(pres, { badges: true });
+    svg.setAttribute('xmlns', SVGNS);
+    var style = document.createElement('style');
+    style.textContent = document.getElementById('scene-css').textContent;
+    svg.insertBefore(style, svg.firstChild.nextSibling);
+    var meta = document.createComment(' atomik source:\n' + $('src').value.replace(/--/g, '—') + '\n');
+    svg.appendChild(meta);
+    var blob = new Blob([new XMLSerializer().serializeToString(svg)], { type: 'image/svg+xml' });
+    var a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = (ir.scene ? ir.scene.id : 'scene') + '.svg';
+    a.click();
+    setTimeout(function () { URL.revokeObjectURL(a.href); }, 500);
+  }
+
+  /* ---------- tabs & wiring ---------- */
+  function showTab(name) {
+    ['source', 'ir', 'diag'].forEach(function (t) {
+      $('tab-' + t).classList.toggle('active', t === name);
+      $('pane-' + t).style.display = t === name ? '' : 'none';
+    });
+  }
+
+  function boot() {
+    var sel = $('preset');
+    Object.keys(PRESETS).forEach(function (k) {
+      var o = document.createElement('option');
+      o.value = k; o.textContent = PRESETS[k].label;
+      sel.appendChild(o);
+    });
+    sel.onchange = function () { $('src').value = PRESETS[sel.value].src; compile(); };
+    $('src').addEventListener('input', onEdit);
+    $('tab-source').onclick = function () { showTab('source'); };
+    $('tab-ir').onclick = function () { showTab('ir'); };
+    $('tab-diag').onclick = function () { showTab('diag'); };
+    $('export').onclick = exportSVG;
+    document.addEventListener('keydown', function (ev) {
+      if (ev.target && ev.target.tagName === 'TEXTAREA') return;
+      if (ev.key === 'ArrowRight') { var p1 = Atomik.present(ir, state); if (p1.canNext) { state.currentStep++; renderAll(); } }
+      if (ev.key === 'ArrowLeft') { var p2 = Atomik.present(ir, state); if (p2.canPrev) { state.currentStep--; renderAll(); } }
+    });
+    $('src').value = PRESETS.demo.src;
+    showTab('source');
+    compile();
+  }
+
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', boot);
+  else boot();
+})();
+
+</script>
+</body>
+</html>

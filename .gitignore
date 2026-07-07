@@ -1,0 +1,4 @@
+# Git hygiene per main-repo bedrock 27 (caches/derived state never canonical)
+node_modules/
+.atomik/
+.DS_Store

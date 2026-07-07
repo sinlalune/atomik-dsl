@@ -1,0 +1,149 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>atomik — prototype cycle de bout en bout (v0.3 / IR 0.1)</title>
+<style>
+  :root{
+    --bg:#f6f4ef; --panel:#ffffff; --ink:#22252a; --muted:#6b7280;
+    --line:#e3ded4; --accent:#4457c5; --warn:#b45309; --err:#b91c1c;
+    --edge:#5b6470; --refute:#b91c1c; --hi:#d97706; --good:#15803d;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;font:14px/1.45 -apple-system,'Segoe UI',Roboto,'Helvetica Neue',sans-serif;
+       background:var(--bg);color:var(--ink)}
+  header{display:flex;gap:12px;align-items:center;padding:10px 16px;
+         background:var(--panel);border-bottom:1px solid var(--line);flex-wrap:wrap}
+  header h1{font-size:15px;margin:0;font-weight:650}
+  header .sub{color:var(--muted);font-size:12px}
+  header select,header button{font:inherit;padding:5px 9px;border:1px solid var(--line);
+         border-radius:8px;background:#fff;cursor:pointer}
+  header button:hover{border-color:var(--accent)}
+  main{display:flex;gap:0;height:calc(100vh - 55px)}
+  #left{width:44%;min-width:380px;display:flex;flex-direction:column;border-right:1px solid var(--line);background:var(--panel)}
+  .tabs{display:flex;gap:2px;padding:8px 10px 0}
+  .tabs button{font:inherit;border:1px solid var(--line);border-bottom:none;background:#f1ede4;
+               padding:6px 12px;border-radius:8px 8px 0 0;cursor:pointer;color:var(--muted)}
+  .tabs button.active{background:#fff;color:var(--ink);font-weight:600}
+  .tabs .spacer{flex:1}
+  #diagcount{align-self:center;font-size:12px;padding:2px 8px;border-radius:10px}
+  #diagcount.good{background:#dcfce7;color:var(--good)}
+  #diagcount.meh{background:#fef3c7;color:var(--warn)}
+  #diagcount.bad{background:#fee2e2;color:var(--err)}
+  .pane{flex:1;overflow:auto;border-top:1px solid var(--line)}
+  textarea#src{width:100%;height:100%;border:none;resize:none;outline:none;
+    font:13px/1.5 ui-monospace,'SF Mono',Menlo,Consolas,monospace;padding:12px;background:#fffdf8;color:#1f2430}
+  #irjson{margin:0;padding:12px;font:12px/1.45 ui-monospace,Menlo,Consolas,monospace;white-space:pre;color:#333}
+  .diag{padding:7px 12px;border-bottom:1px solid var(--line);cursor:pointer;font-size:13px}
+  .diag.error{border-left:4px solid var(--err)}
+  .diag.warning{border-left:4px solid var(--warn)}
+  .diag.ok{border-left:4px solid var(--good);cursor:default;color:var(--good)}
+  .diag:hover{background:#faf7f0}
+
+  #right{flex:1;display:flex;flex-direction:column;overflow:auto}
+  #claimbar{display:flex;gap:10px;align-items:center;padding:12px 16px;flex-wrap:wrap}
+  #claimbar .claimtext{font-size:15px;font-weight:650}
+  #claimbar .subject{color:var(--muted);font-size:12px}
+  .chip{display:inline-flex;gap:6px;align-items:center;padding:3px 10px;border-radius:999px;
+        font-size:12px;border:1.4px solid var(--line);background:#fff;white-space:nowrap}
+  .chip.warn{border-color:#f2d9a4;background:#fef8e7;color:var(--warn)}
+  .chip.proj select{font:inherit;border:none;background:transparent}
+  .chip.proj.suggested{border-color:var(--accent);box-shadow:0 0 0 3px #4457c522}
+  .chip.proj em{color:var(--accent);font-style:normal;font-size:11px}
+  .status-established{border-style:solid;border-color:#9bb69e;background:#eef6ee}
+  .status-supported{border-style:solid}
+  .status-contested{border-style:dashed;border-color:#d9a441;background:#fdf6e8}
+  .status-hypothesis{border-style:dashed}
+  .status-speculative{border-style:dotted}
+  .status-reported{border-style:solid;border-color:#a8b6d9;background:#eef1fb}
+  .status-unspecified{color:var(--muted)}
+  #notices{display:flex;gap:8px;padding:0 16px 8px;flex-wrap:wrap;align-items:center}
+  #stage{padding:4px 16px}
+  svg.scene{width:100%;max-height:62vh;background:#fffdf8;border:1px solid var(--line);border-radius:14px}
+  #notes{padding:2px 16px;display:flex;flex-direction:column;gap:6px}
+  .note{background:#f0f3ff;border:1px solid #d8def7;border-radius:10px;padding:7px 10px;font-size:13px}
+  .note .origin{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.04em;margin-right:8px}
+  #inputs{padding:8px 16px;display:flex;gap:16px;flex-wrap:wrap}
+  .input{background:#fff;border:1px solid var(--line);border-radius:12px;padding:10px 12px;min-width:220px}
+  .input.locked{border-color:var(--hi);box-shadow:0 0 0 3px #d9770622}
+  .input>label{display:block;font-weight:600;margin-bottom:6px}
+  .input .opt{display:block;margin:3px 0;cursor:pointer}
+  .input .val{font-variant-numeric:tabular-nums;color:var(--muted)}
+  #meters{padding:0 16px 8px;display:flex;gap:16px;flex-wrap:wrap}
+  .meter{min-width:240px}
+  .meter .bar{height:10px;background:#eee7d8;border-radius:6px;overflow:hidden;margin-top:4px}
+  .meter .fill{height:100%;background:var(--accent)}
+  #stepnav{display:flex;gap:12px;align-items:center;padding:10px 16px 18px}
+  #stepnav.empty{display:none}
+  #stepnav button{font:inherit;padding:7px 14px;border:1px solid var(--line);border-radius:10px;background:#fff;cursor:pointer}
+  #stepnav button:disabled{opacity:.4;cursor:default}
+  #stepnav .steplabel{font-weight:650}
+  #stepnav .lock{color:var(--hi);font-size:13px}
+</style>
+<style id="scene-css">
+  .box{fill:#ffffff;stroke:#5b6470;stroke-width:1.6}
+  .node.role-evidence .box{fill:#f4f7ff}
+  .node .fold{fill:#dbe3f5;stroke:#5b6470;stroke-width:1.2}
+  .node.role-assumption .box{stroke-dasharray:5 4}
+  .node.role-start .box,.node.role-terminal .box{fill:#f2efe7}
+  .node .inner{fill:none}
+  .label{font:13px -apple-system,'Segoe UI',sans-serif;fill:#22252a;text-anchor:middle;dominant-baseline:middle}
+  .edge path{stroke:#5b6470;stroke-width:1.8}
+  .edge.cls-refutation path{stroke:#b91c1c;stroke-dasharray:7 4}
+  .edge.cls-analogy path{stroke-dasharray:2 4}
+  .edge.cls-boundary path{stroke-dasharray:2 3}
+  .edge.cls-hypothesis path{stroke-dasharray:8 3;opacity:.85}
+  .edgelabel{font:10.5px -apple-system,sans-serif;fill:#6b7280;text-anchor:middle}
+  .breakglyph{font-size:13px;text-anchor:middle;fill:#b45309}
+  .strike{stroke:#b91c1c;stroke-width:2.4;stroke-linecap:round}
+  .falsebadge{fill:#b91c1c}
+  .falsebadgetext{font:600 10px -apple-system,sans-serif;fill:#fff;text-anchor:middle}
+  .glow{fill:none;stroke:#d97706;stroke-width:3;opacity:.55}
+  .node.hi .box{stroke:#d97706;stroke-width:2.4}
+  .edge.hi path{stroke-width:3}
+  .node.criterial .box{stroke-width:2.6}
+  .node.incidental{opacity:.62}
+  .stepbadge{fill:#4457c5}
+  .stepbadgetext{font:700 10px -apple-system,sans-serif;fill:#fff;text-anchor:middle}
+</style>
+</head>
+<body>
+<header>
+  <h1>atomik — prototype « cycle » de bout en bout</h1>
+  <span class="sub">texte → IR 0.1 → layout → runtime pur · C1–C4 appliqués</span>
+  <span style="flex:1"></span>
+  <select id="preset" title="Préréglages"></select>
+  <button id="export" title="Export SVG : tout révélé + badges d'étape (render-core §5)">SVG ⭳</button>
+</header>
+<main>
+  <section id="left">
+    <div class="tabs">
+      <button id="tab-source" class="active">Source</button>
+      <button id="tab-ir">IR</button>
+      <button id="tab-diag">Diagnostics</button>
+      <span class="spacer"></span>
+      <span id="diagcount" class="good">✓</span>
+    </div>
+    <div id="pane-source" class="pane"><textarea id="src" spellcheck="false"></textarea></div>
+    <div id="pane-ir" class="pane" style="display:none"><pre id="irjson"></pre></div>
+    <div id="pane-diag" class="pane" style="display:none"><div id="diags"></div></div>
+  </section>
+  <section id="right">
+    <div id="claimbar"></div>
+    <div id="notices"></div>
+    <div id="stage"></div>
+    <div id="notes"></div>
+    <div id="inputs"></div>
+    <div id="meters"></div>
+    <div id="stepnav"></div>
+  </section>
+</main>
+<script>
+/*@CORE@*/
+</script>
+<script>
+/*@UI@*/
+</script>
+</body>
+</html>

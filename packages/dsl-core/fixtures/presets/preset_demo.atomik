@@ -1,0 +1,31 @@
+atomik 0.3
+scene cycle_eau_demo [origin authored]
+claim "L'eau ne disparaît jamais : elle circule en boucle en changeant d'état." [status established]
+subject [[Cycle de l'eau]]
+
+node gone "L'eau d'une flaque séchée a disparu pour toujours" [status misconception]
+node evap "Évaporation"
+node cond "Condensation"
+node pluie "Précipitations"
+node coll "Ruissellement"
+
+relation evap -> cond puis [as fact]
+relation cond -> pluie puis [as fact]
+relation pluie -> coll puis [as fact]
+relation coll -> evap puis [as fact]
+relation evap -> gone réfute [as refutation]
+
+project as cycle
+
+input devine = choice "elle a disparu" | "elle est passée dans l'air" [label "Une flaque sèche au soleil. Où est passée l'eau ?"]
+
+rule devine == "elle est passée dans l'air" => note "Exactement — suivons-la."
+rule devine != "elle est passée dans l'air" => note "Intuition très répandue. Suivons l'eau pour voir."
+
+step 1 reveal gone
+step 1 note "Beaucoup pensent que l'eau séchée est perdue."
+step 2 require devine
+step 2 reveal evap
+step 3 reveal cond pluie
+step 4 reveal coll
+step 4 highlight evap

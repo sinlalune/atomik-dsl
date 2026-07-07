@@ -1,0 +1,291 @@
+{
+  "fixture": "atomik_scene_ir_golden_northstar",
+  "version": "0.1",
+  "conformsTo": {
+    "language": "atomik_dsl_spec_v0_3.md",
+    "ir": "atomik_render_core_spec_v0_1.md §2.2 (irVersion 0.1)"
+  },
+  "purpose": "Golden fixture #1 (render-core spec §9.1) and machine-checkable form of the north-star end-to-end checklist (§9.2). Any lang-core change that shifts expectedIR, and any runtime change that breaks runtimeOracle, is a reviewed event. This file also fixes the canonical line layout illustrated (abbreviated) in spec §2.4.",
+  "canonicalLayoutRule": "Canonical printer: frame plane (pragma, scene, claim, subject), blank line, model plane contiguous (groups, nodes/evidence in first-mention order, relations, places, data), blank line, projection if any, reactive plane (inputs, deriveds, rules, steps, marks). Rules precede steps (dsl spec §2 canonical order).",
+
+  "canonicalSource": [
+    "atomik 0.3",
+    "scene falling_objects [origin authored]",
+    "claim \"In the absence of air, all objects fall at the same rate.\" [status established]",
+    "subject [[Free fall]]",
+    "",
+    "node belief \"Heavy objects fall faster\" [status misconception]",
+    "node vacuum \"Hammer and feather dropped in a vacuum\" [role evidence]",
+    "node truth \"Both land together\" [role terminal]",
+    "node reason \"Air resistance, not mass, caused the difference\"",
+    "relation vacuum -> belief refutes [as refutation]",
+    "relation vacuum -> truth shows [as fact]",
+    "relation reason -> truth explains [as inference]",
+    "",
+    "input guess = choice \"hammer first\" | \"together\" | \"feather first\" [label \"Predict:\"]",
+    "rule guess == \"together\" => note \"You predicted it — now here's why.\"",
+    "rule guess != \"together\" => note \"A very common intuition. Watch what actually happens.\"",
+    "step 1 reveal belief",
+    "step 1 note \"Most people expect the heavy object to win.\"",
+    "step 2 require guess",
+    "step 2 reveal vacuum",
+    "step 3 reveal truth",
+    "step 3 highlight truth",
+    "step 4 reveal reason"
+  ],
+
+  "expectedIR": {
+    "irVersion": "0.1",
+    "surface": { "language": "atomik", "version": "0.3" },
+    "origin": "authored",
+    "diagnostics": [],
+    "scene": { "id": "falling_objects", "line": 2 },
+    "claim": {
+      "text": "In the absence of air, all objects fall at the same rate.",
+      "status": "established",
+      "line": 3
+    },
+    "subject": {
+      "label": { "text": "Free fall", "ref": { "kind": "note", "target": "Free fall" } },
+      "line": 4
+    },
+    "groups": [],
+    "nodes": [
+      {
+        "id": "belief",
+        "label": { "text": "Heavy objects fall faster", "ref": { "kind": "literal" } },
+        "role": "process",
+        "status": "misconception",
+        "initiallyHidden": true,
+        "line": 6,
+        "extras": {}
+      },
+      {
+        "id": "vacuum",
+        "label": { "text": "Hammer and feather dropped in a vacuum", "ref": { "kind": "literal" } },
+        "role": "evidence",
+        "status": "unspecified",
+        "initiallyHidden": true,
+        "line": 7,
+        "extras": {}
+      },
+      {
+        "id": "truth",
+        "label": { "text": "Both land together", "ref": { "kind": "literal" } },
+        "role": "terminal",
+        "status": "unspecified",
+        "initiallyHidden": true,
+        "line": 8,
+        "extras": {}
+      },
+      {
+        "id": "reason",
+        "label": { "text": "Air resistance, not mass, caused the difference", "ref": { "kind": "literal" } },
+        "role": "process",
+        "status": "unspecified",
+        "initiallyHidden": true,
+        "line": 9,
+        "extras": {}
+      }
+    ],
+    "relations": [
+      {
+        "id": "~r1",
+        "idSource": "synthetic",
+        "from": { "kind": "node", "id": "vacuum" },
+        "to": { "kind": "node", "id": "belief" },
+        "directed": true,
+        "kind": "refutes",
+        "class": "refutation",
+        "status": "unspecified",
+        "initiallyHidden": false,
+        "line": 10,
+        "extras": {}
+      },
+      {
+        "id": "~r2",
+        "idSource": "synthetic",
+        "from": { "kind": "node", "id": "vacuum" },
+        "to": { "kind": "node", "id": "truth" },
+        "directed": true,
+        "kind": "shows",
+        "class": "fact",
+        "status": "unspecified",
+        "initiallyHidden": false,
+        "line": 11,
+        "extras": {}
+      },
+      {
+        "id": "~r3",
+        "idSource": "synthetic",
+        "from": { "kind": "node", "id": "reason" },
+        "to": { "kind": "node", "id": "truth" },
+        "directed": true,
+        "kind": "explains",
+        "class": "inference",
+        "status": "unspecified",
+        "initiallyHidden": false,
+        "line": 12,
+        "extras": {}
+      }
+    ],
+    "places": [],
+    "data": [],
+    "inputs": [
+      {
+        "id": "guess",
+        "control": { "type": "choice", "options": ["hammer first", "together", "feather first"] },
+        "label": "Predict:",
+        "committedByDefault": false,
+        "line": 14
+      }
+    ],
+    "deriveds": [],
+    "rules": [
+      {
+        "when": {
+          "op": "==",
+          "a": { "op": "ref", "id": "guess" },
+          "b": { "op": "lit", "value": "together" }
+        },
+        "effect": { "type": "note", "text": "You predicted it — now here's why." },
+        "line": 15
+      },
+      {
+        "when": {
+          "op": "!=",
+          "a": { "op": "ref", "id": "guess" },
+          "b": { "op": "lit", "value": "together" }
+        },
+        "effect": { "type": "note", "text": "A very common intuition. Watch what actually happens." },
+        "line": 16
+      }
+    ],
+    "steps": [
+      {
+        "index": 1,
+        "sourceStep": 1,
+        "effects": [
+          { "type": "reveal", "targets": ["belief"] },
+          { "type": "note", "text": "Most people expect the heavy object to win." }
+        ],
+        "requires": [],
+        "lines": [17, 18]
+      },
+      {
+        "index": 2,
+        "sourceStep": 2,
+        "effects": [
+          { "type": "reveal", "targets": ["vacuum"] }
+        ],
+        "requires": ["guess"],
+        "lines": [19, 20]
+      },
+      {
+        "index": 3,
+        "sourceStep": 3,
+        "effects": [
+          { "type": "reveal", "targets": ["truth"] },
+          { "type": "highlight", "targets": ["truth"] }
+        ],
+        "requires": [],
+        "lines": [21, 22]
+      },
+      {
+        "index": 4,
+        "sourceStep": 4,
+        "effects": [
+          { "type": "reveal", "targets": ["reason"] }
+        ],
+        "requires": [],
+        "lines": [23]
+      }
+    ],
+    "marks": []
+  },
+
+  "expectedIRNotes": [
+    "initiallyHidden: all four nodes are targets of some reveal (D4); relations carry their own flag false, but paint only when both endpoints are visible (§5 edge effective visibility).",
+    "No projection statement in source: the 'projection' key is absent from the IR; resolveProjection defaults to archetype 'graph' with a soft provenance of 'default' at render time (§3 stage 1).",
+    "The 'require guess' line (19) contributes to steps[1].requires and steps[1].lines, not to effects — require is extracted, not an effect at runtime.",
+    "Synthetic relation ids use the '~' prefix, outside the identifier grammar (D7): source text can never reference them."
+  ],
+
+  "runtimeOracle": {
+    "stateModel": "(currentStep, inputValues, committedInputs) — render-core spec §5, RS1 purity, C4 gated-step semantics",
+    "assertions": [
+      {
+        "id": "A1-elicit",
+        "state": { "currentStep": 1, "inputValues": {}, "committedInputs": [] },
+        "expect": {
+          "visibleNodes": ["belief"],
+          "visibleRelations": [],
+          "notes": ["Most people expect the heavy object to win."],
+          "beliefRendersStruckWithFalseBeliefBadge": true
+        }
+      },
+      {
+        "id": "A2-gate-withholds",
+        "state": { "currentStep": 2, "inputValues": {}, "committedInputs": [] },
+        "expect": {
+          "visibleNodes": ["belief"],
+          "visibleRelations": [],
+          "advanceToStep3": "blocked",
+          "navigatorShowsLockOn": "guess",
+          "comment": "C4: gated step 2 withholds its own reveal (vacuum) until commitment — the evidence must not spoil the prediction."
+        }
+      },
+      {
+        "id": "A3-commit-right",
+        "state": { "currentStep": 2, "inputValues": { "guess": "together" }, "committedInputs": ["guess"] },
+        "expect": {
+          "visibleNodes": ["belief", "vacuum"],
+          "visibleRelations": ["~r1"],
+          "relation~r1Terminator": "blocking-bar (⊣), never an arrowhead",
+          "notes": ["You predicted it — now here's why."],
+          "advanceToStep3": "allowed"
+        }
+      },
+      {
+        "id": "A4-commit-wrong",
+        "state": { "currentStep": 2, "inputValues": { "guess": "hammer first" }, "committedInputs": ["guess"] },
+        "expect": {
+          "visibleNodes": ["belief", "vacuum"],
+          "notes": ["A very common intuition. Watch what actually happens."],
+          "advanceToStep3": "allowed",
+          "comment": "Both branches open the gate; the rule note differs. Commitment, not correctness, is what a gate requires."
+        }
+      },
+      {
+        "id": "A5-resolution",
+        "state": { "currentStep": 4, "inputValues": { "guess": "hammer first" }, "committedInputs": ["guess"] },
+        "expect": {
+          "visibleNodes": ["belief", "vacuum", "truth", "reason"],
+          "visibleRelations": ["~r1", "~r2", "~r3"],
+          "highlighted": ["truth"],
+          "beliefRendersStruckWithFalseBeliefBadge": true,
+          "comment": "Step effects are cumulative (§5): step 3's highlight persists at step 4. The misconception stays struck to the end — it is corrected, not erased."
+        }
+      },
+      {
+        "id": "A6-back-navigation",
+        "state": { "currentStep": 1, "inputValues": { "guess": "together" }, "committedInputs": ["guess"], "reachedVia": "forward to 4, then back to 1" },
+        "expect": {
+          "visibleNodes": ["belief"],
+          "identicalTo": "A1-elicit except notes may include currently-true rule note",
+          "comment": "RS1 purity: same state ⇒ same render regardless of path; going back never un-commits (§5)."
+        }
+      },
+      {
+        "id": "A7-export",
+        "state": { "mode": "export/print" },
+        "expect": {
+          "visibleNodes": ["belief", "vacuum", "truth", "reason"],
+          "stepBadgesOnStepRevealedElements": true,
+          "beliefRendersStruckWithFalseBeliefBadge": true,
+          "comment": "All-revealed export (§5): a printed scene must not silently hide teaching content, and the falsehood stays marked on paper too."
+        }
+      }
+    ]
+  }
+}

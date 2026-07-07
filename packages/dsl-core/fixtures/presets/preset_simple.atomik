@@ -1,0 +1,22 @@
+atomik 0.3
+scene cycle_simple
+claim "Le cycle de l'eau est entretenu par l'énergie solaire." [status established]
+subject [[Cycle de l'eau]]
+
+node evap "Évaporation"
+node cond "Condensation"
+node pluie "Précipitations"
+node coll "Ruissellement"
+
+relation evap -> cond puis [as fact]
+relation cond -> pluie puis [as fact]
+relation pluie -> coll puis [as fact]
+relation coll -> evap puis [as fact]
+
+project as cycle [suggested]
+
+input soleil = slider 0..100 [default 60] [label "Énergie solaire %"]
+derive evaporation = soleil * 0.9
+mark meter "Taux d'évaporation" value evaporation [max 100]
+rule soleil < 15 => note "Presque plus d'évaporation : le cycle ralentit fortement."
+rule soleil > 85 => highlight evap
