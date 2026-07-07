@@ -107,12 +107,22 @@ changed     : S03 — harness (pure, dependency-free) + multi-provider adapter
               live pre-flights each chosen provider's key and blocks cleanly.
 tests       : 65 passing; eval:test 36/36; eval:validate 16/16; dry-run +
               build(both) green; fixture untouched; no dep added to dsl-core
-next action : S04 — `npm i -D @anthropic-ai/sdk @google/genai`, set both keys,
-              `npm run eval:live` (per provider: generation → repair → judge),
-              commit raw results. BLOCKED on owner-provided keys.
-blockers    : S04 needs ANTHROPIC_API_KEY and GEMINI_API_KEY; environment has
-              neither. Owner provides before S04. (Either provider can run
-              alone via `eval:live anthropic|google` if only one key is ready.)
+S04 IN FLIGHT (2026-07-07): owner provided both keys (loaded from gitignored
+              .env); deps installed + both keys auth-verified (Haiku 4.5 + Gemini
+              3.1 Flash-Lite each replied "OK"). Two live bugs found and fixed
+              before spend: (1) authcheck module-resolution from scratchpad —
+              cosmetic; (2) **custom_id contained ':' — Anthropic Batches API
+              requires ^[a-zA-Z0-9_-]{1,64}$, so the first launch was rejected
+              at batch creation with NO tokens billed**; separator changed to
+              '_' (commit 668dc39). Re-launched: anthropic generation batch
+              msgbatch_01KwhnnFSx59KY4EgehH4sfT created OK, 160 requests
+              processing. Runs gen→repair→judge per provider in the background.
+next action : on background completion — S05: score both providers, write the
+              findings report (template check vs main-repo bedrock 24 first),
+              annotate spec §13, thresholds verdict. Raw results land in
+              apps/eval-generability/results/live-*/ (committable).
+blockers    : none (S04 executing). If the session ends mid-run, results are
+              file-durable per-phase; resume S05 from results/live-*/.
 ```
 
 # Blockers
