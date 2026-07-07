@@ -25,6 +25,15 @@ Flash**, **Gemini 3.5 Flash**, **Claude Haiku 4.5**, **Claude Sonnet 5**. Gemini
 `− 100% + ⌂` control (top-right of the scene) zooms and resets. The view persists
 while you edit the source and resets on each new generation.
 
+**See and edit the prompt.** The **Prompt ▸** button opens an editable view of the
+exact prompt sent to the model — the **system** prompt (the pocket spec + the
+demo's syntax rules) and the **user** prompt (instruction + your source). After a
+normal generation it fills in with what was actually sent. Edit either textarea,
+tick **use this edited prompt**, and Generate runs your version verbatim (great
+for testing prompt/spec changes live without touching any file). `↻ Load default`
+recomposes the prompt from the text above. The saved record keeps whichever
+prompt actually produced the scene.
+
 **Cost per generation.** Each run shows an **estimated cost** (`est. cost
 $0.00…`) plus the input/output token counts, computed from the response's token
 usage × the model's list price (Anthropic docs + ai.google.dev, 2026-07). It's

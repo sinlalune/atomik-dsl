@@ -87,12 +87,15 @@ async function handleGenerate(req, res) {
   const text = (payload.text || '').trim();
   const key = payload.model || DEFAULT_MODEL;
   const m = MODELS[key];
-  if (!text) return json(res, 400, { error: 'empty text' });
+  const custom = payload.prompt && typeof payload.prompt.user === 'string' && payload.prompt.user.trim();
+  if (!text && !custom) return json(res, 400, { error: 'empty text (and no custom prompt)' });
   if (!m) return json(res, 400, { error: 'unknown model "' + key + '"' });
   if (!process.env[m.provider.envKey]) return json(res, 500, { error: 'server missing ' + m.provider.envKey + ' (run `npm run demo` with keys in .env)' });
 
+  // use the edited prompt verbatim if the client sent one, else compose it
+  const item = custom ? { system: payload.prompt.system || '', user: payload.prompt.user } : composeItem(text, !!payload.teaching);
   const t0 = Date.now();
-  const r = await m.provider.generateOne(composeItem(text, !!payload.teaching), m.modelId);
+  const r = await m.provider.generateOne(item, m.modelId);
   if (r.error) return json(res, 502, { error: r.error, model: m.label });
   const atomik = extractScene(r.text || '');
   if (!atomik) return json(res, 502, { error: 'model returned no atomik source', model: m.label });
@@ -102,8 +105,19 @@ async function handleGenerate(req, res) {
     atomik, model: m.label, took: Math.max(0, Date.now() - t0),
     nodes: ir.nodes.length, relations: ir.relations.length,
     errorCount: ir.diagnostics.filter((d) => d.severity === 'error').length, renders: ir.nodes.length > 0,
-    inputTokens: usage.inputTokens, outputTokens: usage.outputTokens, cost: costUSD(key, usage)
+    inputTokens: usage.inputTokens, outputTokens: usage.outputTokens, cost: costUSD(key, usage),
+    custom: !!custom, prompt: { system: item.system, user: item.user }   // reflect exactly what was sent
   });
+}
+
+/* Compose (but don't run) the prompt — lets the UI show/edit it before generating. */
+async function handlePrompt(req, res) {
+  let p;
+  try { p = JSON.parse(await readBody(req)); } catch { return json(res, 400, { error: 'bad JSON body' }); }
+  const text = (p.text || '').trim();
+  if (!text) return json(res, 400, { error: 'empty text' });
+  const item = composeItem(text, !!p.teaching);
+  return json(res, 200, { system: item.system, user: item.user });
 }
 
 /* -------- save library (folder read back by the demo) -------- */
@@ -114,24 +128,27 @@ async function handleSave(req, res) {
   const atomik = (p.atomik || '').trim();
   const key = p.model || DEFAULT_MODEL;
   const m = MODELS[key];
-  if (!text || !atomik) return json(res, 400, { error: 'need both the input text and the atomik source' });
+  const customPrompt = p.prompt && typeof p.prompt.user === 'string' && p.prompt.user.trim();
+  if (!atomik || (!text && !customPrompt)) return json(res, 400, { error: 'need the atomik source and either input text or a custom prompt' });
   if (!m) return json(res, 400, { error: 'unknown model "' + key + '"' });
 
   const ir = A.parse(atomik);
   const diagnostics = ir.diagnostics;
   const savedAt = new Date().toISOString();
-  const id = savedAt.replace(/[:.]/g, '-') + '_' + key + '_' + slugify(text);
+  const id = savedAt.replace(/[:.]/g, '-') + '_' + key + '_' + slugify(text || 'custom-prompt');
   const record = {
     id, savedAt,
     model: { key, label: m.label, id: m.modelId },
     teaching: !!p.teaching,
+    customPrompt: !!customPrompt,
     metadata: {
       nodes: ir.nodes.length, relations: ir.relations.length,
       errorCount: diagnostics.filter((d) => d.severity === 'error').length, took: p.took || null,
       inputTokens: p.inputTokens || null, outputTokens: p.outputTokens || null,
       cost: p.cost != null ? p.cost : null, pricePerMTok: PRICING[key] || null
     },
-    prompt: composeItem(text, !!p.teaching),   // exactly what was sent (system = pocket spec, user = instruction+source)
+    // save the prompt actually used: the edited one if provided, else the composed default
+    prompt: customPrompt ? { system: p.prompt.system || '', user: p.prompt.user } : composeItem(text, !!p.teaching),
     inputText: text,
     source: atomik,
     ir,
@@ -187,6 +204,15 @@ const PANEL_STYLE = `
   #genzoom span{font-size:11px;color:var(--muted);min-width:38px;text-align:center}
   svg.scene{cursor:grab}
   svg.scene.grabbing{cursor:grabbing}
+  #genprompt{display:none;padding:10px 16px;border-bottom:1px solid var(--line);background:var(--panel)}
+  #genprompt.open{display:block}
+  #genprompt .prow{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:8px}
+  #genprompt label.h{font-size:12px;color:var(--muted);display:block;margin:8px 0 3px}
+  #genprompt textarea{width:100%;box-sizing:border-box;font:12px/1.45 ui-monospace,SFMono-Regular,Menlo,monospace;
+    padding:8px 10px;border:1px solid var(--line);border-radius:8px;background:#fff;color:var(--ink);resize:vertical}
+  #genpromptsys{min-height:120px;max-height:300px}
+  #genpromptuser{min-height:90px;max-height:240px}
+  #genprompt .note{font-size:11px;color:var(--muted)}
 </style>`;
 
 const MODEL_OPTIONS = Object.entries(MODELS)
@@ -201,10 +227,22 @@ const PANEL_HTML = `
     <div class="genrow">
       <button id="genbtn" class="primary">Generate &amp; render</button>
       <button id="gensave" title="save model + prompt + source + IR + diagnostics to the saved/ folder">Save</button>
+      <button id="genprompttoggle" title="show / edit the exact prompt sent to the model">Prompt ▸</button>
     </div>
     <select id="gensaved" title="reload a saved run"><option value="">— saved runs —</option></select>
   </div>
   <div id="genstatus">Paste text, pick a model, and Generate. The atomik lands in the Source tab below — edit it and the scene re-renders live. Diagnostics there are usually non-fatal (the scene still renders). Zoom/pan the scene with the wheel and drag.</div>
+</div>
+<div id="genprompt">
+  <div class="prow">
+    <button id="genpromptload">↻ Load default from text</button>
+    <label><input type="checkbox" id="genpromptuse"> use this edited prompt when generating</label>
+    <span class="note">The exact prompt sent to the model. System = the pocket spec + demo rules; user = instruction + your source. Edit either and tick the box to generate from your version.</span>
+  </div>
+  <label class="h" for="genpromptsys">System prompt</label>
+  <textarea id="genpromptsys" spellcheck="false"></textarea>
+  <label class="h" for="genpromptuser">User prompt</label>
+  <textarea id="genpromptuser" spellcheck="false"></textarea>
 </div>`;
 
 const PANEL_SCRIPT = `
@@ -213,8 +251,29 @@ const PANEL_SCRIPT = `
   var btn = document.getElementById('genbtn'), save = document.getElementById('gensave'),
       ta = document.getElementById('gentext'), sel = document.getElementById('genmodel'),
       teach = document.getElementById('genteach'), saved = document.getElementById('gensaved'),
-      st = document.getElementById('genstatus');
+      st = document.getElementById('genstatus'),
+      pBox = document.getElementById('genprompt'), pToggle = document.getElementById('genprompttoggle'),
+      pLoad = document.getElementById('genpromptload'), pUse = document.getElementById('genpromptuse'),
+      pSys = document.getElementById('genpromptsys'), pUsr = document.getElementById('genpromptuser');
   var last = { nodes: 0, relations: 0, errorCount: 0 };
+
+  async function loadPrompt() {
+    var text = ta.value.trim();
+    if (!text) { st.textContent = 'Type some text above, then load the prompt.'; return; }
+    try {
+      var res = await fetch('/api/prompt', { method: 'POST', headers: { 'content-type': 'application/json' },
+        body: JSON.stringify({ text: text, model: sel.value, teaching: teach.checked }) });
+      var j = await res.json();
+      if (j.error) { st.textContent = 'Prompt error: ' + j.error; return; }
+      pSys.value = j.system; pUsr.value = j.user;
+    } catch (e) { st.textContent = 'Prompt request failed: ' + e.message; }
+  }
+  pToggle.addEventListener('click', function () {
+    var open = pBox.classList.toggle('open');
+    pToggle.textContent = open ? 'Prompt ▾' : 'Prompt ▸';
+    if (open && !pSys.value && !pUsr.value) loadPrompt();
+  });
+  pLoad.addEventListener('click', loadPrompt);
 
   function applySource(atomik) { var src = document.getElementById('src'); src.value = atomik; src.dispatchEvent(new Event('input')); var t = document.getElementById('tab-source'); if (t) t.click(); }
   function fmtCost(c) { return (c == null) ? 'n/a' : '$' + (c < 0.001 ? c.toFixed(6) : c.toFixed(4)); }
@@ -222,30 +281,35 @@ const PANEL_SCRIPT = `
 
   async function gen() {
     var text = ta.value.trim();
-    if (!text) { st.textContent = 'Paste some text first.'; return; }
-    btn.disabled = true; st.textContent = 'Generating with ' + sel.options[sel.selectedIndex].text + '…';
+    var useCustom = pUse.checked && (pSys.value.trim() || pUsr.value.trim());
+    if (!text && !useCustom) { st.textContent = 'Paste some text first (or edit the prompt and tick “use this edited prompt”).'; return; }
+    var body = { model: sel.value, text: text, teaching: teach.checked };
+    if (useCustom) body.prompt = { system: pSys.value, user: pUsr.value };
+    btn.disabled = true; st.textContent = 'Generating with ' + sel.options[sel.selectedIndex].text + (useCustom ? ' (edited prompt)' : '') + '…';
     try {
-      var res = await fetch('/api/generate', { method: 'POST', headers: { 'content-type': 'application/json' },
-        body: JSON.stringify({ text: text, model: sel.value, teaching: teach.checked }) });
+      var res = await fetch('/api/generate', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify(body) });
       var j = await res.json();
       if (j.error) { st.textContent = 'Generation error (' + (j.model || sel.value) + '): ' + j.error; btn.disabled = false; return; }
       resetZoom(); applySource(j.atomik);
       last = { nodes: j.nodes, relations: j.relations, errorCount: j.errorCount, took: j.took, cost: j.cost, inputTokens: j.inputTokens, outputTokens: j.outputTokens };
+      if (!useCustom && j.prompt) { pSys.value = j.prompt.system; pUsr.value = j.prompt.user; }  // reflect the prompt actually sent
       var summary = j.nodes + ' nodes, ' + j.relations + ' relations';
       if (j.errorCount) summary += ' — ' + j.errorCount + ' line(s) skipped (non-fatal; the scene still rendered — see Diagnostics)';
       var cost = '· est. cost ' + fmtCost(j.cost) + ' (' + fmtInt(j.inputTokens) + ' in / ' + fmtInt(j.outputTokens) + ' out tokens)';
-      st.textContent = 'Rendered by ' + j.model + ' in ' + j.took + ' ms — ' + summary + ' ' + cost + '. Edit the source or Save it.';
+      st.textContent = 'Rendered by ' + j.model + (j.custom ? ' (edited prompt)' : '') + ' in ' + j.took + ' ms — ' + summary + ' ' + cost + '. Edit the source or Save it.';
     } catch (e) { st.textContent = 'Request failed: ' + e.message; }
     btn.disabled = false;
   }
 
   async function doSave() {
     var text = ta.value.trim(), atomik = document.getElementById('src').value.trim();
-    if (!text || !atomik) { st.textContent = 'Generate something first, then Save.'; return; }
+    var hasPrompt = pSys.value.trim() || pUsr.value.trim();
+    if (!atomik || (!text && !hasPrompt)) { st.textContent = 'Generate something first, then Save.'; return; }
     save.disabled = true;
+    var body = { text: text, model: sel.value, teaching: teach.checked, atomik: atomik, took: last.took, cost: last.cost, inputTokens: last.inputTokens, outputTokens: last.outputTokens };
+    if (hasPrompt) body.prompt = { system: pSys.value, user: pUsr.value };  // save the prompt currently shown
     try {
-      var res = await fetch('/api/save', { method: 'POST', headers: { 'content-type': 'application/json' },
-        body: JSON.stringify({ text: text, model: sel.value, teaching: teach.checked, atomik: atomik, took: last.took, cost: last.cost, inputTokens: last.inputTokens, outputTokens: last.outputTokens }) });
+      var res = await fetch('/api/save', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify(body) });
       var j = await res.json();
       if (j.error) { st.textContent = 'Save failed: ' + j.error; }
       else { st.textContent = 'Saved → saved/' + j.id + '.json (model, prompt, source, IR, diagnostics).'; await loadList(); }
@@ -274,6 +338,7 @@ const PANEL_SCRIPT = `
       if (r.error) { st.textContent = 'Load failed: ' + r.error; return; }
       ta.value = r.inputText || ''; teach.checked = !!r.teaching;
       if (r.model && MODELhas(r.model.key)) sel.value = r.model.key;
+      if (r.prompt) { pSys.value = r.prompt.system || ''; pUsr.value = r.prompt.user || ''; pUse.checked = !!r.customPrompt; }
       last = { nodes: r.metadata.nodes, relations: r.metadata.relations, errorCount: r.metadata.errorCount, took: r.metadata.took, cost: r.metadata.cost, inputTokens: r.metadata.inputTokens, outputTokens: r.metadata.outputTokens };
       resetZoom(); applySource(r.source);
       st.textContent = 'Loaded saved run · ' + r.model.label + ' · ' + r.metadata.nodes + ' nodes · ' +
@@ -344,6 +409,7 @@ function json(res, code, obj) { res.writeHead(code, { 'content-type': 'applicati
 const server = createServer(async (req, res) => {
   try {
     if (req.method === 'POST' && req.url === '/api/generate') return void await handleGenerate(req, res);
+    if (req.method === 'POST' && req.url === '/api/prompt') return void await handlePrompt(req, res);
     if (req.method === 'POST' && req.url === '/api/save') return void await handleSave(req, res);
     if (req.method === 'GET' && req.url === '/api/saved') return void json(res, 200, listSaved());
     if (req.method === 'GET' && req.url.startsWith('/api/saved/')) return void handleGetSaved(res, decodeURIComponent(req.url.slice('/api/saved/'.length)));
