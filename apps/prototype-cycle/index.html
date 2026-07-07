@@ -140,17 +140,15 @@
   </section>
 </main>
 <script>
-/* atomik core — prototype implementation of:
- *   - lang-core subset: parse + ground(stub) + validate + IR build (irVersion 0.1)
- *   - render-core subset: pure runtime present(), cycle layout (+ fallback grid)
- * Conforms to atomik_dsl_spec_v0_3.md and atomik_render_core_spec_v0_1.md,
- * including errata C1 (reveal-anywhere hides initially), C2 (set forbidden in
- * rules), C3 (transient notes), C4 (gated-step semantics).
- * UMD-ish: usable from Node (tests) and the browser (prototype UI).
+/* atomik lang kernel — text → Scene IR (irVersion 0.1).
+ * Tokenize, parse, ground (stub), validate (both profiles), fill defaults,
+ * compute initial visibility (D4/C1), reject set/require in rules (C2).
+ * Conforms to atomik_dsl_spec_v0_3.md (v0.3.1) and render-core spec §2.
+ * DOM-free, dependency-free. UMD-ish: Node (require) or browser (AtomikLang).
  */
 (function (root, factory) {
   if (typeof module !== 'undefined' && module.exports) module.exports = factory();
-  else root.Atomik = factory();
+  else root.AtomikLang = factory();
 })(typeof self !== 'undefined' ? self : this, function () {
   'use strict';
 
@@ -759,6 +757,26 @@
     return m[a.length][b.length];
   }
 
+  return {
+    parse: parse,
+    constants: { STATUSES: STATUSES, CLASSES: CLASSES, ROLES: ROLES, ARCHETYPES: ARCHETYPES }
+  };
+});
+
+/* atomik render kernel — Scene IR → pure runtime + layout geometry.
+ * present() implements render-core spec §5: RS1 purity over
+ * (currentStep, inputs, committed), C4 gated steps, C3 transient notes,
+ * edge effective visibility. layout() implements §6 for `cycle`
+ * (+ announced fallback grid). AST interpretation only — no eval.
+ * No DOM, never re-reads source text (D1).
+ * UMD-ish: Node (require) or browser (AtomikRender).
+ */
+(function (root, factory) {
+  if (typeof module !== 'undefined' && module.exports) module.exports = factory();
+  else root.AtomikRender = factory();
+})(typeof self !== 'undefined' ? self : this, function () {
+  'use strict';
+
   /* ---------------- runtime: pure present() ---------------- */
   function evalExpr(e, env) {
     switch (e.op) {
@@ -1108,13 +1126,33 @@
   }
 
   return {
-    parse: parse,
     present: present,
     layout: layout,
     layoutCycle: layoutCycle,
     wrapLabel: wrapLabel,
-    nodeBox: nodeBox,
-    constants: { STATUSES: STATUSES, CLASSES: CLASSES, ROLES: ROLES, ARCHETYPES: ARCHETYPES }
+    nodeBox: nodeBox
+  };
+});
+
+/* atomik dsl-core — the package's public surface.
+ * lang (text → Scene IR) and render (IR → pure runtime + layout) assembled
+ * behind the single `Atomik` object consumers know; the internal split is
+ * not part of the contract. Browser load order: lang.js, render.js, index.js.
+ */
+(function (root, factory) {
+  if (typeof module !== 'undefined' && module.exports)
+    module.exports = factory(require('./lang.js'), require('./render.js'));
+  else root.Atomik = factory(root.AtomikLang, root.AtomikRender);
+})(typeof self !== 'undefined' ? self : this, function (lang, render) {
+  'use strict';
+  return {
+    parse: lang.parse,
+    present: render.present,
+    layout: render.layout,
+    layoutCycle: render.layoutCycle,
+    wrapLabel: render.wrapLabel,
+    nodeBox: render.nodeBox,
+    constants: lang.constants
   };
 });
 

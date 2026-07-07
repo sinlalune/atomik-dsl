@@ -7,7 +7,7 @@ timestamp: 2026-07-07T00:00:00Z
 atomik:
   id: CP-DSL-001
   status: active
-  current_step: S04
+  current_step: S05
   base_commit: ba27ef9
 ---
 
@@ -57,7 +57,7 @@ Completeness rule: every document of this repository appears below at least once
 - [x] S01 Initialize the repository from the dual-plane template; record `base_commit` in the frontmatter and ledger; verify `npm test` green from the package layout.
 - [x] S02 Fold C1–C4 into the language spec → v0.3.1 (normative sections + changelog); update the pocket spec accordingly; re-check its token budget.
 - [x] S03 Add render-core §6.2 implementation notes (cycle entry); mark C1–C4 in §10 as "folded at v0.3.1".
-- [ ] S04 Split `src/atomik_core.js` → `src/lang.js` / `src/render.js` / `src/index.js`; keep the UMD/public surface identical; `npm test` and `npm run build:prototype` both green.
+- [x] S04 Split `src/atomik_core.js` → `src/lang.js` / `src/render.js` / `src/index.js`; keep the UMD/public surface identical; `npm test` and `npm run build:prototype` both green.
 - [ ] S05 Add `index.d.ts`; verify guide cross-references against v0.3.1 wording.
 - [ ] S06 Same-work-unit docs: module note, log.md, register, ledger; close the path.
 
@@ -65,16 +65,20 @@ Completeness rule: every document of this repository appears below at least once
 
 ```text
 base commit : ba27ef9 (ba27ef97060069d36d14c7da6674be29ce7d9e21, branch master — template init)
-changed     : S03 — atomik_render_core_spec_v0_1.md: §6.2 implementation notes added
-              (cycle: ring selection, rotation, radius formula, satellite fan, parked
-              row, ring-arc edges, L4 reservation); §10 marked folded at v0.3.1 and
-              gains C4 (was only in §5); intro "three errata C1–C3" corrected to four;
-              inline "candidate" marks retitled folded. Contract table untouched.
-tests       : 41 passing / 0 failed (node, packages/dsl-core), fixture parity green,
-              fixture file untouched
-next action : S04 — split src/atomik_core.js → src/lang.js / src/render.js /
-              src/index.js, public surface identical; read prototype build.mjs +
-              atomik_ui.js first (conditional trigger); npm test + build:prototype green
+changed     : S04 — kernel split verbatim: src/lang.js (parse→IR + validation,
+              exports parse+constants), src/render.js (present + layouts),
+              src/index.js (assembles identical public surface: parse, present,
+              layout, layoutCycle, wrapLabel, nodeBox, constants); atomik_core.js
+              deleted; package main → src/index.js; test requires the package entry;
+              build.mjs concatenates lang/render/index at @CORE@; index.html rebuilt.
+              Verified: old-vs-new A/B equivalence (28 comparisons, byte-identical
+              JSON), browser-branch VM smoke (globals assemble, fixture deep-equal,
+              C4 gate, cycle ring), module note updated.
+tests       : 41 passing / 0 failed via the public entry; npm run build:prototype
+              green; fixture parity green, fixture file untouched
+next action : S05 — add index.d.ts (SceneIR, parse, present, layout); verify guide
+              (fr) cross-references against v0.3.1 wording (conditional trigger:
+              read the guide first)
 blockers    : none
 ```
 

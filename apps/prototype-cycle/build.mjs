@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /* Rebuilds apps/prototype-cycle/index.html from repo sources:
- *   packages/dsl-core/src/atomik_core.js  (kernel)
+ *   packages/dsl-core/src/{lang,render,index}.js  (kernel, browser load order)
  *   apps/prototype-cycle/atomik_ui.js     (painter/UI, with @PRESET_*@ placeholders)
  *   apps/prototype-cycle/template.html    (layout + CSS, with @CORE@/@UI@ markers)
  *   packages/dsl-core/fixtures/…          (presets + golden north-star source)
@@ -14,7 +14,9 @@ const here = dirname(fileURLToPath(import.meta.url));
 const repo = join(here, '..', '..');
 const pkg = join(repo, 'packages', 'dsl-core');
 
-const core = readFileSync(join(pkg, 'src', 'atomik_core.js'), 'utf8');
+const core = ['lang.js', 'render.js', 'index.js']
+  .map((f) => readFileSync(join(pkg, 'src', f), 'utf8'))
+  .join('\n');
 let ui = readFileSync(join(here, 'atomik_ui.js'), 'utf8');
 const tpl = readFileSync(join(here, 'template.html'), 'utf8');
 const golden = JSON.parse(readFileSync(join(pkg, 'fixtures', 'atomik_scene_ir_golden_northstar_v0_1.json'), 'utf8'));

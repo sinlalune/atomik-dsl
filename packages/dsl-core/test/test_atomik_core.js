@@ -1,7 +1,7 @@
 'use strict';
 const fs = require('fs');
 const path = require('path');
-const Atomik = require(path.join(__dirname, '..', 'src', 'atomik_core.js'));
+const Atomik = require(path.join(__dirname, '..')); // public entry (package.json main)
 
 let pass = 0, fail = 0;
 function ok(cond, label) {

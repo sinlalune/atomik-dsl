@@ -3,7 +3,7 @@
   "private": true,
   "version": "0.3.0",
   "description": "atomik DSL kernels: lang (parse/validate/IR) + render (pure runtime, layout). Language v0.3, Scene IR 0.1. Zero dependencies, DOM-free.",
-  "main": "src/atomik_core.js",
+  "main": "src/index.js",
   "scripts": {
     "test": "node test/test_atomik_core.js"
   }

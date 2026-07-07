@@ -10,7 +10,9 @@ timestamp: 2026-07-07T00:00:00Z
 
 ## What it owns
 
-Tokenize/parse/ground(stub)/validate of atomik v0.3 source; Scene IR assembly (irVersion 0.1, fully explicit, line-provenanced); both validation profiles (`authored` / `generated`); the pure runtime `present()` (visibility, gated steps per C4, reactive rules, notes, edge effective visibility); `layout()` with the `cycle` archetype (ring + satellites, deterministic) and an announced fallback grid; label wrapping and node sizing.
+Tokenize/parse/ground(stub)/validate of atomik v0.3 source (spec v0.3.1); Scene IR assembly (irVersion 0.1, fully explicit, line-provenanced); both validation profiles (`authored` / `generated`); the pure runtime `present()` (visibility, gated steps per C4, reactive rules, notes, edge effective visibility); `layout()` with the `cycle` archetype (ring + satellites, deterministic; formulas in render-core §6.2) and an announced fallback grid; label wrapping and node sizing.
+
+Internal layout (not part of the contract): `src/lang.js` (text → IR) / `src/render.js` (pure runtime + layout) / `src/index.js` (assembles the public `Atomik` surface; package `main`). In the browser the files load in that order and expose `AtomikLang` / `AtomikRender` / `Atomik`.
 
 ## Why it exists
 
@@ -61,7 +63,7 @@ See `apps/prototype-cycle/atomik_ui.js` (paint + interaction over the kernel) an
 
 ## Future extension points
 
-Canonical printer (`print`) for one-line rewrites and diff-stable formatting; internal `src/lang` / `src/render` split (CP-DSL-001); remaining archetypes against the layout contracts table; real resolver semantics for `unresolved` refs; `.d.ts` types.
+Canonical printer (`print`) for one-line rewrites and diff-stable formatting; remaining archetypes against the layout contracts table; real resolver semantics for `unresolved` refs; `.d.ts` types (CP-DSL-001 S05).
 
 ## Agent checklist
 
