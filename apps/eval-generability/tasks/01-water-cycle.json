@@ -1,0 +1,15 @@
+{
+  "id": "water-cycle",
+  "lang": "en",
+  "seed": "spec §9 minimal example; clean causal loop, G1 archetype stability",
+  "passage": "Water is constantly on the move. The sun heats oceans and lakes, and water evaporates into the air. High up, that vapour cools and condenses into clouds. When the droplets grow heavy enough they fall back as rain or snow — precipitation. The water collects in rivers and returns to the sea, where it evaporates again. The loop never stops.",
+  "vaultIndex": ["Water cycle"],
+  "allowedClaimStatuses": ["established", "supported"],
+  "teachingSequence": false,
+  "expectedArchetype": "cycle",
+  "properties": [
+    { "id": "four-stages", "check": "minNodes", "n": 4 },
+    { "id": "cyclic", "check": "directedEdges", "min": 4 },
+    { "id": "subject-grounded", "check": "nodeMatching", "pattern": "evapor|condens|precip|rain|collect", "min": 2 }
+  ]
+}

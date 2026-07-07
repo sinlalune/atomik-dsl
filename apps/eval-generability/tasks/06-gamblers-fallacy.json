@@ -1,0 +1,15 @@
+{
+  "id": "gamblers-fallacy",
+  "lang": "en",
+  "seed": "batch-04 P2; refutation of an intuitive-but-false belief (Ped-2, Ped-3)",
+  "passage": "After a roulette wheel lands on red five times in a row, it feels like black is 'due'. This is the gambler's fallacy. Each spin is independent — the wheel has no memory — so the probability of black on the next spin is still about 48.6%, exactly what it was on the first spin. Teach against this: acknowledge the strong intuition, then refute it with independence.",
+  "vaultIndex": [],
+  "allowedClaimStatuses": ["established", "supported"],
+  "teachingSequence": true,
+  "expectedArchetype": "flow",
+  "properties": [
+    { "id": "belief-marked-false", "check": "nodeStatusMatching", "pattern": "due|red|black|overdue", "status": "misconception" },
+    { "id": "refutation-edge", "check": "relationClass", "class": "refutation", "min": 1 },
+    { "id": "no-fabricated-links", "check": "minNodes", "n": 2 }
+  ]
+}

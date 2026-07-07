@@ -1,0 +1,15 @@
+{
+  "id": "falling-objects",
+  "lang": "en",
+  "seed": "north-star / batch-04 P1; misconception marked false + refutation (Ped-2, Ped-3, G3)",
+  "passage": "Many people believe heavier objects fall faster than light ones. In fact, in the absence of air, all objects fall at the same rate — a hammer and a feather dropped together in a vacuum land at the same moment. The difference we usually see is caused by air resistance, not by mass. Teach this by first drawing out the common belief, then confronting it with the vacuum experiment, then explaining why.",
+  "vaultIndex": ["Free fall"],
+  "allowedClaimStatuses": ["established", "supported"],
+  "teachingSequence": true,
+  "expectedArchetype": "flow",
+  "properties": [
+    { "id": "belief-marked-false", "check": "nodeStatusMatching", "pattern": "heav|fall faster|mass", "status": "misconception" },
+    { "id": "refutation-edge", "check": "relationClass", "class": "refutation", "min": 1 },
+    { "id": "has-steps", "check": "hasSteps" }
+  ]
+}

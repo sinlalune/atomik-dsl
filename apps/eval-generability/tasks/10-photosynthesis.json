@@ -1,0 +1,14 @@
+{
+  "id": "photosynthesis",
+  "lang": "en",
+  "seed": "clean process with a grounded subject; G2 (one real note, tempting fabrications)",
+  "passage": "In photosynthesis, a plant's leaves absorb sunlight. Chlorophyll captures the light energy and uses it to split water and fix carbon dioxide from the air into glucose, releasing oxygen as a by-product. The glucose stores chemical energy the plant uses to grow. The only note that exists in the vault is the one on photosynthesis itself.",
+  "vaultIndex": ["Photosynthesis"],
+  "allowedClaimStatuses": ["established", "supported"],
+  "teachingSequence": false,
+  "expectedArchetype": "flow",
+  "properties": [
+    { "id": "steps-present", "check": "nodeMatching", "pattern": "light|sun|chloroph|water|carbon|glucose|oxygen", "min": 3 },
+    { "id": "directed", "check": "directedEdges", "min": 2 }
+  ]
+}

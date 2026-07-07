@@ -1,0 +1,14 @@
+{
+  "id": "carte-cycle-carbone",
+  "lang": "fr",
+  "seed": "FR causal loop with polarity; rupture O (sign) + G1 stability in French",
+  "passage": "Le cycle du carbone relie l'atmosphère, les océans et la biosphère. Les plantes absorbent le CO2 par photosynthèse, ce qui réduit le carbone atmosphérique. La respiration et la décomposition le renvoient dans l'air, ce qui l'augmente. Les océans en dissolvent une partie, mais un réchauffement réduit leur capacité d'absorption, renforçant l'accumulation. C'est une boucle avec des effets qui se renforcent et d'autres qui s'équilibrent.",
+  "vaultIndex": ["Cycle du carbone"],
+  "allowedClaimStatuses": ["established", "supported", "contested"],
+  "teachingSequence": false,
+  "expectedArchetype": "cycle",
+  "properties": [
+    { "id": "reservoirs", "check": "nodeMatching", "pattern": "atmosph|océan|ocean|plante|photosynth|respiration|carbone|co2", "min": 3 },
+    { "id": "signed", "check": "signedEdges", "min": 1 }
+  ]
+}

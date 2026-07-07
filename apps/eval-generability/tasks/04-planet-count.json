@@ -1,0 +1,16 @@
+{
+  "id": "planet-count",
+  "lang": "en",
+  "seed": "spec §9.2 disputed fact; evidence-vs-evidence, claim as endpoint (P, E, G4)",
+  "passage": "How many planets are in the Solar System? The 2006 IAU resolution defined eight planets and reclassified Pluto as a dwarf planet. Before 2006, the standard count taught for decades was nine. The IAU decision supersedes the older consensus, but the reclassification remains debated by some planetary scientists.",
+  "vaultIndex": ["Planet", "IAU 2006 resolution"],
+  "allowedClaimStatuses": ["contested", "reported", "supported"],
+  "teachingSequence": false,
+  "expectedArchetype": "flow",
+  "properties": [
+    { "id": "two-sources", "check": "evidenceCount", "min": 2 },
+    { "id": "dated", "check": "datedEvidence", "min": 1 },
+    { "id": "targets-claim", "check": "relationToClaim", "min": 1 },
+    { "id": "evidence-vs-evidence", "check": "evidenceEdge" }
+  ]
+}

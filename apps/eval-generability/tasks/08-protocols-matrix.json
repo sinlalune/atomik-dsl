@@ -1,0 +1,13 @@
+{
+  "id": "protocols-matrix",
+  "lang": "en",
+  "seed": "spec §9.4; categorical comparison → data/matrix (rupture I)",
+  "passage": "TCP and UDP are two transport protocols with different tradeoffs. TCP is connection-oriented and reliable: it guarantees delivery and ordering, at the cost of being slower. UDP is connectionless and best-effort: it does not guarantee delivery, which makes it faster and lighter. Applications choose between them based on whether reliability or speed matters more.",
+  "vaultIndex": [],
+  "allowedClaimStatuses": ["established", "supported"],
+  "teachingSequence": false,
+  "expectedArchetype": "matrix",
+  "properties": [
+    { "id": "two-subjects", "check": "nodeMatching", "pattern": "tcp|udp", "min": 1 }
+  ]
+}

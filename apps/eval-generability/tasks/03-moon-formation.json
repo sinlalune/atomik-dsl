@@ -1,0 +1,14 @@
+{
+  "id": "moon-formation",
+  "lang": "en",
+  "seed": "batch-03 passage C; hypothesis→fact promotion (G4), suppressed evidence/anomaly/alternatives",
+  "passage": "The leading hypothesis is that the Moon formed when a Mars-sized body struck the early Earth, ejecting debris that coalesced in orbit. This giant-impact model explains the Moon's small iron core and the isotopic similarity between Earth and Moon. It is widely accepted, but some features — such as the nearly identical isotopic composition — remain hard to reconcile with a single simple impact scenario, and alternative models have been proposed.",
+  "vaultIndex": ["Giant-impact hypothesis"],
+  "allowedClaimStatuses": ["hypothesis", "supported", "contested", "reported"],
+  "teachingSequence": false,
+  "expectedArchetype": "flow",
+  "properties": [
+    { "id": "chain-present", "check": "nodeMatching", "pattern": "impact|collision|debris|moon|body", "min": 3 },
+    { "id": "supporting-evidence-kept", "check": "nodeMatching", "pattern": "iron core|isotop|similar", "min": 1 }
+  ]
+}

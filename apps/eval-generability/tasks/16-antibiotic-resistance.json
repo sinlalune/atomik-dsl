@@ -1,0 +1,16 @@
+{
+  "id": "antibiotic-resistance",
+  "lang": "en",
+  "seed": "misconception + causal mechanism; Ped-2 + G3 (common wrong causal story), teaching sequence",
+  "passage": "A common misconception is that a person's body 'becomes resistant' to antibiotics. It doesn't — the bacteria do. When antibiotics kill off susceptible bacteria, any that happen to carry resistance genes survive and multiply, so the resistant strain comes to dominate. Overuse of antibiotics speeds this selection. Teach against the personal-resistance belief: elicit it, confront it with the selection mechanism, then explain natural selection at the population level.",
+  "vaultIndex": ["Antibiotic resistance", "Natural selection"],
+  "allowedClaimStatuses": ["established", "supported"],
+  "teachingSequence": true,
+  "expectedArchetype": "flow",
+  "properties": [
+    { "id": "belief-marked-false", "check": "nodeStatusMatching", "pattern": "body|person|becomes resistant|immune", "status": "misconception" },
+    { "id": "refutation", "check": "relationClass", "class": "refutation", "min": 1 },
+    { "id": "mechanism", "check": "nodeMatching", "pattern": "bacteria|resistance gene|survive|select|multipl", "min": 2 },
+    { "id": "has-steps", "check": "hasSteps" }
+  ]
+}

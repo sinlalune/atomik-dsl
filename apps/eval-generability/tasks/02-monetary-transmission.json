@@ -1,0 +1,15 @@
+{
+  "id": "monetary-transmission",
+  "lang": "en",
+  "seed": "batch-03 passage B; epistemic flattening (G3), lost contestation and delay",
+  "passage": "When the central bank raises the policy rate, borrowing becomes more expensive, so firms and households cut credit-financed spending. Higher rates also tend to strengthen the currency, which makes imports cheaper and can dampen inflation directly. The effect on investment is less clear-cut and operates with long and variable lags — some estimates place the peak impact at 12–18 months. There is also an expectations channel that many economists judge at least as important as the direct cost-of-borrowing effect, though its magnitude is hard to pin down.",
+  "vaultIndex": ["Monetary policy transmission"],
+  "allowedClaimStatuses": ["contested", "hypothesis", "reported", "supported"],
+  "teachingSequence": false,
+  "expectedArchetype": "flow",
+  "properties": [
+    { "id": "channels-present", "check": "nodeMatching", "pattern": "rate|borrow|spend|currenc|import|invest|expectation|inflation", "min": 4 },
+    { "id": "investment-hedged", "check": "edgeClassNot", "pattern": "invest", "forbidden": ["fact"] },
+    { "id": "not-all-fact", "check": "edgeClassNot", "pattern": "expectation", "forbidden": ["fact"] }
+  ]
+}

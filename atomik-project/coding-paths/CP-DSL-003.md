@@ -7,7 +7,7 @@ timestamp: 2026-07-07T00:00:00Z
 atomik:
   id: CP-DSL-003
   status: active
-  current_step: S02
+  current_step: S03
   base_commit: e0dc2ef
 ---
 
@@ -67,7 +67,7 @@ Completeness rule: every document of this repository appears below at least once
 # Execution
 
 - [x] S01 Open the path: ledger with base commit and owner decisions; register D3 → active; ACTIVE.md; orientation roadmap; log. Record the credentials blocker (no ANTHROPIC_API_KEY in the environment yet — blocks S04 only).
-- [ ] S02 Task corpus: 16 annotated tasks under `apps/eval-generability/tasks/` + a task-schema note; validate annotations mechanically (vault indexes well-formed, property checks executable, status ceilings in the closed vocabulary).
+- [x] S02 Task corpus: 16 annotated tasks under `apps/eval-generability/tasks/` + a task-schema note; validate annotations mechanically (vault indexes well-formed, property checks executable, status ceilings in the closed vocabulary).
 - [ ] S03 Harness: prompt builder (R1/R2), Batches API client (official SDK, root devDependency), kernel-as-grader scorer, repair round, stability aggregation, judge-pass builder, JSONL logging; dry-run mode (no API) proves the full pipeline on canned outputs; npm script.
 - [ ] S04 Execute: generation batch (Haiku 4.5, full matrix) → repair batch → judge batch (Sonnet 5); commit raw logs. **Blocked on owner-provided API key.**
 - [ ] S05 Score + report: aggregate, write the findings document (template check first), annotate spec §13, thresholds verdict; guide check if author-facing findings.
@@ -77,12 +77,20 @@ Completeness rule: every document of this repository appears below at least once
 
 ```text
 base commit : e0dc2ef (branch master — CP-DSL-002 closed, 65/65 green)
-changed     : S01 — path opened; register D3 → active; ACTIVE.md points here;
-              orientation roadmap updated; owner decisions frozen (Haiku 4.5,
-              Sonnet 5 judge, full matrix, ≥80% misconception threshold,
-              SDK as root devDependency)
-tests       : 65 passing / 0 failed (unchanged)
-next action : S02 — author + validate the 16-task corpus
+changed     : S02 — 16 annotated tasks in apps/eval-generability/tasks/
+              (batch-03 A/B/C, batch-04 P1/P2/P4/P5, spec §9 cases, fresh FR/EN
+              passages); tasks/README.md schema + 15 property-check types;
+              validate_tasks.mjs (schema/status-ceiling/regex/param checks) wired
+              as npm run eval:validate — 16/16 valid. Proved achievability +
+              scorer logic against a hand-authored ideal for task 05 (0 error
+              diagnostics, status in ceiling, 0 fabricated links, all 3
+              properties PASS) and the G2 fabrication detector fires on an
+              out-of-vault link. Corpus spans all six G-ruptures + the archetype
+              set; four teaching tasks exercise misconception+refutation+gate.
+tests       : 65 passing / 0 failed; eval:validate 16/16; no kernel change
+next action : S03 — harness (prompt builder R1/R2, Batches client, kernel-as-
+              grader scorer, repair round, stability + judge builders, JSONL);
+              dry-run mode proves the pipeline with no API
 blockers    : S04 requires an Anthropic API key; environment has none
               (ANTHROPIC_API_KEY unset, no ant CLI). Owner provides before S04.
 ```

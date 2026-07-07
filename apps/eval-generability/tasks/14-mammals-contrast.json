@@ -1,0 +1,13 @@
+{
+  "id": "mammals-contrast",
+  "lang": "en",
+  "seed": "batch-04 P5; criterial vs incidental features (Ped-4), grouping",
+  "passage": "What makes an animal a mammal? Not where it lives: bats fly, whales swim, and platypuses lay eggs, yet all three are mammals. A shark swims like a whale but is not a mammal at all. The defining, criterial features are producing milk for the young and being warm-blooded. Habitat and even egg-laying are incidental — they vary across mammals and are not what makes the category.",
+  "vaultIndex": [],
+  "allowedClaimStatuses": ["established", "supported"],
+  "teachingSequence": false,
+  "expectedArchetype": "graph",
+  "properties": [
+    { "id": "examples", "check": "nodeMatching", "pattern": "bat|whale|platypus|shark", "min": 3 }
+  ]
+}

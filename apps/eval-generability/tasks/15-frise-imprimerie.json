@@ -1,0 +1,14 @@
+{
+  "id": "frise-imprimerie",
+  "lang": "fr",
+  "seed": "FR timeline; position-by-date (rupture B, timeline archetype)",
+  "passage": "L'imprimerie moderne se construit par étapes. Vers 1440, Gutenberg met au point les caractères mobiles en métal. En 1455 paraît la Bible à 42 lignes, premier grand livre imprimé en Europe. En 1500, on estime que des ateliers d'imprimerie existent dans plus de 250 villes européennes. En 1605 paraît le premier journal imprimé régulier. Placer ces jalons sur une frise rend visible l'accélération.",
+  "vaultIndex": ["Imprimerie"],
+  "allowedClaimStatuses": ["established", "supported", "reported"],
+  "teachingSequence": false,
+  "expectedArchetype": "timeline",
+  "properties": [
+    { "id": "jalons", "check": "nodeMatching", "pattern": "gutenberg|bible|caract|journal|imprim", "min": 2 },
+    { "id": "dates-positionnees", "check": "placesValue", "min": 3 }
+  ]
+}

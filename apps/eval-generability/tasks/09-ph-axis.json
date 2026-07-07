@@ -1,0 +1,14 @@
+{
+  "id": "ph-axis",
+  "lang": "en",
+  "seed": "spec §9.5; position-by-value on an axis (rupture B)",
+  "passage": "The pH scale runs from 0 to 14. Lemon juice is strongly acidic, around pH 2. Pure water is neutral at 7. Human blood is slightly alkaline, about 7.4. Household bleach is strongly basic, near 13. Placing these on a single axis makes the relative acidity immediately visible.",
+  "vaultIndex": [],
+  "allowedClaimStatuses": ["established", "supported"],
+  "teachingSequence": false,
+  "expectedArchetype": "axis",
+  "properties": [
+    { "id": "positioned", "check": "placesValue", "min": 3 },
+    { "id": "substances", "check": "nodeMatching", "pattern": "lemon|water|blood|bleach", "min": 3 }
+  ]
+}

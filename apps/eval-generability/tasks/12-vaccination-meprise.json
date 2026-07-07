@@ -1,0 +1,15 @@
+{
+  "id": "vaccination-meprise",
+  "lang": "fr",
+  "seed": "FR misconception teaching; Ped-2 + Ped-3 + G4 in French, hedged source",
+  "passage": "Une idée reçue tenace veut que les vaccins « surchargent » le système immunitaire des nourrissons. En réalité, un enfant rencontre chaque jour bien plus d'antigènes dans son environnement que dans l'ensemble de son calendrier vaccinal. Les études de sécurité à grande échelle n'ont pas trouvé de lien entre le nombre de vaccins et un affaiblissement immunitaire. Pour enseigner : faire émerger la crainte, la confronter aux données, puis expliquer la charge antigénique réelle.",
+  "vaultIndex": ["Système immunitaire"],
+  "allowedClaimStatuses": ["established", "supported", "reported"],
+  "teachingSequence": true,
+  "expectedArchetype": "flow",
+  "properties": [
+    { "id": "croyance-fausse", "check": "nodeStatusMatching", "pattern": "surcharge|vaccin|immunitaire|trop", "status": "misconception" },
+    { "id": "refutation", "check": "relationClass", "class": "refutation", "min": 1 },
+    { "id": "etapes", "check": "hasSteps" }
+  ]
+}

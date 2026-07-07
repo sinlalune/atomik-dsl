@@ -9,6 +9,7 @@
   ],
   "scripts": {
     "test": "node packages/dsl-core/test/test_atomik_core.js",
-    "build:prototype": "node apps/prototype-cycle/build.mjs"
+    "build:prototype": "node apps/prototype-cycle/build.mjs",
+    "eval:validate": "node apps/eval-generability/validate_tasks.mjs"
   }
 }

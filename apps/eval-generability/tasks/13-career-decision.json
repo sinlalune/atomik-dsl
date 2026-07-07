@@ -1,0 +1,13 @@
+{
+  "id": "career-decision",
+  "lang": "en",
+  "seed": "batch-03 passage A; no clear archetype (G1 worst case), value tension, soft confabulation risk",
+  "passage": "Okay, the Berlin offer. More money, obviously — about 20% — but higher cost of living, so maybe it cancels out. The team looked strong and the manager was impressive in the interview. BUT it's four days onsite and I'd lose remote, which honestly is half of why I'm still standing right now. Current job is boring but stable, and I've only just gotten comfortable. Moving means uprooting everything, a new language, no network there. Though maybe that's exactly the kick I need. I keep coming back to: am I optimizing for comfort or for growth. Money isn't really the point.",
+  "vaultIndex": [],
+  "allowedClaimStatuses": ["reported", "unspecified"],
+  "teachingSequence": false,
+  "expectedArchetype": null,
+  "properties": [
+    { "id": "captures-tension", "check": "nodeMatching", "pattern": "comfort|growth|remote|team|berlin|current|stable", "min": 3 }
+  ]
+}

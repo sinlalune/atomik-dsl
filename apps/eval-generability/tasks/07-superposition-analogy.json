@@ -1,0 +1,14 @@
+{
+  "id": "superposition-analogy",
+  "lang": "en",
+  "seed": "batch-04 P4 / spec §9.3; analogy then boundary (Ped-3 boundary variant)",
+  "passage": "A qubit in superposition is often compared to a spinning coin: while it spins, it is neither heads nor tails until it lands. The analogy helps at first, but it breaks down. Measurement of a qubit is not simply 'looking' at a coin, and entanglement — where two qubits share a state — has no spinning-coin counterpart at all. The lesson is as much where the analogy fails as where it holds.",
+  "vaultIndex": [],
+  "allowedClaimStatuses": ["supported", "hypothesis", "reported"],
+  "teachingSequence": false,
+  "expectedArchetype": "graph",
+  "properties": [
+    { "id": "analogy-edge", "check": "relationClass", "class": "analogy", "min": 1 },
+    { "id": "boundary-edge", "check": "relationClass", "class": "boundary", "min": 1 }
+  ]
+}
