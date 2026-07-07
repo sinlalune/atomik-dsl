@@ -49,8 +49,8 @@ Locked design decisions are numbered inside the specs (D1–D11 in render-core �
 ## Roadmap (register: `atomik-project/coding-paths/index.md`)
 
 ```text
-D1  v0.3.1 consolidation + package hardening      CP-DSL-001 (active)
-D2  second archetype: flow                        not opened
+D1  v0.3.1 consolidation + package hardening      CP-DSL-001 (done 2026-07-07)
+D2  second archetype: flow                        next — not opened
 D3  generability evaluation (small models ×
     adversarial corpus from batch-03)             not opened
 D4  workbench integration = main-repo M12         CP-DSL-004 (draft; executes in main repo)

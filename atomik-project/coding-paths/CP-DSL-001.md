@@ -6,8 +6,9 @@ tags: [coding-path, dsl, d1]
 timestamp: 2026-07-07T00:00:00Z
 atomik:
   id: CP-DSL-001
-  status: active
-  current_step: S06
+  status: done
+  closed: 2026-07-07
+  current_step: none
   base_commit: ba27ef9
 ---
 
@@ -59,26 +60,27 @@ Completeness rule: every document of this repository appears below at least once
 - [x] S03 Add render-core §6.2 implementation notes (cycle entry); mark C1–C4 in §10 as "folded at v0.3.1".
 - [x] S04 Split `src/atomik_core.js` → `src/lang.js` / `src/render.js` / `src/index.js`; keep the UMD/public surface identical; `npm test` and `npm run build:prototype` both green.
 - [x] S05 Add `index.d.ts`; verify guide cross-references against v0.3.1 wording.
-- [ ] S06 Same-work-unit docs: module note, log.md, register, ledger; close the path.
+- [x] S06 Same-work-unit docs: module note, log.md, register, ledger; close the path.
 
 # Current checkpoint
 
 ```text
 base commit : ba27ef9 (ba27ef97060069d36d14c7da6674be29ce7d9e21, branch master — template init)
-changed     : S05 — src/index.d.ts added (SceneIR per render-core §2.2 verbatim,
-              nullable scene/claim for partial validity; runtime + geometry types
-              from the current emit; UMD-typed via export-as-namespace) + package
-              "types" field; verified with tsc --strict on a consumer script
-              (positive narrowing + 4 @ts-expect-error negatives, exit 0).
-              Guide (fr): C1–C4 teaching verified present (Niveau 5, pièges 6);
-              stale references fixed — prototype path apps/prototype-cycle/
-              index.html, kernel src/{lang,render,index}.js, pocket ≈1,2K tokens,
-              spec §14 pointer, antisèche marks require AND set step-only.
-tests       : 41 passing / 0 failed; build:prototype green (index.html unchanged —
-              d.ts not injected); fixture untouched
-next action : S06 — closing audit: coverage list re-check, register/ledger/log
-              final states, mark path done, ACTIVE.md pointer
-blockers    : none
+path closed 2026-07-07 — definition-of-done audit:
+  ✓ language spec v0.3.1: C1–C4 in §4 grammar + §6 semantics (not errata-listed),
+    changelog §14; surface pragma unchanged (`atomik 0.3`)
+  ✓ pocket spec updated (effects, visibility/gate note), ≈1.2K ≤ 2K tokens
+  ✓ render-core §6.2 cycle notes (radius formula, rotation, satellites, parked
+    row); contractual table untouched; §10 lists C1–C4 as folded
+  ✓ kernel split lang/render/index, public API unchanged (28-comparison A/B +
+    browser-branch VM smoke); index.d.ts typed surface (tsc --strict consumer)
+  ✓ guide cross-references verified against v0.3.1 (it already taught C1–C4)
+  ✓ 41/41 green after every step; golden fixture byte-identical to base:
+    git diff ba27ef9..HEAD -- packages/dsl-core/fixtures/ → empty
+  ✓ module note, register, log.md, ledger updated at every step
+  ✓ no new document type created (doc-templates trigger never fired); no scope
+    widening into the Deliberately-excluded list
+next        : D2 (flow archetype) opens just-in-time from the register
 ```
 
 # Blockers

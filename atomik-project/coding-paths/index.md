@@ -18,7 +18,7 @@ Exception on record: `CP-DSL-004` was drafted before its turn, at explicit owner
 
 | milestone | scope | path | status |
 |---|---|---|---|
-| D1 | v0.3.1 consolidation (fold errata C1–C4) + package hardening (lang/render split, types) | [CP-DSL-001](./CP-DSL-001.md) | active |
+| D1 | v0.3.1 consolidation (fold errata C1–C4) + package hardening (lang/render split, types) | [CP-DSL-001](./CP-DSL-001.md) | done (2026-07-07) |
 | D2 | second archetype: `flow` (layered layout against the L-contracts) | — | not opened |
 | D3 | generability evaluation: pocket spec × small models × adversarial corpus (batch-03) | — | not opened |
 | D4 | workbench integration — fenced ` ```atomik ` blocks rendered in Atomik (= main-repo M12) | [CP-DSL-004](./CP-DSL-004.md) | draft (executes in main repo) |
