@@ -12,7 +12,7 @@ The atomik DSL (language + kernels) for the Atomik workbench, maturing in its ow
 
 ## Current state
 
-Language **v0.3.1** (surface `atomik 0.3` unchanged) · Scene IR **0.1** · `cycle` archetype end-to-end (prototype in `apps/prototype-cycle/`) · `flow` archetype end-to-end (ranks, determinism, lane bands painted, routed back-edges, contractual `cycle`→`flow` fallback, prototype flip, typed) · **65/65 tests** green including golden-fixture byte parity and the A1–A7 runtime oracle · errata **C1–C4 folded** (language spec §14 changelog; render-core §10 marked, §6.2 cycle implementation notes) · kernel split `lang.js`/`render.js`/`index.js` with typed surface (`index.d.ts`), public API unchanged · **CP-DSL-001 closed 2026-07-07** · active path: **CP-DSL-002** (D2 — `flow` archetype, opened 2026-07-07 at owner go-ahead).
+Language **v0.3.1** (surface `atomik 0.3` unchanged) · Scene IR **0.1** · `cycle` archetype end-to-end (prototype in `apps/prototype-cycle/`) · `flow` archetype end-to-end (ranks, determinism, lane bands painted, routed back-edges, contractual `cycle`→`flow` fallback, prototype flip, typed) · **65/65 tests** green including golden-fixture byte parity and the A1–A7 runtime oracle · errata **C1–C4 folded** (language spec §14 changelog; render-core §10 marked, §6.2 cycle implementation notes) · kernel split `lang.js`/`render.js`/`index.js` with typed surface (`index.d.ts`), public API unchanged · **CP-DSL-001 and CP-DSL-002 both closed 2026-07-07** · no active path — next milestone **D3** (generability evaluation) needs owner input (model access, spend, corpus scope) before opening; **D4** executes in the main repo after its S00 owner amendment.
 
 ## Canonical files
 

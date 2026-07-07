@@ -6,8 +6,9 @@ tags: [coding-path, dsl, d2]
 timestamp: 2026-07-07T00:00:00Z
 atomik:
   id: CP-DSL-002
-  status: active
-  current_step: S06
+  status: done
+  closed: 2026-07-07
+  current_step: none
   base_commit: 5064ff7
 ---
 
@@ -62,25 +63,29 @@ Completeness rule: every document of this repository appears below at least once
 - [x] S03 Lanes + back-edge routing: `[kind lane]` groups partition x into declaration-ordered bands (members constrained inside, ranks shared); back-edges routed around the diagram flank as paths with labels. Tests: lane bands, routed path clears node bounds.
 - [x] S04 Contract fallback rewire: `layoutCycle` no-ring → `flow` + loud warning (replaces grid); `layout()` notices updated for two real archetypes; render-core §6.2 flow entry + cycle-entry update. Tests: `project as cycle` on an acyclic model lands in flow with a warning.
 - [x] S05 Prototype + types: UI prefers `e.path` when present; rebuild; guide prototype-limits sentence; `index.d.ts` routed-edge variant; browser-branch smoke.
-- [ ] S06 Same-work-unit docs audit and close: register, ACTIVE.md, orientation, log, ledger; fixture-diff gate re-check.
+- [x] S06 Same-work-unit docs audit and close: register, ACTIVE.md, orientation, log, ledger; fixture-diff gate re-check.
 
 # Current checkpoint
 
 ```text
 base commit : 5064ff7 (branch master — CP-DSL-001 closed, 41/41 green)
-changed     : S05 — painter prefers e.path over the straight segment (routed
-              back-edges render); lane regions painted from layout.lanes with
-              .lane/.lanelabel styles in the template; boundary glyph anchors on
-              labelAt; guide limits sentence now names cycle AND flow; d.ts:
-              Geometry gains flow fields (rows/backEdges/lanes optional,
-              ring/parked now optional), LayoutEdge gains the back+path variant,
-              CycleAttempt renamed ArchetypeAttempt, layoutFlow declared.
-              Verified: tsc --strict exit 0, browser-branch VM smoke (lanes +
-              routed back-edge + built html carries engine/styles/painter).
-tests       : 65 passing / 0 failed; build green; fixture untouched
-next action : S06 — closing audit (DoD line-by-line, fixture diff vs base),
-              register done, ACTIVE.md, orientation, log
-blockers    : none
+path closed 2026-07-07 — definition-of-done audit:
+  ✓ flow layered engine behind layout(): rank-order-follows-edges property
+    tested on a DAG and a cyclic model; lanes honored (band order, containment,
+    disjointness proven); back-edges routed around (segment-vs-box sweep);
+    cyclic models legal
+  ✓ L1 byte-identical re-layout ×2 · L2 no-overlap ×3 scenes · L3 shared
+    nodeBox · L4 hidden-nodes-positioned · L5 announced fallbacks
+  ✓ cycle no-ring → flow + warning (contract row; grid retired for that case)
+  ✓ render-core §6.2 flow entry; cycle "until flow exists" caveat retired;
+    contract table untouched (flow row byte-identical)
+  ✓ IR unmoved: git diff 5064ff7..HEAD on fixtures/, language spec, pocket
+    spec all empty; src/lang.js absent from the path diff (render-side only)
+  ✓ prototype flip end-to-end (routed paths painted, lanes painted, rebuilt);
+    guide limits updated; d.ts covers flow (tsc --strict exit 0)
+  ✓ 65 ≥ 55 target; green after every step; docs updated every step
+next        : D3 (generability evaluation) — needs owner input on model access,
+              spend, and corpus scope before opening
 ```
 
 # Blockers
