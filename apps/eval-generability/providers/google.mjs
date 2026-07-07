@@ -18,10 +18,14 @@ export const sdkPackage = '@google/genai';
 
 const DONE_STATES = ['JOB_STATE_SUCCEEDED', 'JOB_STATE_FAILED', 'JOB_STATE_CANCELLED', 'JOB_STATE_EXPIRED'];
 
-/* plan item -> inline request body (model is set on the batch job, not here) */
+/* plan item -> inline request body (model is set on the batch job, not here).
+ * metadata.key carries our custom_id: InlinedResponse echoes metadata back, and
+ * — critically — Gemini's inline batch does NOT guarantee response order, so we
+ * correlate by this key, never by index (learned the hard way, 2026-07-07). */
 export function toRequest(item) {
   return {
     contents: [{ parts: [{ text: item.user }], role: 'user' }],
+    metadata: { key: item.customId },
     config: {
       systemInstruction: { parts: [{ text: item.system }] },
       maxOutputTokens: MAX_TOKENS
@@ -45,21 +49,34 @@ function textFromResponse(resp) {
   return null;
 }
 
-/* Zip a finished job's inlinedResponses back to custom_ids by index (order
- * matching — inline responses carry no key). Pure, so it is unit-testable
- * against a canned job object without the SDK. */
+function recordFor(ir) {
+  const txt = ir ? textFromResponse(ir.response) : null;
+  if (txt) return { text: txt, error: null };
+  if (ir && ir.error) return { text: null, error: String(ir.error) };
+  if (ir && ir.response) {
+    const fr = ir.response.candidates && ir.response.candidates[0] && ir.response.candidates[0].finishReason;
+    return { text: null, error: 'no-text' + (fr ? ':' + fr : '') }; // e.g. MAX_TOKENS / SAFETY
+  }
+  return { text: null, error: 'missing' };
+}
+
+/* Correlate a finished job's inlinedResponses to custom_ids by the echoed
+ * metadata.key (order-independent — Gemini does not guarantee inline output
+ * order). Falls back to positional matching only if no key was echoed (older
+ * requests). Pure, so it is unit-testable against a canned job object. */
 export function parseInlineResponses(job, customIds) {
-  const map = {};
   const responses = (job && job.dest && job.dest.inlinedResponses) || [];
+  const byKey = {};
+  let keyed = 0;
+  responses.forEach((ir, i) => {
+    const key = ir && ir.metadata && ir.metadata.key;
+    if (key) { byKey[key] = recordFor(ir); keyed++; }
+    else byKey['__idx_' + i] = recordFor(ir);
+  });
+  const useKeys = keyed > 0;
+  const map = {};
   customIds.forEach((cid, i) => {
-    const ir = responses[i];
-    const txt = ir ? textFromResponse(ir.response) : null;
-    if (txt) map[cid] = { text: txt, error: null };
-    else if (ir && ir.error) map[cid] = { text: null, error: String(ir.error) };
-    else if (ir && ir.response) {
-      const fr = ir.response.candidates && ir.response.candidates[0] && ir.response.candidates[0].finishReason;
-      map[cid] = { text: null, error: 'no-text' + (fr ? ':' + fr : '') }; // e.g. MAX_TOKENS / SAFETY
-    } else map[cid] = { text: null, error: 'missing' };
+    map[cid] = (useKeys ? byKey[cid] : byKey['__idx_' + i]) || { text: null, error: 'missing' };
   });
   return map;
 }

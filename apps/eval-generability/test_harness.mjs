@@ -90,21 +90,26 @@ ok(gReqs.length === 10, 'google builds one inline request per item');
 ok(gReqs[0].contents[0].parts[0].text === items[0].user && gReqs[0].contents[0].role === 'user', 'google inline request: user text under contents.parts');
 ok(gReqs[0].config.systemInstruction.parts[0].text === items[0].system && gReqs[0].config.maxOutputTokens > 0, 'google inline request: systemInstruction + maxOutputTokens in config');
 ok(gReqs[0].model === undefined, 'google inline request omits model (set on the batch job)');
-// order-zipping: inline responses have no key — must match by index. Uses the
-// REAL batch shape (text under candidates[0].content.parts, verified against a
-// SUCCEEDED job), NOT the live-only `.text` getter that returns "" in batch.
+ok(gReqs[0].metadata && gReqs[0].metadata.key === items[0].customId, 'google inline request carries metadata.key = custom_id (correlation, not order)');
+// REAL batch shape: text under candidates[0].content.parts (verified against a
+// SUCCEEDED job), NOT the live-only `.text` getter. Responses are deliberately
+// SHUFFLED and carry metadata.key — the exact bug that mislabeled every Gemini
+// scene when we correlated by index. Correct code must recover by key.
 const cids = ['gen_a_R1_1', 'gen_b_R1_1', 'gen_c_R1_1', 'gen_d_R1_1'];
-const realResp = (t) => ({ response: { candidates: [{ content: { parts: [{ text: t }] }, finishReason: 'STOP' }], text: '' } });
-const fakeJob = { dest: { inlinedResponses: [
-  realResp('atomik 0.3\nscene a'),
-  { error: 'quota' },
-  realResp('atomik 0.3\nscene c'),
-  { response: { candidates: [{ content: { parts: [] }, finishReason: 'MAX_TOKENS' }], text: '' } }
+const realResp = (key, t) => ({ metadata: { key }, response: { candidates: [{ content: { parts: [{ text: t }] }, finishReason: 'STOP' }], text: '' } });
+const shuffledJob = { dest: { inlinedResponses: [
+  realResp('gen_c_R1_1', 'atomik 0.3\nscene c'),                       // out of request order
+  { metadata: { key: 'gen_b_R1_1' }, error: 'quota' },
+  realResp('gen_a_R1_1', 'atomik 0.3\nscene a'),
+  { metadata: { key: 'gen_d_R1_1' }, response: { candidates: [{ content: { parts: [] }, finishReason: 'MAX_TOKENS' }], text: '' } }
 ] } };
-const gMap = google.parseInlineResponses(fakeJob, cids);
-ok(gMap['gen_a_R1_1'].text === 'atomik 0.3\nscene a' && gMap['gen_c_R1_1'].text === 'atomik 0.3\nscene c', 'google extracts from candidates.parts and zips by position');
-ok(gMap['gen_b_R1_1'].text === null && gMap['gen_b_R1_1'].error === 'quota', 'google surfaces a per-request error by position');
+const gMap = google.parseInlineResponses(shuffledJob, cids);
+ok(gMap['gen_a_R1_1'].text === 'atomik 0.3\nscene a' && gMap['gen_c_R1_1'].text === 'atomik 0.3\nscene c', 'google correlates by metadata.key despite shuffled response order');
+ok(gMap['gen_b_R1_1'].text === null && gMap['gen_b_R1_1'].error === 'quota', 'google surfaces a per-request error by key');
 ok(gMap['gen_d_R1_1'].text === null && gMap['gen_d_R1_1'].error === 'no-text:MAX_TOKENS', 'google reports a truncated/blocked response with its finishReason');
+// fallback: no keys echoed (legacy) → positional
+const legacyJob = { dest: { inlinedResponses: [realResp(undefined, 'atomik 0.3\nscene a')] } };
+ok(google.parseInlineResponses(legacyJob, ['gen_a_R1_1'])['gen_a_R1_1'].text === 'atomik 0.3\nscene a', 'google falls back to positional when no key is echoed');
 ok(google.parseInlineResponses({ dest: {} }, ['gen_x_R1_1'])['gen_x_R1_1'].error === 'missing', 'google marks a missing response');
 
 console.log('\n== provider registry ==');
