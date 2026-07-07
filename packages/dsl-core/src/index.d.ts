@@ -176,18 +176,24 @@ declare namespace Atomik {
 
   interface NodeBox { w: number; h: number; lines: string[] }
   interface Point { x: number; y: number }
+  interface LaneRegion { id: string; label?: string; x0: number; x1: number }
 
   type LayoutEdge =
     | { id: string; skip: true }
     | { id: string; ring: true; path: string; labelAt: Point }
-    | { id: string; ring: false; x1: number; y1: number; x2: number; y2: number; labelAt: Point };
+    | { id: string; ring: false; x1: number; y1: number; x2: number; y2: number; labelAt: Point;
+        /** flow back-edge: `path` carries the orthogonal route and wins over the straight segment */
+        back?: true; path?: string };
 
   interface Geometry {
-    archetype: "cycle" | "graph";
+    archetype: "cycle" | "flow" | "graph";
     /** present on fallback layouts: why the requested archetype was not used */
     reason?: string;
-    ring: string[];
-    parked: string[];
+    ring?: string[];        // cycle: traversal-ordered ring
+    parked?: string[];      // cycle: unattached non-ring nodes
+    rows?: string[][];      // flow: rank rows, top-down
+    backEdges?: string[];   // flow: relation ids classified as back-edges
+    lanes?: LaneRegion[];   // flow: declaration-ordered lane bands
     pos: Record<string, Point>;
     boxes: Record<string, NodeBox>;
     edges: LayoutEdge[];
@@ -195,14 +201,15 @@ declare namespace Atomik {
   }
 
   interface LayoutResult { layout: Geometry; notices: string[]; requested: Archetype }
-  interface CycleAttempt { fallback: boolean; notices: string[]; layout: Geometry }
+  interface ArchetypeAttempt { fallback: boolean; notices: string[]; layout: Geometry }
 
   // ---- public surface ----
 
   function parse(text: string, opts?: { resolver?: (wikilinkText: string) => Ref }): SceneIR;
   function present(ir: SceneIR, state: RuntimeState, opts?: { ignoreGates?: boolean }): Presentation;
   function layout(ir: SceneIR): LayoutResult;
-  function layoutCycle(ir: SceneIR): CycleAttempt;
+  function layoutCycle(ir: SceneIR): ArchetypeAttempt;
+  function layoutFlow(ir: SceneIR): ArchetypeAttempt;
   function wrapLabel(text: string, maxChars?: number): string[];
   function nodeBox(node: NodeIR): NodeBox;
   const constants: {

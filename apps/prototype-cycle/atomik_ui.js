@@ -140,6 +140,25 @@
       '<path d="M8,0 L8,10" stroke="var(--refute)" stroke-width="2.6"/></marker>';
     svg.appendChild(defs);
 
+    /* lane regions under everything (flow: layout.lanes) */
+    if (geo.lanes && geo.lanes.length) {
+      geo.lanes.forEach(function (L) {
+        var rc = document.createElementNS(SVGNS, 'rect');
+        rc.setAttribute('x', L.x0 - 14); rc.setAttribute('y', vb[1] + 6);
+        rc.setAttribute('width', (L.x1 - L.x0) + 28); rc.setAttribute('height', vb[3] - 12);
+        rc.setAttribute('rx', 12);
+        rc.setAttribute('class', 'lane');
+        svg.appendChild(rc);
+        if (L.label) {
+          var lt = document.createElementNS(SVGNS, 'text');
+          lt.setAttribute('x', L.x0 - 2); lt.setAttribute('y', vb[1] + 26);
+          lt.setAttribute('class', 'lanelabel');
+          lt.textContent = L.label;
+          svg.appendChild(lt);
+        }
+      });
+    }
+
     var visN = {}, visR = {}, hi = {};
     pres.visibleNodes.forEach(function (id) { visN[id] = true; });
     pres.visibleRelations.forEach(function (id) { visR[id] = true; });
@@ -156,13 +175,14 @@
       g.setAttribute('class', 'edge cls-' + r['class'] + (hi[r.id] ? ' hi' : ''));
       if (!visR[r.id]) g.setAttribute('display', 'none');
       var p = document.createElementNS(SVGNS, 'path');
-      p.setAttribute('d', e.ring ? e.path : ('M ' + e.x1 + ' ' + e.y1 + ' L ' + e.x2 + ' ' + e.y2));
+      /* a pre-routed path (ring arcs, flow back-edges) always wins over the straight segment */
+      p.setAttribute('d', e.path ? e.path : ('M ' + e.x1 + ' ' + e.y1 + ' L ' + e.x2 + ' ' + e.y2));
       p.setAttribute('fill', 'none');
       if (r.directed) p.setAttribute('marker-end', r['class'] === 'refutation' ? 'url(#m-tbar)' : 'url(#m-arrow)');
       g.appendChild(p);
       if (r['class'] === 'boundary') {
-        var bx = e.ring ? e.labelAt.x : (e.x1 + e.x2) / 2;
-        var by = e.ring ? e.labelAt.y : (e.y1 + e.y2) / 2;
+        var bx = e.labelAt.x;
+        var by = e.labelAt.y;
         var brk = document.createElementNS(SVGNS, 'text');
         brk.setAttribute('x', bx); brk.setAttribute('y', by);
         brk.setAttribute('class', 'breakglyph'); brk.textContent = '✂';
