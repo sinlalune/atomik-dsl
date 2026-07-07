@@ -1,0 +1,558 @@
+{
+  "judge_superposition-analogy_R2_3": {
+    "text": "{\"unsupportedElements\": [\"claim states analogy is 'ultimately inaccurate' — source frames it as partially useful and instructive in its limits, not simply inaccurate\", \"spinning_coin node marked as [status misconception] — source treats it as a helpful-but-limited analogy, not a misconception\", \"relation spinning_coin -> superposition 'illustrates' marked [status reported] — source presents this as the author's own analogy, not a reported claim from elsewhere\"], \"overconfidentClaim\": true, \"flattenedHedge\": true, \"notes\": \"The scene overstates the source's nuanced 'helpful but limited' framing as a flat verdict of inaccuracy/misconception, losing the hedge that the analogy is valuable precisely in showing where it holds and fails.\"}",
+    "error": null
+  },
+  "judge_ph-axis_R2_4": {
+    "text": "{\"unsupportedElements\": [\"Claim wording 'quantifies the acidity or alkalinity of substances' is a generalization not stated in source, though scale range is supported\"], \"overconfidentClaim\": false, \"flattenedHedge\": false, \"notes\": \"The scene's data, placements, and status markings closely mirror the source's stated values and framing, with only a minor generalization in the claim's phrasing.\"}",
+    "error": null
+  },
+  "judge_frise-imprimerie_R2_4": {
+    "text": "{\"unsupportedElements\": [\"Relation g_mob->bible labeled as fact ('permet la production') implies a causal certainty not stated in source\", \"Relation expansion->journal labeled as fact with 'standardisation de l'information' – no mention of information standardization in source\", \"Claim status 'established' overstates the source's more descriptive/narrative framing of milestones\"], \"overconfidentClaim\": true, \"flattenedHedge\": true, \"notes\": \"The source's hedge 'on estime' about the 250 villes figure is dropped, and causal relations between milestones are asserted as fact rather than inference, exceeding the source's tentative, descriptive tone.\"}",
+    "error": null
+  },
+  "judge_monetary-transmission_R1_1": {
+    "text": "{\"unsupportedElements\": [\"invest_lag node labeled with '12-18 months' as if it's the settled investment effect, omitting the source's qualifier that this effect is 'less clear-cut'\", \"overall claim marked as 'established' despite the passage explicitly hedging the investment and expectations channels\"], \"overconfidentClaim\": true, \"flattenedHedge\": true, \"notes\": \"The scene folds the passage's explicit uncertainty about investment effects and the hard-to-pin-down expectations channel into a single 'established' claim and a concrete 12-18 month figure, understating the source's hedging language.\"}",
+    "error": null
+  },
+  "judge_superposition-analogy_R1_3": {
+    "text": "{\"unsupportedElements\": [\"spin_coin node labeled as 'misconception' — source frames it as a useful-but-limited analogy, not an outright misconception\"], \"overconfidentClaim\": true, \"flattenedHedge\": true, \"notes\": \"The source's nuanced 'helps at first, breaks down' framing is flattened into a firmly negative 'misconception' status for the analogy node.\"}",
+    "error": null
+  },
+  "judge_ph-axis_R1_2": {
+    "text": "{\"unsupportedElements\": [], \"overconfidentClaim\": false, \"flattenedHedge\": false, \"notes\": \"All nodes, values, and relations match the source, and the axis projection is appropriately marked as suggested.\"}",
+    "error": null
+  },
+  "judge_moon-formation_R2_2": {
+    "text": "{\"unsupportedElements\": [\"relation impactor -> impact and earth -> impact labeled 'as fact' overstate hypothesis certainty\", \"separate 'anomalies' node duplicates/conflicts with 'Isotopic similarity' node, which the source treats as a single contested feature\", \"relation alternative_models -> impact labeled 'as refutation' is stronger than source's neutral mention that alternatives 'have been proposed'\"], \"overconfidentClaim\": true, \"flattenedHedge\": true, \"notes\": \"The scene converts a hedged, provisional 'leading hypothesis' into fact-labeled relations and turns a vaguely mentioned complication into a distinct contradiction/refutation structure not warranted by the source's cautious language.\"}",
+    "error": null
+  },
+  "judge_carte-cycle-carbone_R1_3": {
+    "text": "{\"unsupportedElements\": [\"relations bio -> photo, bio -> resp, ocean -> dissol asserted 'as fact' though source only implies these structural links rather than stating them explicitly\", \"claim phrase 'par des mécanismes complexes' is an added characterization not explicitly stated in source\"], \"overconfidentClaim\": false, \"flattenedHedge\": false, \"notes\": \"The scene stays close to the source's facts and loop structure, with only minor added structural relations and phrasing not explicitly stated in the passage.\"}",
+    "error": null
+  },
+  "judge_planet-count_R2_4": {
+    "text": "{\"unsupportedElements\": [\"old_count node labeled with status 'misconception' — source only says it was the standard count before 2006, not that it was wrong or a misconception\"], \"overconfidentClaim\": true, \"flattenedHedge\": true, \"notes\": \"The scene overstates the old nine-planet count as a 'misconception' rather than a superseded historical consensus, adding a judgment not present in the source.\"}",
+    "error": null
+  },
+  "judge_career-decision_R1_5": {
+    "text": "{\"unsupportedElements\": [\"node 'comfort' status marked as 'established' when source presents it as the person's own tentative self-assessment ('boring but stable', 'just gotten comfortable'), not a verified fact\", \"relation current -> comfort tagged 'as fact' which overstates the hedged, subjective tone of the source\"], \"overconfidentClaim\": false, \"flattenedHedge\": true, \"notes\": \"Most nodes/relations mirror the source's hedged tone appropriately, but treating 'comfort/stability' as an established fact rather than a self-reported perception flattens the source's ambivalence.\"}",
+    "error": null
+  },
+  "judge_carte-cycle-carbone_R1_1": {
+    "text": "{\"unsupportedElements\": [\"relation oceans -> atmosphere 'Relargage' [as fact] – source never mentions oceans releasing CO2 back to the atmosphere, this is an invented fact\", \"claim describes feedback loops as 'complexes' which overstates the simple reinforcing/balancing description in the source\"], \"overconfidentClaim\": true, \"flattenedHedge\": true, \"notes\": \"The scene adds a fabricated 'ocean release' relation stated as fact and slightly inflates the overall loop complexity beyond what the source describes.\"}",
+    "error": null
+  },
+  "judge_water-cycle_R1_3": {
+    "text": "{\"unsupportedElements\": [], \"overconfidentClaim\": false, \"flattenedHedge\": false, \"notes\": \"The scene's nodes, relations, and claim all directly correspond to the described evaporation-condensation-precipitation-collection loop stated confidently in the source.\"}",
+    "error": null
+  },
+  "judge_monetary-transmission_R2_5": {
+    "text": "{\"unsupportedElements\": [\"relation imports -> inflation marked as fact despite source saying it only 'can dampen inflation directly' (hedged possibility, not established fact)\"], \"overconfidentClaim\": true, \"flattenedHedge\": true, \"notes\": \"The imports->inflation link is stated as a firm fact when the source frames it as merely possible ('can dampen'), flattening the hedge; other relations reasonably match source hedging (fact vs hypothesis).\"}",
+    "error": null
+  },
+  "judge_carte-cycle-carbone_R2_2": {
+    "text": "{\"unsupportedElements\": [], \"overconfidentClaim\": false, \"flattenedHedge\": false, \"notes\": \"The scene's nodes and relations closely mirror the source's described mechanisms without introducing new claims or unwarranted certainty.\"}",
+    "error": null
+  },
+  "judge_superposition-analogy_R1_4": {
+    "text": "{\"unsupportedElements\": [], \"overconfidentClaim\": false, \"flattenedHedge\": false, \"notes\": \"All nodes and relations map directly to details in the passage, and the reported status appropriately reflects the source's hedged tone.\"}",
+    "error": null
+  },
+  "judge_ph-axis_R2_1": {
+    "text": "{\"unsupportedElements\": [], \"overconfidentClaim\": false, \"flattenedHedge\": false, \"notes\": \"The scene accurately reflects the source's stated values and relationships without adding unsupported claims or overstating confidence.\"}",
+    "error": null
+  },
+  "judge_mammals-contrast_R2_1": {
+    "text": "{\"unsupportedElements\": [\"node 'fish' with status misconception is not mentioned or implied in the source text\", \"relations labeled 'as analogy' for habitat and eggs are not framed as analogies in the source, which simply calls them incidental/variable traits\"], \"overconfidentClaim\": false, \"flattenedHedge\": false, \"notes\": \"The scene adds an unsupported 'fish' node and mislabels the habitat/eggs relations as analogies, otherwise faithfully reflects the source's confident claims.\"}",
+    "error": null
+  },
+  "judge_frise-imprimerie_R2_3": {
+    "text": "{\"unsupportedElements\": [\"Node 'diffusion' (Ateliers dans 250 villes) is marked [status established] and linked 'as fact', but source says 'on estime que' (it is estimated), which is a hedge not a confirmed fact\"], \"overconfidentClaim\": true, \"flattenedHedge\": true, \"notes\": \"The source explicitly hedges the 250-cities figure as an estimate, but the scene presents it with the same certainty (established/fact) as the other well-documented milestones.\"}",
+    "error": null
+  },
+  "judge_career-decision_R2_3": {
+    "text": "{\"unsupportedElements\": [\"current_job -> comfort labeled 'as fact' with sign + is reasonable but source calls current job 'boring but stable' - stability supported, but relation direction/certainty as fact overstates the nuance\", \"berlin_offer -> growth as hypothesis is reasonable but framed as a direct relation when source only poses it as an open question ('maybe that's exactly the kick I need')\", \"social_cost -> berlin_offer as inference with sign - implies uprooting negatively affects the offer itself, but source frames it as a personal cost/consideration, not a property of the offer\"], \"overconfidentClaim\": false, \"flattenedHedge\": true, \"notes\": \"The scene converts several tentative, hedged musings (e.g., growth as a maybe, uprooting as an open trade-off) into firm 'fact' or directional relations, flattening the source's uncertainty.\"}",
+    "error": null
+  },
+  "judge_vaccination-meprise_R1_1": {
+    "text": "{\"unsupportedElements\": [\"claim status 'established' overstates the source's more cautious phrasing that large-scale studies 'found no link'\"], \"overconfidentClaim\": true, \"flattenedHedge\": true, \"notes\": \"The scene converts the source's cautious 'no link found in studies' into a flatly 'established' fact, slightly overstating certainty.\"}",
+    "error": null
+  },
+  "judge_monetary-transmission_R2_3": {
+    "text": "{\"unsupportedElements\": [\"relation inv -> infl labeled as certain inference despite source describing investment effect as 'less clear-cut' with long variable lags — should be hedged, not stated as definite dampening\", \"relation exp -> infl labeled as certain inference despite source noting the expectations channel's magnitude is 'hard to pin down'\", \"overall claim status 'established' glosses over the explicit uncertainty attached to the investment and expectations channels\"], \"overconfidentClaim\": true, \"flattenedHedge\": true, \"notes\": \"The scene correctly hedges the rate->investment link as hypothesis but then treats investment's and expectations' downstream effects on inflation as certain, flattening hedges the source explicitly states.\"}",
+    "error": null
+  },
+  "judge_falling-objects_R1_1": {
+    "text": "{\"unsupportedElements\": [], \"overconfidentClaim\": false, \"flattenedHedge\": false, \"notes\": \"The scene faithfully mirrors the passage's claim, misconception, evidence, and explanation without adding unsupported content or overstating certainty.\"}",
+    "error": null
+  },
+  "judge_vaccination-meprise_R1_3": {
+    "text": "{\"unsupportedElements\": [\"node realite reframes antigen-exposure comparison as 'immune capacity' claim, which is an inferential leap not stated in source\", \"claim status 'established' overstates the source's more hedged 'n'ont pas trouvé de lien' (no link found) phrasing\"], \"overconfidentClaim\": true, \"flattenedHedge\": true, \"notes\": \"The source states studies found no link between vaccines and immune weakening (absence of evidence), but the scene elevates this to an 'established' fact and reinterprets antigen-count comparison as a claim about immune capacity.\"}",
+    "error": null
+  },
+  "judge_superposition-analogy_R1_1": {
+    "text": "{\"unsupportedElements\": [\"coin node status 'misconception' - source frames analogy as partially useful and only breaking down in specific respects (measurement, entanglement), not as a flat misconception\"], \"overconfidentClaim\": false, \"flattenedHedge\": true, \"notes\": \"The scene's claim and relations are well supported, but tagging the coin analogy as a 'misconception' overstates the source's more nuanced hedge that the analogy 'helps at first' before breaking down in specific ways.\"}",
+    "error": null
+  },
+  "judge_protocols-matrix_R1_5": {
+    "text": "{\"unsupportedElements\": [], \"overconfidentClaim\": false, \"flattenedHedge\": false, \"notes\": \"The scene accurately reflects the source's claims about TCP and UDP tradeoffs without adding unsupported elements or overstating confidence.\"}",
+    "error": null
+  },
+  "judge_falling-objects_R2_1": {
+    "text": "{\"unsupportedElements\": [\"relation resistance -> misconception 'supports' (air resistance actually supports the fact/refutes the misconception's implication, not 'supports' the misconception itself; mislabeled relation direction/semantics)\"], \"overconfidentClaim\": false, \"flattenedHedge\": false, \"notes\": \"The claim and evidence nodes are faithful to the source, but the relation labeling air resistance as 'supporting' the misconception misrepresents its actual explanatory role (it explains the illusion, not confirms the misconception).\"}",
+    "error": null
+  },
+  "judge_ph-axis_R2_5": {
+    "text": "{\"unsupportedElements\": [], \"overconfidentClaim\": false, \"flattenedHedge\": false, \"notes\": \"The scene faithfully represents the pH values, descriptors, and axis projection as stated in the source without adding unsupported claims.\"}",
+    "error": null
+  },
+  "judge_water-cycle_R1_1": {
+    "text": "{\"unsupportedElements\": [], \"overconfidentClaim\": false, \"flattenedHedge\": false, \"notes\": \"The scene's nodes, relations, and claim closely mirror the source's description of the water cycle without adding unsupported detail or inflating certainty.\"}",
+    "error": null
+  },
+  "judge_mammals-contrast_R1_2": {
+    "text": "{\"unsupportedElements\": [\"relation habitat -> mammal contradicts: source calls habitat incidental/irrelevant, not contradictory to mammal status\", \"relation eggs -> mammal contradicts: source explicitly shows egg-laying (platypus) coexists with being a mammal, so it does not contradict mammal status, only shows it's non-criterial\"], \"overconfidentClaim\": false, \"",
+    "error": null
+  },
+  "judge_frise-imprimerie_R2_2": {
+    "text": "{\"unsupportedElements\": [\"Claim status 'established' is stronger than source's tentative framing ('on estime', 'rend visible l'accélération')\", \"'250+ villes' presented as fact via relation e3->expansion, though source says 'on estime' (an estimate, not confirmed fact)\"], \"overconfidentClaim\": true, \"flattenedHedge\": true, \"notes\": \"The source hedges the 1500 estimate with 'on estime' and frames the whole narrative as an interpretive visualization, but the scene asserts these as established facts.\"}",
+    "error": null
+  },
+  "judge_protocols-matrix_R2_1": {
+    "text": "{\"unsupportedElements\": [], \"overconfidentClaim\": false, \"flattenedHedge\": false, \"notes\": \"All nodes and relations directly reflect the source's description of TCP/UDP tradeoffs with no added or overstated claims.\"}",
+    "error": null
+  },
+  "judge_gamblers-fallacy_R1_2": {
+    "text": "{\"unsupportedElements\": [\"input prediction options '50/50' not in source (source states probability is ~48.6%, not 50/50, so offering it as an option is minor addition)\", \"relation independence -> fact 'supports' framed as 'as fact' - source presents this as a direct consequence/explanation rather than a separate 'supports' relation, minor structural liberty\"], \"overconfidentClaim\": false, \"flattenedHedge\": false, \"notes\": \"The scene faithfully captures the gambler's fallacy, the independence refutation, and the 48.6% probability, with only minor structural additions like the '50/50' choice option not explicitly in the source.\"}",
+    "error": null
+  },
+  "judge_superposition-analogy_R1_2": {
+    "text": "{\"unsupportedElements\": [\"node spin_coin labeled with status 'misconception' — source presents it as a useful-but-limited analogy, not a false belief\"], \"overconfidentClaim\": false, \"flattenedHedge\": true, \"notes\": \"The scene overstates the analogy's status as a 'misconception' when the source describes it as helpful yet imperfect, flattening the nuanced hedge into a stronger negative label.\"}",
+    "error": null
+  },
+  "judge_ph-axis_R1_1": {
+    "text": "{\"unsupportedElements\": [], \"overconfidentClaim\": false, \"flattenedHedge\": false, \"notes\": \"The scene's claims and values (pH 2, 7, 7.4, 13) closely match the approximate values given in the source, and statuses/relations are consistent with the passage's confident factual tone.\"}",
+    "error": null
+  },
+  "judge_carte-cycle-carbone_R2_4": {
+    "text": "",
+    "error": null
+  },
+  "judge_gamblers-fallacy_R2_2": {
+    "text": "{\"unsupportedElements\": [\"node 'memory' labeled as an assumption with relation 'supports' belief — source frames wheel having no memory as refutation, not as something supporting the belief with an 'Intuitive but false' label; this framing is confusing/inverted\", \"relation memory -> belief supports [sign +] contradicts the source's point that the wheel has no memory, misrepresenting causal direction\"], \"overconfidentClaim\": false, \"flattenedHedge\": false, \"notes\": \"The scene mostly matches the source but inverts the role of 'wheel memory', presenting it as supporting the misconception rather than as the (false) assumption underlying it being refuted.\"}",
+    "error": null
+  },
+  "judge_mammals-contrast_R2_3": {
+    "text": "{\"unsupportedElements\": [\"relation habitat -> mammal as fact [sign -] implies habitat negatively determines mammal status, but source says habitat is merely incidental/irrelevant, not a negative factor\", \"relation eggs -> mammal as fact [sign -] similarly mischaracterizes egg-laying as negatively causal, contradicting the platypus example which is a mammal that lays eggs\"], \"overconfidentClaim\": true, \"flattenedHedge\": true, \"notes\": \"The scene converts 'incidental, non-determining' features into signed causal relations, overstating the source's claim that habitat/egg-laying simply don't matter.\"}",
+    "error": null
+  },
+  "judge_monetary-transmission_R2_2": {
+    "text": "{\"unsupportedElements\": [\"relation spend -> infl labeled as fact (source never explicitly links reduced credit-financed spending to inflation dampening, only implies it via demand)\", \"claim status 'established' for the whole multi-channel mechanism, despite source noting long/variable lags and hard-to-pin-down magnitudes\"], \"overconfidentClaim\": true, \"flattenedHedge\": true, \"notes\": \"The scene overstates certainty by marking the whole transmission claim as 'established' and treating an unstated spending\\u2192inflation link as fact, flattening the source's explicit hedges about lags and uncertain magnitudes.\"}",
+    "error": null
+  },
+  "judge_moon-formation_R2_1": {
+    "text": "{\"unsupportedElements\": [\"Relation gaps -> impact labeled as 'contradicts'/'refutation' overstates the source's more measured claim that isotopic similarity is merely 'hard to reconcile' with a simple impact scenario\"], \"overconfidentClaim\": false, \"flattenedHedge\": true, \"notes\": \"The scene converts the source's hedged tension ('hard to reconcile', 'alternative models proposed') into a strong refutation relation, overstating the challenge to the giant-impact hypothesis.\"}",
+    "error": null
+  },
+  "judge_antibiotic-resistance_R1_5": {
+    "text": "{\"unsupportedElements\": [\"Note calling it 'a classic example' of natural selection acting on bacterial populations \\u2014 phrasing not in source, mild rhetorical embellishment\"], \"overconfidentClaim\": false, \"flattenedHedge\": false, \"notes\": \"The scene's mechanism, relations, and misconception framing are all well supported by the source; only a minor stylistic addition in the closing note goes beyond the text.\"}",
+    "error": null
+  },
+  "judge_gamblers-fallacy_R2_4": {
+    "text": "{\"unsupportedElements\": [], \"overconfidentClaim\": false, \"flattenedHedge\": false, \"notes\": \"Scene faithfully represents the source's claim, misconception status, and refutation via independence and constant probability.\"}",
+    "error": null
+  },
+  "judge_gamblers-fallacy_R1_3": {
+    "text": "{\"unsupportedElements\": [\"Claim status 'established' overstates the source, which frames this as a teaching point/fallacy explanation rather than an established formal claim\", \"Claim wording 'necessitate a win' is more absolute/technical phrasing than source's softer 'feels like black is due'\"], \"overconfidentClaim\": true, \"flattenedHedge\": false, \"notes\": \"The core content (intuition vs independence, ~48.6%) is faithful, but marking the claim as 'established' and phrasing it in stronger terms than the source's hedged, illustrative tone slightly overstates confidence.\"",
+    "error": null
+  },
+  "judge_frise-imprimerie_R1_3": {
+    "text": "{\"unsupportedElements\": [\"node expansion status 'established' ignores source's hedge 'on estime que' (estimated number of cities, not a confirmed fact)\"], \"overconfidentClaim\": false, \"flattenedHedge\": true, \"notes\": \"The estimate about workshops in 250+ cities is stated as an established fact, dropping the source's 'on estime que' qualifier.\"}",
+    "error": null
+  },
+  "judge_photosynthesis_R1_1": {
+    "text": "{\"unsupportedElements\": [\"relation leaves -> chlorophyll [as fact] (source says leaves absorb sunlight, not that leaves 'lead to' chlorophyll in this sense)\", \"claim status 'established' (source presents this as standard textbook description, not explicitly marked as an established/verified fact within the vault)\"], \"overconfidentClaim\": false, \"flattenedHedge\": false, \"notes\": \"The scene closely mirrors the source's causal chain but slightly overstates certainty via the 'established' status and reframes the leaves-chlorophyll relation without clear textual support.\"}",
+    "error": null
+  },
+  "judge_vaccination-meprise_R1_5": {
+    "text": "{\"unsupportedElements\": [], \"overconfidentClaim\": false, \"flattenedHedge\": false, \"notes\": \"The scene faithfully mirrors the source's claim, evidence, and refutation structure without adding unsupported content or overstating certainty.\"}",
+    "error": null
+  },
+  "judge_water-cycle_R2_4": {
+    "text": "{\"unsupportedElements\": [], \"overconfidentClaim\": false, \"flattenedHedge\": false, \"notes\": \"The scene accurately reflects the source's confident description of the continuous water cycle without adding unsupported elements.\"}",
+    "error": null
+  },
+  "judge_planet-count_R1_5": {
+    "text": "{\"unsupportedElements\": [\"node old_count labeled as 'misconception' — source only says it was the standard count for decades and was superseded, not that it was mistaken/false\"], \"overconfidentClaim\": false, \"flattenedHedge\": false, \"notes\": \"Scene is largely faithful, but labeling the old nine-planet count a 'misconception' adds a judgment not present in the source, which merely notes it was superseded.\"}",
+    "error": null
+  },
+  "judge_falling-objects_R2_2": {
+    "text": "{\"unsupportedElements\": [\"claim status 'established' overstates source's tone (source presents as fact but doesn't use formal epistemic status language)\", \"relation 'air_res -> physics modifies' framing is a slight interpretive addition not explicitly stated in source\", \"node physics status not marked though it's the corrected fact, minor inconsistency but not major\"], \"overconfidentClaim\": false, \"flattenedHedge\": false, \"notes\": \"The scene closely mirrors the source's content and teaching sequence without introducing unsupported facts, though minor structural labels add slight interpretive framing.\"}",
+    "error": null
+  },
+  "judge_vaccination-meprise_R1_2": {
+    "text": "{\"unsupportedElements\": [], \"overconfidentClaim\": false, \"flattenedHedge\": false, \"notes\": \"The scene's claim, evidence nodes, and refutation relations align closely with the source's assertions about antigen exposure and safety studies, without adding unsupported details.\"}",
+    "error": null
+  },
+  "judge_carte-cycle-carbone_R2_5": {
+    "text": "{\"unsupportedElements\": [\"relation ocean -> atm labeled 'accumulation' as direct fact; source only describes reduced ocean absorption capacity reinforcing atmospheric buildup, not an explicit ocean→atm flux\", \"photo -> bio relation omits that photosynthesis specifically reduces atmospheric CO2, only shows absorption into biosphere\"], \"overconfidentClaim\": false, \"flattenedHedge\": false, \"notes\": \"The scene closely mirrors the source's causal structure but slightly reifies an inferred reinforcing effect as a direct factual flux and omits the explicit atmospheric-reduction detail from photosynthesis.\"}",
+    "error": null
+  },
+  "judge_falling-objects_R1_2": {
+    "text": "{\"unsupportedElements\": [], \"overconfidentClaim\": false, \"flattenedHedge\": false, \"notes\": \"The scene faithfully mirrors the source's claim, misconception, experiment, and causal explanation without adding unsupported content or overstating certainty.\"}",
+    "error": null
+  },
+  "judge_career-decision_R2_2": {
+    "text": "{\"unsupportedElements\": [\"relation current -> growth marked as fact [sign -], but source only implies this indirectly via 'current job is boring but stable' rather than stating it as an established fact\", \"growth node's link to offer marked as inference is reasonable, but the corresponding current->growth being stated as fact (not inference) overstates certainty",
+    "error": null
+  },
+  "judge_gamblers-fallacy_R1_5": {
+    "text": "{\"unsupportedElements\": [], \"overconfidentClaim\": false, \"flattenedHedge\": false, \"notes\": \"The scene faithfully represents the source's claims about independence, the gambler's fallacy misconception, and the 48.6% probability, with appropriate status labels.\"}",
+    "error": null
+  },
+  "judge_planet-count_R1_3": {
+    "text": "{\"unsupportedElements\": [\"nine_planets labeled as 'misconception' status - source only says it was superseded, not that it was a misconception\", \"debate node targets iau_def as a whole rather than specifically the Pluto reclassification, which is what the source says is debated\"], \"overconfidentClaim\": true, \"flattenedHedge\": true, \"notes\": \"The source presents the old nine-planet count as a superseded historical consensus, not a 'misconception', and specifies debate is about the Pluto reclassification specifically, not the entire IAU definition.\"}",
+    "error": null
+  },
+  "judge_frise-imprimerie_R1_2": {
+    "text": "{\"unsupportedElements\": [\"node diffusion marked 'established' despite source saying 'on estime que' (estimated), losing the hedge\", \"relation gutenberg -> bible_42 marked 'as fact' implies causation not explicitly stated in source, which only lists chronological events\"], \"overconfidentClaim\": false, \"flattenedHedge\": true, \"notes\": \"The estimate ('on estime que') about 250 cities is flattened into an established fact, and a causal fact-link is asserted where the source only gives a timeline.\"}",
+    "error": null
+  },
+  "judge_water-cycle_R1_2": {
+    "text": "{\"unsupportedElements\": [], \"overconfidentClaim\": false, \"flattenedHedge\": false, \"notes\": \"The scene accurately reflects the cyclical process described in the source without adding unsupported claims.\"}",
+    "error": null
+  },
+  "judge_career-decision_R1_2": {
+    "text": "{\"unsupportedElements\": [\"relation offer -> growth marked as inference with sign + presents growth as a settled outcome, but the source only tentatively suggests 'maybe that's exactly the kick I need'\", \"node remote marked status established while comparable evidence (salary, living, relocation) is marked reported, giving it undue certainty\"], \"overconfidentClaim\": false, \"flattenedHedge\": true, \"notes\": \"The scene converts the source's tentative 'maybe' about growth into a confident inference and inconsistently elevates the remote-work loss to 'established' status, slightly overstating certainty.\"}",
+    "error": null
+  },
+  "judge_gamblers-fallacy_R2_5": {
+    "text": "{\"unsupportedElements\": [\"relation independence -> probability supports [as fact]: source doesn't frame independence as 'supporting' the probability figure as a separate fact-relation, though implied\", \"label 'Cognitive bias' on intuition->claim relation not explicitly named in source\"], \"overconfidentClaim\": false, \"flattenedHedge\": false, \"notes\": \"Scene closely tracks source content and hedges (misconception vs established) appropriately, with only minor added framing/labels not explicitly stated.\"}",
+    "error": null
+  },
+  "judge_superposition-analogy_R2_2": {
+    "text": "{\"unsupportedElements\": [\"claim describes the analogy as 'misleading', a stronger judgment than the source's 'breaks down'\"], \"overconfidentClaim\": true, \"flattenedHedge\": false, \"notes\": \"The scene's claim adds an evaluative term ('misleading') not present in the source, otherwise the relations and nodes track the passage closely.\"}",
+    "error": null
+  },
+  "judge_superposition-analogy_R2_5": {
+    "text": "{\"unsupportedElements\": [], \"overconfidentClaim\": false, \"flattenedHedge\": false, \"notes\": \"The scene's nodes, relations, and claim closely mirror the source's description of the coin analogy's use and limitations without adding unsupported detail or inflating certainty.\"}",
+    "error": null
+  },
+  "judge_career-decision_R1_1": {
+    "text": "{\"unsupportedElements\": [\"Relation berlin_offer -> comfort_growth labeled 'Focus on growth' treats the tentative 'maybe that's exactly the kick I need' as a settled inference rather than a hedged possibility\", \"The salary_inc vs cost_living relations are presented as parallel factual evidence without capturing the source's hedge 'maybe it cancels out'\"], \"overconfidentClaim\": false, \"flattenedHedge\": true, \"notes\": \"The scene captures the core factors accurately but drops the speaker's explicit uncertainty ('maybe', 'though maybe') when framing the growth-vs-comfort and salary/cost-of-living tensions as firm inferences.\"}",
+    "error": null
+  },
+  "judge_water-cycle_R1_5": {
+    "text": "{\"unsupportedElements\": [], \"overconfidentClaim\": false, \"flattenedHedge\": false, \"notes\": \"The scene faithfully represents the described water cycle process and relations without adding unsupported claims.\"}",
+    "error": null
+  },
+  "judge_planet-count_R2_2": {
+    "text": "{\"unsupportedElements\": [\"old_count node status 'misconception' - source only states the nine-planet count was the standard before 2006 and was superseded, not that it was a misconception\"], \"overconfidentClaim\": false, \"flattenedHedge\": false, \"notes\": \"The scene accurately reflects the IAU 2006 definition and ongoing debate, but labeling the pre-2006 count as a 'misconception' overstates the source's neutral description of it as an outdated consensus.\"}",
+    "error": null
+  },
+  "judge_protocols-matrix_R1_4": {
+    "text": "{\"unsupportedElements\": [], \"overconfidentClaim\": false, \"flattenedHedge\": false, \"notes\": \"The scene faithfully represents the tradeoffs and relations described in the source without adding unsupported claims.\"}",
+    "error": null
+  },
+  "judge_antibiotic-resistance_R2_4": {
+    "text": "{\"unsupportedElements\": [], \"overconfidentClaim\": false, \"flattenedHedge\": false, \"notes\": \"The scene faithfully mirrors the source's claims about population-level selection and the personal-resistance misconception without adding unsupported content or overstating confidence.\"}",
+    "error": null
+  },
+  "judge_moon-formation_R1_4": {
+    "text": "{\"unsupportedElements\": [\"Relation iso_anom -> impact labeled as 'refutation' overstates the source's hedge that the isotopic similarity is merely 'hard to reconcile' with the model, not a refutation\", \"Relation alt -> impact labeled as 'analogy' is an arbitrary relation type not supported by the source, which only says alternative models have been proposed\"], \"overconfidentClaim\": false, \"flattenedHedge\": true, \"notes\": \"The scene turns the source's soft hedge ('hard to reconcile') into a stronger 'refutation' relation and invents an unsupported '",
+    "error": null
+  },
+  "judge_moon-formation_R1_1": {
+    "text": "{\"unsupportedElements\": [\"relation alt_models -> impact labeled as 'refutation' overstates the source, which only says alternative models have been proposed, not that they refute the giant-impact model\", \"alt_models node given role 'assumption', a framing not supported by the source\"], \"overconfidentClaim\": false, \"flattenedHedge\": true, \"notes\": \"The source's cautious mention of alternative models is turned into a definitive 'refutation' relation, flattening the original hedge.\"}",
+    "error": null
+  },
+  "judge_superposition-analogy_R2_1": {
+    "text": "{\"unsupportedElements\": [\"node spinning_coin labeled [status misconception] — source presents it as a partially helpful analogy that breaks down, not a flat misconception\", \"claim wording 'physically inaccurate' overstates the source's softer framing of 'breaks down'\"], \"overconfidentClaim\": true, \"flattenedHedge\": true, \"notes\": \"The source frames the coin analogy as helpful-but-limited, while the scene recasts it more starkly as a misconception/physically inaccurate claim.\"}",
+    "error": null
+  },
+  "judge_water-cycle_R1_4": {
+    "text": "{\"unsupportedElements\": [], \"overconfidentClaim\": false, \"flattenedHedge\": false, \"notes\": \"Scene faithfully represents the described water cycle process with appropriate status and hedge for the cyclical projection.\"}",
+    "error": null
+  },
+  "judge_superposition-analogy_R1_5": {
+    "text": "{\"unsupportedElements\": [], \"overconfidentClaim\": false, \"flattenedHedge\": false, \"notes\": \"The scene's nodes, relations, and claim align closely with the passage's content and hedged framing.\"}",
+    "error": null
+  },
+  "judge_carte-cycle-carbone_R1_5": {
+    "text": "{\"unsupportedElements\": [\"Relation atmo -> photo [sign +] not explicitly stated in the source (only photosynthesis reducing atmospheric CO2 is mentioned, not a feedback of atmospheric CO2 increasing photosynthesis)\", \"Relation disso -> atmo [sign +] in boucle_renforcante contradicts the source, where dissolution removes carbon from the atmosphere; the reinforcing effect actually comes from reduced absorption due to warming, not dissolution increasing atmospheric carbon\"], \"overconfidentClaim\": false, \"flattenedHedge\": false, \"notes\": \"The scene adds a speculative positive feedback (atmo→photo) and mis-signs the dissolution→atmosphere relation, misrepresenting the causal direction described in the source.\"}",
+    "error": null
+  },
+  "judge_gamblers-fallacy_R1_1": {
+    "text": "{\"unsupportedElements\": [], \"overconfidentClaim\": false, \"flattenedHedge\": true, \"notes\": \"The source hedges the probability as 'about 48.6%', but the scene's fact node states '48.6%' as an exact figure, slightly overstating precision; otherwise all nodes and relations are well supported by the passage.\"}",
+    "error": null
+  },
+  "judge_monetary-transmission_R2_4": {
+    "text": "{\"unsupportedElements\": [\"relation investment -> inflation (sign +) not stated in source; source only discusses effect on investment itself, not its downstream effect on inflation\", \"relation lag -> investment marked as fact, but source presents it as 'some estimates' (a hedge), not a fact\", \"claim status 'established' overstates certainty; source hedges most channels ('tend to', 'less clear-cut', 'hard to pin down')\"], \"overconfidentClaim\": true, \"flattenedHedge\": true, \"notes\": \"The scene converts several hedged or uncertain statements (investment effect, lag estimates, expectations magnitude) into confident inference/fact relations and an 'established' claim, exceeding the source's expressed certainty.\"}",
+    "error": null
+  },
+  "judge_planet-count_R2_3": {
+    "text": "{\"unsupportedElements\": [\"nine_planets labeled as 'misconception' - source only says it was the prior standard count that was superseded, not that it was a mistaken belief\", \"relation debate -> iau_def (as inference, negative) misattributes the debate; source states the debate concerns the Pluto reclassification, not the eight-planet definition itself\"], \"overconfidentClaim\": false, \"flattenedHedge\": true, \"notes\": \"The scene overstates the 'nine planets' status as a misconception and misdirects the scientific debate toward the IAU's planet count rather than the Pluto reclassification specifically mentioned in the source.\"}",
+    "error": null
+  },
+  "judge_falling-objects_R2_5": {
+    "text": "{\"unsupportedElements\": [], \"overconfidentClaim\": false, \"flattenedHedge\": false, \"notes\": \"The scene faithfully mirrors the source's claim, misconception, vacuum evidence, and air-resistance explanation without adding unsupported details.\"}",
+    "error": null
+  },
+  "judge_protocols-matrix_R2_2": {
+    "text": "{\"unsupportedElements\": [], \"overconfidentClaim\": false, \"flattenedHedge\": false, \"notes\": \"All nodes and relations directly reflect the source's stated tradeoffs between TCP and UDP with no added or overstated claims.\"}",
+    "error": null
+  },
+  "judge_antibiotic-resistance_R1_4": {
+    "text": "{\"unsupportedElements\": [\"relation 'selection -> mechanism [as analogy]' — source presents natural selection as the actual underlying mechanism/explanation, not as an analogy to it\"], \"overconfidentClaim\": false, \"flattenedHedge\": false, \"notes\": \"The scene accurately reflects the source's confident correction of the misconception, but mischaracterizes the relationship between natural selection and the resistance mechanism as an 'analogy' rather than an explanatory identity.\"}",
+    "error": null
+  },
+  "judge_protocols-matrix_R1_1": {
+    "text": "{\"unsupportedElements\": [], \"overconfidentClaim\": false, \"flattenedHedge\": false, \"notes\": \"The scene accurately reflects the tradeoffs, definitions, and claim stated in the source without adding unsupported content.\"}",
+    "error": null
+  },
+  "judge_frise-imprimerie_R2_1": {
+    "text": "{\"unsupportedElements\": [\"place gut at 1440 stated as exact fact, though source says 'vers 1440' (approximate)\", \"expansion node/evidence presented as fact ('on estime que' in source indicates estimation, not certain fact)\"], \"overconfidentClaim\": false, \"flattenedHedge\": true, \"notes\": \"The scene converts two hedged approximations ('vers 1440', 'on estime que') into exact, fact-status data points, slightly overstating precision.\"}",
+    "error": null
+  },
+  "judge_carte-cycle-carbone_R2_3": {
+    "text": "{\"unsupportedElements\": [\"Direct relation 'warm -> atm' (sign +, 'renforce accumulation') is not explicitly stated in the source; the passage only says warming reduces ocean absorption capacity, the atmospheric effect is implied, not asserted as a direct fact.\", \"Claim wording 'boucles de rétroaction complexes' adds an evaluative descriptor ('complexes') not present in the source.\"], \"overconfidentClaim\": false, \"flattenedHedge\": false, \"notes\": \"The scene mostly mirrors the source's causal structure but adds one inferred direct causal link (warming→atmosphere) stated as fact rather than as an implied secondary effect.\"}",
+    "error": null
+  },
+  "judge_moon-formation_R2_5": {
+    "text": "{\"unsupportedElements\": [\"relation impact -> isotopic_sim [as fact] overstates certainty since source says isotopic similarity is hard to reconcile with the model\", \"relation alt_models -> impact [as refutation] implies alternative models disprove the giant-impact hypothesis, which the source does not claim\", \"relation impact -> small_core [as fact] is stated more definitively than the source's 'explains' language\"], \"overconfidentClaim\": false, \"flattenedHedge\": true, \"notes\": \"The scene turns the source's cautious 'explains but hard to reconcile' language into definite factual relations and frames alternative models as outright refuting the giant-impact hypothesis.\"}",
+    "error": null
+  },
+  "judge_monetary-transmission_R1_3": {
+    "text": "{\"unsupportedElements\": [\"expect_chan -> dampen_inf shown as a confident inference despite source saying its magnitude is hard to pin down\", \"invest_lag node omits that the investment effect itself is 'less clear-cut', only keeping the timing hedge\"], \"overconfidentClaim\": false, \"flattenedHedge\": true, \"notes\": \"The scene converts two explicitly hedged claims (expectations channel's importance/magnitude, investment effect's clarity) into flat inference edges without preserving the uncertainty language.\"}",
+    "error": null
+  },
+  "judge_water-cycle_R2_1": {
+    "text": "{\"unsupportedElements\": [], \"overconfidentClaim\": false, \"flattenedHedge\": false, \"notes\": \"All nodes and relations directly reflect the source's description of the water cycle process, and the claim's confidence matches the passage's assertive tone.\"}",
+    "error": null
+  },
+  "judge_falling-objects_R2_4": {
+    "text": "{\"unsupportedElements\": [], \"overconfidentClaim\": false, \"flattenedHedge\": false, \"notes\": \"The scene faithfully represents the source's claims about free fall, vacuum tests, and air resistance without adding unsupported elements or overstating confidence.\"}",
+    "error": null
+  },
+  "judge_planet-count_R2_5": {
+    "text": "{\"unsupportedElements\": [\"\\\"nine\\\" node labeled with status 'misconception' — source only says it was superseded, not that it was a misconception\"], \"overconfidentClaim\": false, \"flattenedHedge\": false, \"notes\": \"Core claim and debate are faithfully represented, but labeling the pre-2006 count as a 'misconception' overstates what the source states (mere supersession, not error).\"}",
+    "error": null
+  },
+  "judge_falling-objects_R2_3": {
+    "text": "{\"unsupportedElements\": [\"Duplicate/redundant relations 'vacuum_test refutes common_belief' and 'physics_law contradicts common_belief' both framed as independent refutations, slightly overstating the source's simpler single narrative (belief -> experiment -> explanation)\"], \"overconfidentClaim\": false, \"flattenedHedge\": false, \"notes\": \"The scene faithfully captures the source's claim, misconception, evidence, and explanation, though it adds a bit of structural redundancy not explicit in the text.\"}",
+    "error": null
+  },
+  "judge_moon-formation_R2_4": {
+    "text": "{\"unsupportedElements\": [\"relation impact -> debris marked 'as fact' though the whole scenario is presented as a hypothesis in the source\", \"relation debris -> moon marked 'as fact' for the same reason\", \"relation anomalies -> impact marked 'as refutation' overstates source's softer language of 'hard to reconcile' and 'alternative models proposed'\"], \"overconfidentClaim\": false, \"flattenedHedge\": true, \"notes\": \"The scene upgrades hedged, hypothesis-level claims and tensions into 'fact' and 'refutation' relations, overstating the source's cautious tone.\"}",
+    "error": null
+  },
+  "judge_monetary-transmission_R2_1": {
+    "text": "{\"unsupportedElements\": [], \"overconfidentClaim\": false, \"flattenedHedge\": true, \"notes\": \"The source hedges the currency/inflation link with 'tend to' and 'can dampen', but the scene renders policy_rate->currency, currency->imports, and imports->inflation all as unhedged facts.\"}",
+    "error": null
+  },
+  "judge_ph-axis_R2_3": {
+    "text": "{\"unsupportedElements\": [], \"overconfidentClaim\": false, \"flattenedHedge\": false, \"notes\": \"The scene faithfully reflects the source's values, placements, and axis framing without adding unsupported claims or inflating certainty.\"}",
+    "error": null
+  },
+  "judge_carte-cycle-carbone_R2_1": {
+    "text": "{\"unsupportedElements\": [\"Claim states the carbon cycle 'maintains a dynamic equilibrium' with status established, while the source only says it is a loop with some reinforcing and some balancing effects, not asserting an achieved or stable equilibrium\", \"atm -> ocean 'Dissolution' relation with sign + implies a straightforward atmosphere-to-ocean CO2 transfer boosting ocean carbon, but source frames dissolution as reducing atmospheric CO2, a nuance the relation omits\"",
+    "error": null
+  },
+  "judge_falling-objects_R1_3": {
+    "text": "{\"unsupportedElements\": [\"node truth labeled 'Constant acceleration' — source only states objects fall at the same rate, not that acceleration is constant, which is an added physics inference not explicitly stated\", \"relation air -> belief (supports, as inference) implies air resistance is evidence for the misconception, which subtly reframes the source's causal explanation of the illusion as support for the false belief\"], \"overconfidentClaim\": false, \"flattenedHedge\": false, \"notes\": \"The scene mostly tracks the source's belief-confrontation-explanation structure faithfully, but adds a more precise physics term ('constant acceleration') and slightly recasts the air-resistance explanation as supporting evidence for the misconception rather than merely its perceptual cause.\"}",
+    "error": null
+  },
+  "judge_frise-imprimerie_R2_5": {
+    "text": "{\"unsupportedElements\": [\"Claim restricts timeline to \\\"XVe et XVIe siècles\\\" but source's timeline extends to 1605, which is XVIIe siècle — a factual/temporal inaccuracy not supported by source\", \"Node 'expansion' (250 villes) marked status 'established' despite source using hedged language 'on estime que' (an estimate)\", \"Node 'gut' treats 'vers 1440' (approximate) as an exact established date without preserving the approximation\"], \"overconfidentClaim\": true, \"flattenedHedge\": true, \"notes\": \"The scene flattens the source's hedged estimate ('on estime') and approximate date ('vers 1440') into firm 'established' status, and the claim misstates the actual century range covered by the timeline.\"}",
+    "error": null
+  },
+  "judge_planet-count_R1_1": {
+    "text": "{\"unsupportedElements\": [\"nine_planets node labeled with status 'misconception' — source only says it was the standard count before 2006 and was superseded, not that it was a misconception\", \"Main claim given status 'established' without reflecting that the reclassification 'remains debated by some planetary scientists'\"], \"overconfidentClaim\": true, \"flattenedHedge\": true, \"notes\": \"The scene overstates certainty by labeling the pre-2006 count a 'misconception' and by giving the overall claim an 'established' status despite the source's explicit mention of ongoing scientific debate.\"}",
+    "error": null
+  },
+  "judge_protocols-matrix_R2_3": {
+    "text": "{\"unsupportedElements\": [], \"overconfidentClaim\": false, \"flattenedHedge\": false, \"notes\": \"All nodes, relations, and the claim closely mirror the source's description of TCP/UDP trade-offs without adding unsupported detail or overstating certainty.\"}",
+    "error": null
+  },
+  "judge_antibiotic-resistance_R2_1": {
+    "text": "{\"unsupportedElements\": [\"evidence e1 citing source [[Natural selection]] as if an external reference, when the passage simply describes the mechanism without citing a separate source\"], \"overconfidentClaim\": false, \"flattenedHedge\": false, \"notes\": \"The scene's core claims and relations align with the passage, but attaching an external 'source' tag to the evidence node is an unsupported embellishment.\"}",
+    "error": null
+  },
+  "judge_mammals-contrast_R1_5": {
+    "text": "{\"unsupportedElements\": [\"eggs -> mammal 'contradicts' mislabels the relation; source shows egg-laying is incidental (platypus is still a mammal), not that it contradicts mammal status\", \"habitat -> mammal 'contradicts' similarly overstates a negative relation where source only says habitat is incidental/irrelevant\", \"shark -> mammal 'refutes' relation is a stretched framing since shark is used as a contrast example, not a tested candidate being refuted\"], \"overconfidentClaim\": false, \"flattenedHedge\": false, \"notes\": \"The core claim matches the source's confident tone, but several relation labels (contradicts/refutes) impose stronger logical relationships than the source's simple statement that habitat and egg-laying are merely incidental.\"}",
+    "error": null
+  },
+  "judge_career-decision_R1_3": {
+    "text": "{\"unsavedElements\": [], \"unsupportedElements\": [\"pros_berlin listing 'professional growth' as a fact-based pro, when growth is explicitly framed as an open question in the source\", \"berlin_offer -> growth relation stated 'as inference' with positive sign, flattening the source's tentative 'maybe that's exactly the kick I need'\", \"cons_berlin includes 'relocation stress' which is not explicitly stated, only implied via uprooting/new language/no network\"], \"overconfidentClaim\": false, \"flattenedHedge\": true, \"notes\": \"The scene mostly mirrors the source's ambivalence but converts the tentative, hedged link between relocation and growth into a firm positive inference, and folds growth into the 'pros' list despite the source treating it as an unresolved question.\"}",
+    "error": null
+  },
+  "judge_gamblers-fallacy_R2_3": {
+    "text": "{\"unsupportedElements\": [], \"overconfidentClaim\": false, \"flattenedHedge\": false, \"notes\": \"Scene accurately reflects the source's framing of the gambler's fallacy, the intuition, and the independence-based refutation with correct probability figure.\"}",
+    "error": null
+  },
+  "judge_planet-count_R1_4": {
+    "text": "{\"unsupportedElements\": [\"nine_planets labeled with status 'misconception' — source frames it as the prior standard consensus, not an error/misconception\"], \"overconfidentClaim\": true, \"flattenedHedge\": false, \"notes\": \"The scene recasts the previously accepted nine-planet count as a 'misconception,' which is a stronger/different judgment than the source's neutral description of it as the superseded prior consensus.\"}",
+    "error": null
+  },
+  "judge_planet-count_R2_1": {
+    "text": "{\"unsupportedElements\": [\"node nine_planets labeled as 'misconception' — source presents it as the prior standard consensus, not a misconception\", \"relation scientist_debate -> iau_def (source says debate concerns Pluto's reclassification, not the eight-planet count itself)\"], \"overconfidentClaim\": false, \"flattenedHedge\": true, \"notes\": \"The scene overstates the prior nine-planet consensus as a 'misconception' and misdirects the scientific debate toward the eight-planet definition rather than Pluto's reclassification, flattening the source's more nuanced hedges.\"}",
+    "error": null
+  },
+  "judge_career-decision_R2_4": {
+    "text": "",
+    "error": null
+  },
+  "judge_superposition-analogy_R2_4": {
+    "text": "{\"unsupportedElements\": [\"relation measurement -> qubit 'collapses state' [as fact] — source never states that measurement collapses the qubit's state, only that it is not simply 'looking'\", \"node analogy status 'speculative' — source presents the coin analogy as a common pedagogical comparison, not as a speculative claim\"], \"overconfidentClaim\": true, \"flattenedHedge\": true, \"notes\": \"The scene adds a specific technical mechanism (measurement collapsing state) as a hard fact that the source only gestures at negatively, overstating source certainty.\"}",
+    "error": null
+  },
+  "judge_ph-axis_R1_4": {
+    "text": "{\"unsupportedElements\": [\"Relation labels drop the source's hedging words ('around', 'about', 'near') and state exact pH values as fact\", \"Relation type 'inference' implies these values were inferred rather than directly given in the source\"], \"overconfidentClaim\": false, \"flattenedHedge\": true, \"notes\": \"The scene converts the source's approximate pH values ('around 2', 'about 7.4', 'near 13') into precise, unhedged figures.\"}",
+    "error": null
+  },
+  "judge_falling-objects_R1_5": {
+    "text": "{\"unsupportedElements\": [\"relation air_res -> myth (explains) reframes the source's statement that air resistance explains the *difference*, not the misconception itself\"], \"overconfidentClaim\": false, \"flattenedHedge\": false, \"notes\": \"Scene closely tracks the source's claim and reasoning sequence, with only a minor reinterpretation of what air resistance explains.\"}",
+    "error": null
+  },
+  "judge_antibiotic-resistance_R1_1": {
+    "text": "{\"unsupportedElements\": [\"Overuse of antibiotics speeding selection is omitted, but this is fine since it's not required; not an unsupported element\", \"relation survival -> bacteria [as inference] frames bacteria developing resistance as inferred conclusion from survival rather than the source's direct causal chain (survival IS the bacteria resistance, not something inferred from it)\", \"claim status 'established' presented as settled fact, though source frames it as a teaching point/misconception correction rather than an established scientific claim needing no hedge (minor overconfidence)\"], \"overconfidentClaim\": false, \"flattenedHedge\": false, \"notes\": \"The scene largely mirrors the source's mechanism and misconception-correction structure, with only minor logical restructuring (treating bacterial resistance as inferred from survival rather than as the same phenomenon) that doesn't materially misrepresent the source.\"}",
+    "error": null
+  },
+  "judge_photosynthesis_R1_5": {
+    "text": "{\"unsupportedElements\": [\"relation chlorophyll -> leaves (source says leaves absorb sunlight; chlorophyll does not act on leaves)\", \"relation water -> chlorophyll (source says chlorophyll splits water, i.e. chlorophyll acts on water, not the reverse)\", \"relation co2 -> chlorophyll (source says chlorophyll fixes CO2, i.e. chlorophyll acts on CO2, not the reverse)\"], \"overconfidentClaim\": false, \"flattenedHedge\": false, \"notes\": \"Three relations reverse the causal direction described in the source (chlorophyll acting on water/CO2/leaves rather than the source's actual leaves-absorb-light and chlorophyll-splits-water/fixes-CO2 sequence).\"}",
+    "error": null
+  },
+  "judge_ph-axis_R1_3": {
+    "text": "{\"unsupportedElements\": [], \"overconfidentClaim\": false, \"flattenedHedge\": false, \"notes\": \"The scene's claims, values, and statuses closely match the source's stated facts without adding unsupported confidence.\"}",
+    "error": null
+  },
+  "judge_career-decision_R2_1": {
+    "text": "{\"unsupportedElements\": [\"relation current_job -> comfort marked as 'as fact' though it's an inferred association, not stated fact\", \"relation growth -> relocation 'supports' implies growth causes relocation stress, a causal link not stated in source\", \"comfort node status 'established' overstates certainty since comfort vs growth is explicitly framed as an open question\", \"remote node status 'established' slightly overstates a stated but personal/subjective claim as settled fact\"], \"overconfidentClaim\": false, \"flattenedHedge\": true, \"notes\": \"The scene mostly mirrors the source but overstates a couple of inferred or subjective relations as facts/established, and invents a causal link between growth and relocation stress not present in the text.\"}",
+    "error": null
+  },
+  "judge_protocols-matrix_R1_2": {
+    "text": "{\"unsupportedElements\": [], \"overconfidentClaim\": false, \"flattenedHedge\": false, \"notes\": \"All nodes, relations, and the claim closely mirror the source's stated tradeoffs between TCP and UDP with no added or inflated certainty.\"}",
+    "error": null
+  },
+  "judge_photosynthesis_R1_2": {
+    "text": "{\"unsupportedElements\": [], \"overconfidentClaim\": false, \"flattenedHedge\": false, \"notes\": \"The scene's nodes and relations accurately reflect the described photosynthesis process without adding unsupported claims or overstating certainty.\"}",
+    "error": null
+  },
+  "judge_moon-formation_R1_3": {
+    "text": "{\"unsupportedElements\": [\"relation impactor -> impact marked 'as fact' (impact event itself is part of the hypothesis, not established fact)\", \"relation earth -> impact marked 'as fact' (same issue)\", \"relation anomalies -> impact marked 'as refutation' (source only says anomalies are hard to reconcile, not that they refute the model)\"], \"overconfidentClaim\": true, \"flattenedHedge\": true, \"notes\": \"The scene treats the impact event as settled fact and treats isotopic anomalies as an outright refutation, whereas the source frames both the impact and the anomalies with more hedging (leading hypothesis, hard to reconcile, alternative models proposed).\"}",
+    "error": null
+  },
+  "judge_mammals-contrast_R1_1": {
+    "text": "{\"unsupportedElements\": [\"node 'fish' as separate entity from shark (source just says shark is not a mammal, no separate 'fish' category node)\", \"relation shark -> fish [as fact] (source doesn't classify shark as fish, just contrasts it with whale/mammal)\", \"claim status 'established' presented with full confidence, though source itself states this fairly directly so mostly acceptable\"], \"overconfidentClaim\": false, \"flattenedHedge\": false, \"notes\": \"The scene is largely faithful but introduces an unsupported 'fish' node/relation not present in the source, which only says the shark is not a mammal.\"}",
+    "error": null
+  },
+  "judge_planet-count_R1_2": {
+    "text": "{\"unsupportedElements\": [\"nine node labeled with status 'misconception' - source only says it was superseded, not that it was a misconception\", \"relation iau_def -> nine described as 'refutes'/'refutation' - source uses 'supersedes', a weaker claim than refutation\", \"claim marked 'established' without reflecting the source's explicit statement that the reclassification remains debated\"], \"overconfidentClaim\": true, \"flattenedHedge\": true, \"notes\": \"The scene upgrades 'superseded' to 'refuted' and labels the old view a 'misconception', and states the claim as fully established despite the source's explicit hedge about ongoing scientific debate.\"}",
+    "error": null
+  },
+  "judge_frise-imprimerie_R1_1": {
+    "text": "{\"unsupportedElements\": [\"claim states development occurred in 'XVe et XVIe siècles' but timeline spans to 1605 (XVIIe siècle), which is inaccurate/unsupported\", \"date_1440 given as exact '1440' losing the source's 'vers' (approximate) qualifier\", \"diffusion node marked [status established] despite source using 'on estime que' (estimate), flattening the hedge\"], \"overconfidentClaim\": true, \"flattenedHedge\": true, \"notes\": \"The scene drops the source's hedges ('vers', 'on estime que') and asserts an inaccurate century range, overstating certainty and precision.\"}",
+    "error": null
+  },
+  "judge_ph-axis_R1_5": {
+    "text": "{\"unsupportedElements\": [], \"overconfidentClaim\": false, \"flattenedHedge\": true, \"notes\": \"Source hedges pH values with 'around', 'about', 'near' and qualitative terms (strongly/slightly), but the scene presents exact figures (pH 2, 7.4, 13) as unqualified facts.\"}",
+    "error": null
+  },
+  "judge_water-cycle_R2_2": {
+    "text": "{\"unsupportedElements\": [], \"overconfidentClaim\": false, \"flattenedHedge\": false, \"notes\": \"All nodes and relations (sun heating, evaporation, condensation, precipitation, collection, and the closed loop) are directly supported by the passage, and the claim's confidence matches the source's assertive tone.\"}",
+    "error": null
+  },
+  "judge_ph-axis_R2_2": {
+    "text": "{\"unsupportedElements\": [], \"overconfidentClaim\": false, \"flattenedHedge\": false, \"notes\": \"Scene faithfully represents the source's pH values and framing without adding unsupported claims or overstating confidence.\"}",
+    "error": null
+  },
+  "judge_mammals-contrast_R1_4": {
+    "text": "{\"unsupportedElements\": [\"relation animal -> mammal [as fact] (genus relation not explicitly stated in source, only presupposed)\"], \"overconfidentClaim\": false, \"flattenedHedge\": false, \"notes\": \"The scene closely mirrors the source's confident claim about milk and warm-bloodedness as criterial features, with only a minor unstated taxonomic relation added.\"}",
+    "error": null
+  },
+  "judge_frise-imprimerie_R1_4": {
+    "text": "{\"unsupportedElements\": [\"essor node status marked 'established' despite source using 'on estime que' (estimate, not established fact)\"], \"overconfidentClaim\": false, \"flattenedHedge\": true, \"notes\": \"The estimate about workshops in 250+ cities is presented as an established fact, flattening the source's explicit hedge ('on estime que').\"}",
+    "error": null
+  },
+  "judge_mammals-contrast_R1_3": {
+    "text": "{\"unsupportedElements\": [\"shark node status 'misconception' - source presents shark only as a counterexample, not explicitly framed as a misconception\"], \"overconfidentClaim\": false, \"flattenedHedge\": false, \"notes\": \"The scene closely mirrors the source's confident definitional claims and examples, with only the added 'misconception' status for shark being an unsupported interpretive label.\"}",
+    "error": null
+  },
+  "judge_carte-cycle-carbone_R1_2": {
+    "text": "{\"unsupportedElements\": [\"relation bio -> atmos asserted as fact without a specific mechanism (source only links biosphere to atmosphere via photosynthesis/respiration processes)\", \"claim's descriptor",
+    "error": null
+  },
+  "judge_photosynthesis_R1_4": {
+    "text": "",
+    "error": null
+  },
+  "judge_career-decision_R2_5": {
+    "text": "",
+    "error": null
+  },
+  "judge_photosynthesis_R2_3": {
+    "text": "{\"unsupportedElements\": [\"relation glucose -> oxygen labeled 'releases' (source attributes oxygen release to splitting water, not to glucose)\", \"relation chloro -> leaves labeled 'contained in' (not stated in source, inferred)\"], \"overconfidentClaim\": false, \"flattenedHedge\": false, \"notes\": \"The scene misattributes oxygen release to glucose rather than water-splitting, and adds an unstated containment relation, though the overall claim confidence matches the source.\"}",
+    "error": null
+  },
+  "judge_falling-objects_R1_4": {
+    "text": "{\"unsupportedElements\": [], \"overconfidentClaim\": false, \"flattenedHedge\": false, \"notes\": \"The scene faithfully represents the source's claims about gravity, air resistance, and the vacuum experiment without adding unsupported elements or overstating confidence.\"}",
+    "error": null
+  },
+  "judge_protocols-matrix_R2_5": {
+    "text": "{\"unsupportedElements\": [\"Relation tcp -> udp label 'slower due to overhead' introduces a causal mechanism (overhead) not stated in the source, which only says TCP is slower without explaining why\"], \"overconfidentClaim\": false, \"flattenedHedge\": false, \"notes\": \"The scene is largely faithful; the only unsupported addition is the specific 'overhead' explanation for TCP's slowness, which the source does not mention.\"}",
+    "error": null
+  },
+  "judge_monetary-transmission_R1_2": {
+    "text": "{\"unsupportedElements\": [\"currency -> imports/inflation chain marked as fact despite source's hedged 'tend to' and 'can dampen' language\", \"expectations -> inflation marked as inference though source only says economists judge it important, not that it operates on inflation via this exact pathway\"], \"overconfidentClaim\": false, \"flattenedHedge\": true, \"notes\": \"The scene converts several hedged claims ('tend to', 'can dampen') about currency and inflation effects into flat 'fact' relations, understating the source's uncertainty.\"}",
+    "error": null
+  },
+  "judge_moon-formation_R2_3": {
+    "text": "{\"unsupportedElements\": [\"Relation anomaly -> impact labeled as 'refutation' overstates the source's hedge ('hard to reconcile'), which is not a full refutation but an open difficulty\"], \"overconfidentClaim\": false, \"flattenedHedge\": true, \"notes\": \"The scene's main claim and evidence nodes are faithful, but casting the isotopic anomaly as a 'refutation' with a contested status turns the source's soft hedge into a stronger epistemic conflict than stated.\"}",
+    "error": null
+  },
+  "judge_career-decision_R1_4": {
+    "text": "{\"unsupportedElements\": [\"node comfort marked status 'established' though source frames comfort/stability as an open, questioned motivation rather than a settled fact\", \"relation growth -> berlin_offer marked as inference/sign+ though source only tentatively wonders if relocation might be 'the kick I need', not a settled inferential link\", \"asymmetry between growth (hypothesis) and comfort (established) not supported by source's parallel hedged treatment of both\"], \"overconfidentClaim\": false, \"flattenedHedge\": true, \"notes\": \"The scene mostly tracks the source's evidence and hedges reasonably, but assigns 'established' certainty to the comfort node when the source treats comfort and growth as equally uncertain, competing motivations.\"}",
+    "error": null
+  },
+  "judge_gamblers-fallacy_R1_4": {
+    "text": "{\"unsupportedElements\": [\"input prediction options '50/50' not mentioned in source\", \"claim generalizes to all independent random events, broader than source's specific roulette wheel example\"], \"overconfidentClaim\": true, \"flattenedHedge\": false, \"notes\": \"The scene's claim overgeneralizes the specific roulette example into a universal law about independent random events, slightly exceeding the source's scope.\"}",
+    "error": null
+  },
+  "judge_monetary-transmission_R1_4": {
+    "text": "{\"unsupportedElements\": [\"relation expectations -> inflation (source doesn't specify what the expectations channel affects, only that it exists and its magnitude is uncertain)\"], \"overconfidentClaim\": false, \"flattenedHedge\": false, \"notes\": \"Scene largely preserves source hedges (inference/hypothesis statuses, reported evidence) but adds an unsupported specific target for the expectations channel's effect.\"}",
+    "error": null
+  },
+  "judge_protocols-matrix_R1_3": {
+    "text": "{\"unsupportedElements\": [], \"overconfidentClaim\": false, \"flattenedHedge\": false, \"notes\": \"The scene's claim, nodes, and relations all directly reflect the tradeoffs stated in the source without adding unsupported detail or overstating certainty.\"}",
+    "error": null
+  },
+  "judge_protocols-matrix_R2_4": {
+    "text": "{\"unsupportedElements\": [], \"overconfidentClaim\": false, \"flattenedHedge\": false, \"notes\": \"All nodes, relations, and statuses accurately reflect the source's description of TCP/UDP tradeoffs without adding unsupported claims or inflating certainty.\"}",
+    "error": null
+  },
+  "judge_monetary-transmission_R1_5": {
+    "text": "{\"unsupportedElements\": [\"lag -> investment relation marked as fact, but source only says 'some estimates place the peak impact at 12–18 months' (hedged, not fact)\", \"expectation -> spending relation implies the expectations channel specifically targets spending, which the source does not specify\"], \"overconfidentClaim\": false, \"flattenedHedge\": true, \"notes\": \"The scene converts the source's hedged estimate about investment lag into a stated fact and adds a specific target (spending) for the expectations channel that isn't explicit in the source.\"}",
+    "error": null
+  },
+  "judge_gamblers-fallacy_R2_1": {
+    "text": "{\"unsupportedElements\": [\"relation wheel -> independence (supports/fact) not explicitly stated in source; source only says wheel has no memory as part of independence explanation, not a separate supporting fact chain\", \"node 'wheel' as distinct evidence node with role separate from independence claim is an inferred structural addition\"], \"overconfidentClaim\": false, \"flattenedHedge\": false, \"notes\": \"The scene mostly mirrors the source's claim and refutation but adds an extra inferred support relation (wheel -> independence) not explicitly stated.\"}",
+    "error": null
+  },
+  "judge_water-cycle_R2_5": {
+    "text": "{\"unsupportedElements\": [], \"overconfidentClaim\": false, \"flattenedHedge\": false, \"notes\": \"All nodes and relations correspond directly to processes and sequence described in the source, and the claim matches the passage's confident 'never stops' framing.\"}",
+    "error": null
+  },
+  "judge_frise-imprimerie_R1_5": {
+    "text": "{\"unsupportedElements\": [\"relation j3 -> essor marked 'as fact' despite source saying 'on estime que' (estimated), which is a hedge\"], \"overconfidentClaim\": false, \"flattenedHedge\": true, \"notes\": \"The source explicitly hedges the 250-city estimate with 'on estime que', but the scene asserts it as a plain fact, flattening the epistemic uncertainty.\"}",
+    "error": null
+  },
+  "judge_water-cycle_R2_3": {
+    "text": "{\"unsupportedElements\": [], \"overconfidentClaim\": false, \"flattenedHedge\": false, \"notes\": \"All nodes and relations correspond directly to steps and the loop described in the source, with no invented content or overstated confidence.\"}",
+    "error": null
+  },
+  "judge_photosynthesis_R1_3": {
+    "text": "{\"unsupportedElements\": [\"relation glucose -> leaves (source says glucose stores energy for growth, not that it flows back into leaves)\", \"leaves node not connected to sunlight absorption as described in source\"], \"overconfidentClaim\": false, \"flattenedHedge\": false, \"notes\": \"The scene adds an unsupported glucose→leaves relation and omits the leaves' sunlight-absorption link, but the overall claim confidence matches the source's fairly definitive tone.\"}",
+    "error": null
+  }
+}

@@ -1,0 +1,1256 @@
+{
+  "dir": "apps/eval-generability/results/live-1783426556456",
+  "generatedAt": "2026-07-07T13:24:54.980Z",
+  "providers": {
+    "anthropic": {
+      "model": "claude-haiku-4-5",
+      "generations": 160,
+      "rollup": {
+        "R1": {
+          "archetypeModeShare": 0.84,
+          "nodeJaccard": 0.42,
+          "relationJaccard": 0.17,
+          "passRate": 0.66,
+          "fabricationRate": 0,
+          "statusCeilingHoldRate": 0.91,
+          "parseFailRate": 0.11
+        },
+        "R2": {
+          "archetypeModeShare": 0.73,
+          "nodeJaccard": 0.41,
+          "relationJaccard": 0.19,
+          "passRate": 0.46,
+          "fabricationRate": 0,
+          "statusCeilingHoldRate": 0.74,
+          "parseFailRate": 0.15
+        }
+      },
+      "perTask": [
+        {
+          "taskId": "antibiotic-resistance",
+          "regime": "R1",
+          "runs": 5,
+          "archetypeDistribution": {
+            "cycle": 2,
+            "(none)": 3
+          },
+          "archetypeMode": "(none)",
+          "archetypeModeShare": 0.6,
+          "nodeJaccard": 0.2906010656010657,
+          "relationJaccard": 0.03727272727272727,
+          "passRate": 1,
+          "fabricationRate": 0,
+          "statusCeilingHoldRate": 1,
+          "parseFailRate": 0
+        },
+        {
+          "taskId": "antibiotic-resistance",
+          "regime": "R2",
+          "runs": 5,
+          "archetypeDistribution": {
+            "graph": 1,
+            "cycle": 3,
+            "tree": 1
+          },
+          "archetypeMode": "cycle",
+          "archetypeModeShare": 0.6,
+          "nodeJaccard": 0.1540750915750916,
+          "relationJaccard": 0.05333333333333333,
+          "passRate": 0,
+          "fabricationRate": 0,
+          "statusCeilingHoldRate": 1,
+          "parseFailRate": 0.4
+        },
+        {
+          "taskId": "career-decision",
+          "regime": "R1",
+          "runs": 5,
+          "archetypeDistribution": {
+            "(none)": 1,
+            "graph": 4
+          },
+          "archetypeMode": "graph",
+          "archetypeModeShare": 0.8,
+          "nodeJaccard": 0.11457138690716559,
+          "relationJaccard": 0.005555555555555555,
+          "passRate": 0.4,
+          "fabricationRate": 0,
+          "statusCeilingHoldRate": 0.4,
+          "parseFailRate": 0.2
+        },
+        {
+          "taskId": "career-decision",
+          "regime": "R2",
+          "runs": 5,
+          "archetypeDistribution": {
+            "(none)": 4,
+            "graph": 1
+          },
+          "archetypeMode": "(none)",
+          "archetypeModeShare": 0.8,
+          "nodeJaccard": 0.11622409033578449,
+          "relationJaccard": 0.013095238095238094,
+          "passRate": 0,
+          "fabricationRate": 0,
+          "statusCeilingHoldRate": 0,
+          "parseFailRate": 0.2
+        },
+        {
+          "taskId": "carte-cycle-carbone",
+          "regime": "R1",
+          "runs": 5,
+          "archetypeDistribution": {
+            "cycle": 5
+          },
+          "archetypeMode": "cycle",
+          "archetypeModeShare": 1,
+          "nodeJaccard": 0.4782251082251082,
+          "relationJaccard": 0.09880952380952382,
+          "passRate": 0.4,
+          "fabricationRate": 0,
+          "statusCeilingHoldRate": 1,
+          "parseFailRate": 0.2
+        },
+        {
+          "taskId": "carte-cycle-carbone",
+          "regime": "R2",
+          "runs": 5,
+          "archetypeDistribution": {
+            "cycle": 5
+          },
+          "archetypeMode": "cycle",
+          "archetypeModeShare": 1,
+          "nodeJaccard": 0.3442191142191143,
+          "relationJaccard": 0.027344877344877346,
+          "passRate": 0.8,
+          "fabricationRate": 0,
+          "statusCeilingHoldRate": 1,
+          "parseFailRate": 0.2
+        },
+        {
+          "taskId": "falling-objects",
+          "regime": "R1",
+          "runs": 5,
+          "archetypeDistribution": {
+            "(none)": 5
+          },
+          "archetypeMode": "(none)",
+          "archetypeModeShare": 1,
+          "nodeJaccard": 0.8321428571428571,
+          "relationJaccard": 0.5533333333333333,
+          "passRate": 1,
+          "fabricationRate": 0,
+          "statusCeilingHoldRate": 1,
+          "parseFailRate": 0
+        },
+        {
+          "taskId": "falling-objects",
+          "regime": "R2",
+          "runs": 5,
+          "archetypeDistribution": {
+            "graph": 1,
+            "cycle": 2,
+            "tree": 2
+          },
+          "archetypeMode": "cycle",
+          "archetypeModeShare": 0.4,
+          "nodeJaccard": 0.35500000000000004,
+          "relationJaccard": 0.15805555555555556,
+          "passRate": 0,
+          "fabricationRate": 0,
+          "statusCeilingHoldRate": 1,
+          "parseFailRate": 0
+        },
+        {
+          "taskId": "frise-imprimerie",
+          "regime": "R1",
+          "runs": 5,
+          "archetypeDistribution": {
+            "timeline": 5
+          },
+          "archetypeMode": "timeline",
+          "archetypeModeShare": 1,
+          "nodeJaccard": 0.23856282606282608,
+          "relationJaccard": 0.13444444444444445,
+          "passRate": 1,
+          "fabricationRate": 0,
+          "statusCeilingHoldRate": 1,
+          "parseFailRate": 0
+        },
+        {
+          "taskId": "frise-imprimerie",
+          "regime": "R2",
+          "runs": 5,
+          "archetypeDistribution": {
+            "timeline": 5
+          },
+          "archetypeMode": "timeline",
+          "archetypeModeShare": 1,
+          "nodeJaccard": 0.24051587301587304,
+          "relationJaccard": 0.11000000000000001,
+          "passRate": 1,
+          "fabricationRate": 0,
+          "statusCeilingHoldRate": 1,
+          "parseFailRate": 0
+        },
+        {
+          "taskId": "gamblers-fallacy",
+          "regime": "R1",
+          "runs": 5,
+          "archetypeDistribution": {
+            "(none)": 4,
+            "tree": 1
+          },
+          "archetypeMode": "(none)",
+          "archetypeModeShare": 0.8,
+          "nodeJaccard": 0.1979040404040404,
+          "relationJaccard": 0.01111111111111111,
+          "passRate": 0.2,
+          "fabricationRate": 0,
+          "statusCeilingHoldRate": 1,
+          "parseFailRate": 0.8
+        },
+        {
+          "taskId": "gamblers-fallacy",
+          "regime": "R2",
+          "runs": 5,
+          "archetypeDistribution": {
+            "graph": 4,
+            "(none)": 1
+          },
+          "archetypeMode": "graph",
+          "archetypeModeShare": 0.8,
+          "nodeJaccard": 0.2664141414141414,
+          "relationJaccard": 0.06492424242424241,
+          "passRate": 0.6,
+          "fabricationRate": 0,
+          "statusCeilingHoldRate": 0.6,
+          "parseFailRate": 0
+        },
+        {
+          "taskId": "mammals-contrast",
+          "regime": "R1",
+          "runs": 5,
+          "archetypeDistribution": {
+            "graph": 4,
+            "tree": 1
+          },
+          "archetypeMode": "graph",
+          "archetypeModeShare": 0.8,
+          "nodeJaccard": 0.4621093285799168,
+          "relationJaccard": 0.06999999999999999,
+          "passRate": 0.8,
+          "fabricationRate": 0,
+          "statusCeilingHoldRate": 1,
+          "parseFailRate": 0.2
+        },
+        {
+          "taskId": "mammals-contrast",
+          "regime": "R2",
+          "runs": 5,
+          "archetypeDistribution": {
+            "graph": 3,
+            "(none)": 2
+          },
+          "archetypeMode": "graph",
+          "archetypeModeShare": 0.6,
+          "nodeJaccard": 0.5639260739260739,
+          "relationJaccard": 0.14778947368421053,
+          "passRate": 0.6,
+          "fabricationRate": 0,
+          "statusCeilingHoldRate": 1,
+          "parseFailRate": 0.4
+        },
+        {
+          "taskId": "monetary-transmission",
+          "regime": "R1",
+          "runs": 5,
+          "archetypeDistribution": {
+            "flow": 5
+          },
+          "archetypeMode": "flow",
+          "archetypeModeShare": 1,
+          "nodeJaccard": 0.3132039013617961,
+          "relationJaccard": 0.08940603514132925,
+          "passRate": 0.2,
+          "fabricationRate": 0,
+          "statusCeilingHoldRate": 1,
+          "parseFailRate": 0
+        },
+        {
+          "taskId": "monetary-transmission",
+          "regime": "R2",
+          "runs": 5,
+          "archetypeDistribution": {
+            "flow": 3,
+            "(none)": 2
+          },
+          "archetypeMode": "flow",
+          "archetypeModeShare": 0.6,
+          "nodeJaccard": 0.24042710944026738,
+          "relationJaccard": 0.08909012727898177,
+          "passRate": 0,
+          "fabricationRate": 0,
+          "statusCeilingHoldRate": 0.4,
+          "parseFailRate": 0.2
+        },
+        {
+          "taskId": "moon-formation",
+          "regime": "R1",
+          "runs": 5,
+          "archetypeDistribution": {
+            "graph": 1,
+            "flow": 3,
+            "cycle": 1
+          },
+          "archetypeMode": "flow",
+          "archetypeModeShare": 0.6,
+          "nodeJaccard": 0.35983516483516487,
+          "relationJaccard": 0.051794871794871786,
+          "passRate": 1,
+          "fabricationRate": 0,
+          "statusCeilingHoldRate": 1,
+          "parseFailRate": 0
+        },
+        {
+          "taskId": "moon-formation",
+          "regime": "R2",
+          "runs": 5,
+          "archetypeDistribution": {
+            "flow": 2,
+            "tree": 1,
+            "graph": 2
+          },
+          "archetypeMode": "flow",
+          "archetypeModeShare": 0.4,
+          "nodeJaccard": 0.5376839826839827,
+          "relationJaccard": 0.15019813519813519,
+          "passRate": 0.4,
+          "fabricationRate": 0,
+          "statusCeilingHoldRate": 0.4,
+          "parseFailRate": 0.2
+        },
+        {
+          "taskId": "ph-axis",
+          "regime": "R1",
+          "runs": 5,
+          "archetypeDistribution": {
+            "axis": 5
+          },
+          "archetypeMode": "axis",
+          "archetypeModeShare": 1,
+          "nodeJaccard": 0.6141025641025641,
+          "relationJaccard": 0.6,
+          "passRate": 1,
+          "fabricationRate": 0,
+          "statusCeilingHoldRate": 1,
+          "parseFailRate": 0
+        },
+        {
+          "taskId": "ph-axis",
+          "regime": "R2",
+          "runs": 5,
+          "archetypeDistribution": {
+            "axis": 5
+          },
+          "archetypeMode": "axis",
+          "archetypeModeShare": 1,
+          "nodeJaccard": 1,
+          "relationJaccard": 1,
+          "passRate": 1,
+          "fabricationRate": 0,
+          "statusCeilingHoldRate": 1,
+          "parseFailRate": 0
+        },
+        {
+          "taskId": "photosynthesis",
+          "regime": "R1",
+          "runs": 5,
+          "archetypeDistribution": {
+            "cycle": 4,
+            "flow": 1
+          },
+          "archetypeMode": "cycle",
+          "archetypeModeShare": 0.8,
+          "nodeJaccard": 0.7163675213675214,
+          "relationJaccard": 0.3258333333333333,
+          "passRate": 1,
+          "fabricationRate": 0,
+          "statusCeilingHoldRate": 1,
+          "parseFailRate": 0
+        },
+        {
+          "taskId": "photosynthesis",
+          "regime": "R2",
+          "runs": 5,
+          "archetypeDistribution": {
+            "cycle": 2,
+            "flow": 3
+          },
+          "archetypeMode": "flow",
+          "archetypeModeShare": 0.6,
+          "nodeJaccard": 0.95,
+          "relationJaccard": 0.7152777777777778,
+          "passRate": 1,
+          "fabricationRate": 0,
+          "statusCeilingHoldRate": 1,
+          "parseFailRate": 0
+        },
+        {
+          "taskId": "planet-count",
+          "regime": "R1",
+          "runs": 5,
+          "archetypeDistribution": {
+            "tree": 1,
+            "timeline": 3,
+            "graph": 1
+          },
+          "archetypeMode": "timeline",
+          "archetypeModeShare": 0.6,
+          "nodeJaccard": 0.4969552669552669,
+          "relationJaccard": 0.1601190476190476,
+          "passRate": 0,
+          "fabricationRate": 0,
+          "statusCeilingHoldRate": 0.2,
+          "parseFailRate": 0
+        },
+        {
+          "taskId": "planet-count",
+          "regime": "R2",
+          "runs": 5,
+          "archetypeDistribution": {
+            "(none)": 2,
+            "timeline": 2,
+            "graph": 1
+          },
+          "archetypeMode": "(none)",
+          "archetypeModeShare": 0.4,
+          "nodeJaccard": 0.23021645021645024,
+          "relationJaccard": 0.02857142857142857,
+          "passRate": 0,
+          "fabricationRate": 0,
+          "statusCeilingHoldRate": 0.2,
+          "parseFailRate": 0.2
+        },
+        {
+          "taskId": "protocols-matrix",
+          "regime": "R1",
+          "runs": 5,
+          "archetypeDistribution": {
+            "graph": 5
+          },
+          "archetypeMode": "graph",
+          "archetypeModeShare": 1,
+          "nodeJaccard": 0.3388381162181472,
+          "relationJaccard": 0.1227544351073763,
+          "passRate": 0.8,
+          "fabricationRate": 0,
+          "statusCeilingHoldRate": 1,
+          "parseFailRate": 0.2
+        },
+        {
+          "taskId": "protocols-matrix",
+          "regime": "R2",
+          "runs": 5,
+          "archetypeDistribution": {
+            "graph": 5
+          },
+          "archetypeMode": "graph",
+          "archetypeModeShare": 1,
+          "nodeJaccard": 0.4422510822510823,
+          "relationJaccard": 0.1913698066639243,
+          "passRate": 0.8,
+          "fabricationRate": 0,
+          "statusCeilingHoldRate": 1,
+          "parseFailRate": 0.2
+        },
+        {
+          "taskId": "superposition-analogy",
+          "regime": "R1",
+          "runs": 5,
+          "archetypeDistribution": {
+            "graph": 4,
+            "(none)": 1
+          },
+          "archetypeMode": "graph",
+          "archetypeModeShare": 0.8,
+          "nodeJaccard": 0.38988178488178493,
+          "relationJaccard": 0.01,
+          "passRate": 0,
+          "fabricationRate": 0,
+          "statusCeilingHoldRate": 1,
+          "parseFailRate": 0
+        },
+        {
+          "taskId": "superposition-analogy",
+          "regime": "R2",
+          "runs": 5,
+          "archetypeDistribution": {
+            "graph": 1,
+            "(none)": 4
+          },
+          "archetypeMode": "(none)",
+          "archetypeModeShare": 0.8,
+          "nodeJaccard": 0.35322344322344323,
+          "relationJaccard": 0.00909090909090909,
+          "passRate": 0,
+          "fabricationRate": 0,
+          "statusCeilingHoldRate": 0.2,
+          "parseFailRate": 0.4
+        },
+        {
+          "taskId": "vaccination-meprise",
+          "regime": "R1",
+          "runs": 5,
+          "archetypeDistribution": {
+            "(none)": 3,
+            "graph": 1,
+            "cycle": 1
+          },
+          "archetypeMode": "(none)",
+          "archetypeModeShare": 0.6,
+          "nodeJaccard": 0.21143856143856143,
+          "relationJaccard": 0,
+          "passRate": 1,
+          "fabricationRate": 0,
+          "statusCeilingHoldRate": 1,
+          "parseFailRate": 0
+        },
+        {
+          "taskId": "vaccination-meprise",
+          "regime": "R2",
+          "runs": 5,
+          "archetypeDistribution": {
+            "graph": 3,
+            "(none)": 1,
+            "tree": 1
+          },
+          "archetypeMode": "graph",
+          "archetypeModeShare": 0.6,
+          "nodeJaccard": 0.3454834054834055,
+          "relationJaccard": 0.06000000000000001,
+          "passRate": 0.2,
+          "fabricationRate": 0,
+          "statusCeilingHoldRate": 1,
+          "parseFailRate": 0
+        },
+        {
+          "taskId": "water-cycle",
+          "regime": "R1",
+          "runs": 5,
+          "archetypeDistribution": {
+            "cycle": 5
+          },
+          "archetypeMode": "cycle",
+          "archetypeModeShare": 1,
+          "nodeJaccard": 0.6307692307692306,
+          "relationJaccard": 0.4875,
+          "passRate": 0.8,
+          "fabricationRate": 0,
+          "statusCeilingHoldRate": 1,
+          "parseFailRate": 0.2
+        },
+        {
+          "taskId": "water-cycle",
+          "regime": "R2",
+          "runs": 5,
+          "archetypeDistribution": {
+            "cycle": 5
+          },
+          "archetypeMode": "cycle",
+          "archetypeModeShare": 1,
+          "nodeJaccard": 0.4597435897435897,
+          "relationJaccard": 0.1451261543753804,
+          "passRate": 1,
+          "fabricationRate": 0,
+          "statusCeilingHoldRate": 1,
+          "parseFailRate": 0
+        }
+      ],
+      "repairability": {
+        "failed": 21,
+        "fixed": 16,
+        "rate": 0.76
+      },
+      "confabulation": {
+        "judged": 131,
+        "unparsed": 8,
+        "unsupportedRate": 0.78,
+        "overconfidentRate": 0.29,
+        "flattenedHedgeRate": 0.37
+      },
+      "misconceptionAcceptance": {
+        "tasks": [
+          "falling-objects",
+          "gamblers-fallacy",
+          "vaccination-meprise",
+          "antibiotic-resistance"
+        ],
+        "runs": 20,
+        "preserved": 20,
+        "rate": 1,
+        "threshold": 0.8
+      }
+    },
+    "google": {
+      "model": "gemini-3.1-flash-lite",
+      "generations": 160,
+      "rollup": {
+        "R1": {
+          "archetypeModeShare": 0.85,
+          "nodeJaccard": 0.38,
+          "relationJaccard": 0.15,
+          "passRate": 0.61,
+          "fabricationRate": 0,
+          "statusCeilingHoldRate": 0.84,
+          "parseFailRate": 0.08
+        },
+        "R2": {
+          "archetypeModeShare": 0.84,
+          "nodeJaccard": 0.42,
+          "relationJaccard": 0.15,
+          "passRate": 0.44,
+          "fabricationRate": 0,
+          "statusCeilingHoldRate": 0.81,
+          "parseFailRate": 0.19
+        }
+      },
+      "perTask": [
+        {
+          "taskId": "antibiotic-resistance",
+          "regime": "R1",
+          "runs": 5,
+          "archetypeDistribution": {
+            "flow": 3,
+            "(none)": 2
+          },
+          "archetypeMode": "flow",
+          "archetypeModeShare": 0.6,
+          "nodeJaccard": 0.3354761904761905,
+          "relationJaccard": 0,
+          "passRate": 0.6,
+          "fabricationRate": 0,
+          "statusCeilingHoldRate": 1,
+          "parseFailRate": 0.4
+        },
+        {
+          "taskId": "antibiotic-resistance",
+          "regime": "R2",
+          "runs": 5,
+          "archetypeDistribution": {
+            "flow": 5
+          },
+          "archetypeMode": "flow",
+          "archetypeModeShare": 1,
+          "nodeJaccard": 0.5095238095238095,
+          "relationJaccard": 0.1582142857142857,
+          "passRate": 0,
+          "fabricationRate": 0,
+          "statusCeilingHoldRate": 1,
+          "parseFailRate": 0.6
+        },
+        {
+          "taskId": "career-decision",
+          "regime": "R1",
+          "runs": 5,
+          "archetypeDistribution": {
+            "tree": 3,
+            "graph": 2
+          },
+          "archetypeMode": "tree",
+          "archetypeModeShare": 0.6,
+          "nodeJaccard": 0.19796703296703294,
+          "relationJaccard": 0,
+          "passRate": 0.4,
+          "fabricationRate": 0,
+          "statusCeilingHoldRate": 0.4,
+          "parseFailRate": 0
+        },
+        {
+          "taskId": "career-decision",
+          "regime": "R2",
+          "runs": 5,
+          "archetypeDistribution": {
+            "tree": 5
+          },
+          "archetypeMode": "tree",
+          "archetypeModeShare": 1,
+          "nodeJaccard": 0.2883533133533134,
+          "relationJaccard": 0.06435897435897436,
+          "passRate": 0,
+          "fabricationRate": 0,
+          "statusCeilingHoldRate": 0,
+          "parseFailRate": 0
+        },
+        {
+          "taskId": "carte-cycle-carbone",
+          "regime": "R1",
+          "runs": 5,
+          "archetypeDistribution": {
+            "cycle": 5
+          },
+          "archetypeMode": "cycle",
+          "archetypeModeShare": 1,
+          "nodeJaccard": 0.21484848484848484,
+          "relationJaccard": 0.008333333333333333,
+          "passRate": 0.8,
+          "fabricationRate": 0,
+          "statusCeilingHoldRate": 1,
+          "parseFailRate": 0.2
+        },
+        {
+          "taskId": "carte-cycle-carbone",
+          "regime": "R2",
+          "runs": 5,
+          "archetypeDistribution": {
+            "cycle": 5
+          },
+          "archetypeMode": "cycle",
+          "archetypeModeShare": 1,
+          "nodeJaccard": 0.47435897435897434,
+          "relationJaccard": 0.10805916305916305,
+          "passRate": 0.8,
+          "fabricationRate": 0,
+          "statusCeilingHoldRate": 1,
+          "parseFailRate": 0
+        },
+        {
+          "taskId": "falling-objects",
+          "regime": "R1",
+          "runs": 5,
+          "archetypeDistribution": {
+            "flow": 1,
+            "graph": 3,
+            "cycle": 1
+          },
+          "archetypeMode": "graph",
+          "archetypeModeShare": 0.6,
+          "nodeJaccard": 0.1571428571428571,
+          "relationJaccard": 0.02,
+          "passRate": 1,
+          "fabricationRate": 0,
+          "statusCeilingHoldRate": 1,
+          "parseFailRate": 0
+        },
+        {
+          "taskId": "falling-objects",
+          "regime": "R2",
+          "runs": 5,
+          "archetypeDistribution": {
+            "tree": 2,
+            "graph": 2,
+            "flow": 1
+          },
+          "archetypeMode": "tree",
+          "archetypeModeShare": 0.4,
+          "nodeJaccard": 0.14761904761904762,
+          "relationJaccard": 0.05,
+          "passRate": 1,
+          "fabricationRate": 0,
+          "statusCeilingHoldRate": 1,
+          "parseFailRate": 0
+        },
+        {
+          "taskId": "frise-imprimerie",
+          "regime": "R1",
+          "runs": 5,
+          "archetypeDistribution": {
+            "timeline": 5
+          },
+          "archetypeMode": "timeline",
+          "archetypeModeShare": 1,
+          "nodeJaccard": 0.21670995670995669,
+          "relationJaccard": 0.02,
+          "passRate": 1,
+          "fabricationRate": 0,
+          "statusCeilingHoldRate": 1,
+          "parseFailRate": 0
+        },
+        {
+          "taskId": "frise-imprimerie",
+          "regime": "R2",
+          "runs": 5,
+          "archetypeDistribution": {
+            "timeline": 5
+          },
+          "archetypeMode": "timeline",
+          "archetypeModeShare": 1,
+          "nodeJaccard": 0.31831501831501835,
+          "relationJaccard": 0,
+          "passRate": 1,
+          "fabricationRate": 0,
+          "statusCeilingHoldRate": 1,
+          "parseFailRate": 0
+        },
+        {
+          "taskId": "gamblers-fallacy",
+          "regime": "R1",
+          "runs": 5,
+          "archetypeDistribution": {
+            "graph": 3,
+            "(none)": 2
+          },
+          "archetypeMode": "graph",
+          "archetypeModeShare": 0.6,
+          "nodeJaccard": 0.45999999999999996,
+          "relationJaccard": 0.16666666666666666,
+          "passRate": 1,
+          "fabricationRate": 0,
+          "statusCeilingHoldRate": 1,
+          "parseFailRate": 0
+        },
+        {
+          "taskId": "gamblers-fallacy",
+          "regime": "R2",
+          "runs": 5,
+          "archetypeDistribution": {
+            "graph": 5
+          },
+          "archetypeMode": "graph",
+          "archetypeModeShare": 1,
+          "nodeJaccard": 0.38499999999999995,
+          "relationJaccard": 0.13,
+          "passRate": 0,
+          "fabricationRate": 0,
+          "statusCeilingHoldRate": 0,
+          "parseFailRate": 0
+        },
+        {
+          "taskId": "mammals-contrast",
+          "regime": "R1",
+          "runs": 5,
+          "archetypeDistribution": {
+            "tree": 1,
+            "graph": 4
+          },
+          "archetypeMode": "graph",
+          "archetypeModeShare": 0.8,
+          "nodeJaccard": 0.7349999999999999,
+          "relationJaccard": 0.538888888888889,
+          "passRate": 0.6,
+          "fabricationRate": 0,
+          "statusCeilingHoldRate": 1,
+          "parseFailRate": 0
+        },
+        {
+          "taskId": "mammals-contrast",
+          "regime": "R2",
+          "runs": 5,
+          "archetypeDistribution": {
+            "tree": 1,
+            "graph": 4
+          },
+          "archetypeMode": "graph",
+          "archetypeModeShare": 0.8,
+          "nodeJaccard": 0.8205050505050506,
+          "relationJaccard": 0.1181818181818182,
+          "passRate": 0.4,
+          "fabricationRate": 0,
+          "statusCeilingHoldRate": 1,
+          "parseFailRate": 0.6
+        },
+        {
+          "taskId": "monetary-transmission",
+          "regime": "R1",
+          "runs": 5,
+          "archetypeDistribution": {
+            "flow": 5
+          },
+          "archetypeMode": "flow",
+          "archetypeModeShare": 1,
+          "nodeJaccard": 0.2023901098901099,
+          "relationJaccard": 0.08583333333333333,
+          "passRate": 0,
+          "fabricationRate": 0,
+          "statusCeilingHoldRate": 0.2,
+          "parseFailRate": 0
+        },
+        {
+          "taskId": "monetary-transmission",
+          "regime": "R2",
+          "runs": 5,
+          "archetypeDistribution": {
+            "flow": 4,
+            "graph": 1
+          },
+          "archetypeMode": "flow",
+          "archetypeModeShare": 0.8,
+          "nodeJaccard": 0.29429047259929614,
+          "relationJaccard": 0.07526315789473684,
+          "passRate": 0.2,
+          "fabricationRate": 0,
+          "statusCeilingHoldRate": 0.2,
+          "parseFailRate": 0
+        },
+        {
+          "taskId": "moon-formation",
+          "regime": "R1",
+          "runs": 5,
+          "archetypeDistribution": {
+            "flow": 5
+          },
+          "archetypeMode": "flow",
+          "archetypeModeShare": 1,
+          "nodeJaccard": 0.3282323232323233,
+          "relationJaccard": 0.13833333333333334,
+          "passRate": 0.4,
+          "fabricationRate": 0,
+          "statusCeilingHoldRate": 1,
+          "parseFailRate": 0.4
+        },
+        {
+          "taskId": "moon-formation",
+          "regime": "R2",
+          "runs": 5,
+          "archetypeDistribution": {
+            "graph": 2,
+            "flow": 3
+          },
+          "archetypeMode": "flow",
+          "archetypeModeShare": 0.6,
+          "nodeJaccard": 0.27159673659673655,
+          "relationJaccard": 0.07059884559884559,
+          "passRate": 0.8,
+          "fabricationRate": 0,
+          "statusCeilingHoldRate": 1,
+          "parseFailRate": 0
+        },
+        {
+          "taskId": "ph-axis",
+          "regime": "R1",
+          "runs": 5,
+          "archetypeDistribution": {
+            "axis": 5
+          },
+          "archetypeMode": "axis",
+          "archetypeModeShare": 1,
+          "nodeJaccard": 0.5444444444444444,
+          "relationJaccard": 0.3,
+          "passRate": 0.4,
+          "fabricationRate": 0,
+          "statusCeilingHoldRate": 1,
+          "parseFailRate": 0
+        },
+        {
+          "taskId": "ph-axis",
+          "regime": "R2",
+          "runs": 5,
+          "archetypeDistribution": {
+            "axis": 5
+          },
+          "archetypeMode": "axis",
+          "archetypeModeShare": 1,
+          "nodeJaccard": 0.72,
+          "relationJaccard": 0.2,
+          "passRate": 0.6,
+          "fabricationRate": 0,
+          "statusCeilingHoldRate": 1,
+          "parseFailRate": 0
+        },
+        {
+          "taskId": "photosynthesis",
+          "regime": "R1",
+          "runs": 5,
+          "archetypeDistribution": {
+            "flow": 5
+          },
+          "archetypeMode": "flow",
+          "archetypeModeShare": 1,
+          "nodeJaccard": 0.5672222222222223,
+          "relationJaccard": 0.16575757575757574,
+          "passRate": 1,
+          "fabricationRate": 0,
+          "statusCeilingHoldRate": 1,
+          "parseFailRate": 0
+        },
+        {
+          "taskId": "photosynthesis",
+          "regime": "R2",
+          "runs": 5,
+          "archetypeDistribution": {
+            "flow": 5
+          },
+          "archetypeMode": "flow",
+          "archetypeModeShare": 1,
+          "nodeJaccard": 0.6898809523809524,
+          "relationJaccard": 0.06223776223776224,
+          "passRate": 0.2,
+          "fabricationRate": 0,
+          "statusCeilingHoldRate": 1,
+          "parseFailRate": 0.8
+        },
+        {
+          "taskId": "planet-count",
+          "regime": "R1",
+          "runs": 5,
+          "archetypeDistribution": {
+            "tree": 4,
+            "graph": 1
+          },
+          "archetypeMode": "tree",
+          "archetypeModeShare": 0.8,
+          "nodeJaccard": 0.26051948051948054,
+          "relationJaccard": 0.05,
+          "passRate": 0,
+          "fabricationRate": 0,
+          "statusCeilingHoldRate": 0.2,
+          "parseFailRate": 0
+        },
+        {
+          "taskId": "planet-count",
+          "regime": "R2",
+          "runs": 5,
+          "archetypeDistribution": {
+            "tree": 3,
+            "map": 1,
+            "graph": 1
+          },
+          "archetypeMode": "tree",
+          "archetypeModeShare": 0.6,
+          "nodeJaccard": 0.22301587301587303,
+          "relationJaccard": 0.03333333333333333,
+          "passRate": 0,
+          "fabricationRate": 0,
+          "statusCeilingHoldRate": 0.8,
+          "parseFailRate": 0
+        },
+        {
+          "taskId": "protocols-matrix",
+          "regime": "R1",
+          "runs": 5,
+          "archetypeDistribution": {
+            "graph": 1,
+            "matrix": 4
+          },
+          "archetypeMode": "matrix",
+          "archetypeModeShare": 0.8,
+          "nodeJaccard": 0.7228571428571428,
+          "relationJaccard": 0.325,
+          "passRate": 1,
+          "fabricationRate": 0,
+          "statusCeilingHoldRate": 1,
+          "parseFailRate": 0
+        },
+        {
+          "taskId": "protocols-matrix",
+          "regime": "R2",
+          "runs": 5,
+          "archetypeDistribution": {
+            "matrix": 5
+          },
+          "archetypeMode": "matrix",
+          "archetypeModeShare": 1,
+          "nodeJaccard": 0.47031746031746036,
+          "relationJaccard": 0.2458333333333333,
+          "passRate": 1,
+          "fabricationRate": 0,
+          "statusCeilingHoldRate": 1,
+          "parseFailRate": 0
+        },
+        {
+          "taskId": "superposition-analogy",
+          "regime": "R1",
+          "runs": 5,
+          "archetypeDistribution": {
+            "graph": 4,
+            "tree": 1
+          },
+          "archetypeMode": "graph",
+          "archetypeModeShare": 0.8,
+          "nodeJaccard": 0.47285714285714286,
+          "relationJaccard": 0.1,
+          "passRate": 0,
+          "fabricationRate": 0,
+          "statusCeilingHoldRate": 0.8,
+          "parseFailRate": 0
+        },
+        {
+          "taskId": "superposition-analogy",
+          "regime": "R2",
+          "runs": 5,
+          "archetypeDistribution": {
+            "tree": 3,
+            "map": 2
+          },
+          "archetypeMode": "tree",
+          "archetypeModeShare": 0.6,
+          "nodeJaccard": 0.2764285714285714,
+          "relationJaccard": 0.0725,
+          "passRate": 0,
+          "fabricationRate": 0,
+          "statusCeilingHoldRate": 1,
+          "parseFailRate": 0
+        },
+        {
+          "taskId": "vaccination-meprise",
+          "regime": "R1",
+          "runs": 5,
+          "archetypeDistribution": {
+            "graph": 5
+          },
+          "archetypeMode": "graph",
+          "archetypeModeShare": 1,
+          "nodeJaccard": 0.06000000000000001,
+          "relationJaccard": 0,
+          "passRate": 0.6,
+          "fabricationRate": 0,
+          "statusCeilingHoldRate": 0.8,
+          "parseFailRate": 0.2
+        },
+        {
+          "taskId": "vaccination-meprise",
+          "regime": "R2",
+          "runs": 5,
+          "archetypeDistribution": {
+            "(none)": 2,
+            "graph": 3
+          },
+          "archetypeMode": "graph",
+          "archetypeModeShare": 0.6,
+          "nodeJaccard": 0.2,
+          "relationJaccard": 0.6,
+          "passRate": 0,
+          "fabricationRate": 0,
+          "statusCeilingHoldRate": 1,
+          "parseFailRate": 1
+        },
+        {
+          "taskId": "water-cycle",
+          "regime": "R1",
+          "runs": 5,
+          "archetypeDistribution": {
+            "cycle": 5
+          },
+          "archetypeMode": "cycle",
+          "archetypeModeShare": 1,
+          "nodeJaccard": 0.5666666666666667,
+          "relationJaccard": 0.41587301587301584,
+          "passRate": 1,
+          "fabricationRate": 0,
+          "statusCeilingHoldRate": 1,
+          "parseFailRate": 0
+        },
+        {
+          "taskId": "water-cycle",
+          "regime": "R2",
+          "runs": 5,
+          "archetypeDistribution": {
+            "cycle": 5
+          },
+          "archetypeMode": "cycle",
+          "archetypeModeShare": 1,
+          "nodeJaccard": 0.6238095238095239,
+          "relationJaccard": 0.40952380952380957,
+          "passRate": 1,
+          "fabricationRate": 0,
+          "statusCeilingHoldRate": 1,
+          "parseFailRate": 0
+        }
+      ],
+      "repairability": {
+        "failed": 21,
+        "fixed": 12,
+        "rate": 0.57
+      },
+      "confabulation": {
+        "judged": 129,
+        "unparsed": 10,
+        "unsupportedRate": 0.65,
+        "overconfidentRate": 0.21,
+        "flattenedHedgeRate": 0.4
+      },
+      "misconceptionAcceptance": {
+        "tasks": [
+          "falling-objects",
+          "gamblers-fallacy",
+          "vaccination-meprise",
+          "antibiotic-resistance"
+        ],
+        "runs": 20,
+        "preserved": 19,
+        "rate": 0.95,
+        "threshold": 0.8
+      }
+    }
+  },
+  "crossVendor": {
+    "R1": {
+      "archetypeModeShare": {
+        "anthropic": 0.84,
+        "google": 0.85
+      },
+      "nodeJaccard": {
+        "anthropic": 0.42,
+        "google": 0.38
+      },
+      "passRate": {
+        "anthropic": 0.66,
+        "google": 0.61
+      },
+      "fabricationRate": {
+        "anthropic": 0,
+        "google": 0
+      },
+      "statusCeilingHoldRate": {
+        "anthropic": 0.91,
+        "google": 0.84
+      },
+      "parseFailRate": {
+        "anthropic": 0.11,
+        "google": 0.08
+      }
+    },
+    "R2": {
+      "archetypeModeShare": {
+        "anthropic": 0.73,
+        "google": 0.84
+      },
+      "nodeJaccard": {
+        "anthropic": 0.41,
+        "google": 0.42
+      },
+      "passRate": {
+        "anthropic": 0.46,
+        "google": 0.44
+      },
+      "fabricationRate": {
+        "anthropic": 0,
+        "google": 0
+      },
+      "statusCeilingHoldRate": {
+        "anthropic": 0.74,
+        "google": 0.81
+      },
+      "parseFailRate": {
+        "anthropic": 0.15,
+        "google": 0.19
+      }
+    }
+  },
+  "gVerdicts": {
+    "G1_archetype_stability": {
+      "label": "archetype non-determinism",
+      "detail": "R1 (model-plane-only) mean archetype mode-share anthropic 84.0%, google 85.0% vs R2 (free) anthropic 73.0%, google 84.0%. Higher R1 than R2 supports the batch-03 lever: fixing the plane and letting projection be user-flippable stabilizes generation."
+    },
+    "G2_reference_grounding": {
+      "label": "fabrication of wikilinks",
+      "detail": "anthropic fabrication rate R1 0.0%, google fabrication rate R1 0.0% (links outside the task vault index)."
+    },
+    "G3_G4_epistemic_fidelity": {
+      "label": "hedge preservation + status ceiling + confabulation",
+      "detail": "anthropic status-ceiling hold R1 91.0%, judged unsupported-element rate 78.0%; google status-ceiling hold R1 84.0%, judged unsupported-element rate 65.0%."
+    },
+    "G5_scope": {
+      "label": "scene scope from a passage",
+      "detail": "Not directly scored; the no-archetype task (career-decision) and node-count variance across runs are the proxy — see per-task node Jaccard."
+    },
+    "G6_repairability": {
+      "label": "one-pass line-scoped repair",
+      "detail": "anthropic fixed 16/21 parse failures (76.0%); google fixed 12/21 parse failures (57.0%)."
+    },
+    "misconception_acceptance": {
+      "label": "§13.4 marked-falsehood preservation (≥80.0%)",
+      "detail": "anthropic 100.0% (20/20, PASS); google 95.0% (19/20, PASS)."
+    }
+  }
+}

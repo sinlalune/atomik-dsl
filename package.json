@@ -14,7 +14,8 @@
     "eval:test": "node apps/eval-generability/test_harness.mjs",
     "eval:dry-run": "node apps/eval-generability/run.mjs --dry-run",
     "eval:build": "node apps/eval-generability/run.mjs build",
-    "eval:live": "node --env-file-if-exists=.env apps/eval-generability/run.mjs live"
+    "eval:live": "node --env-file-if-exists=.env apps/eval-generability/run.mjs live",
+    "eval:report": "node apps/eval-generability/report.mjs"
   },
   "devDependencies": {
     "@anthropic-ai/sdk": "^0.110.0",
