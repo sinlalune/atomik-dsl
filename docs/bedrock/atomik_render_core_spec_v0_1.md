@@ -311,13 +311,23 @@ The table above is the contract; these notes record how the shipped engine meets
 
 **cycle** (kernel in `packages/dsl-core`, v0.3.1):
 
-- **Ring selection.** The ring is the longest simple directed cycle over node→node relations, found by DFS from each node in IR order; ties resolve to the first cycle found in that order. A model with no directed cycle falls back per the table (contractually `flow`; until `flow` exists — roadmap D2 — the prototype announces the miss and renders the minimal grid).
+- **Ring selection.** The ring is the longest simple directed cycle over node→node relations, found by DFS from each node in IR order; ties resolve to the first cycle found in that order. A model with no directed cycle falls back per the table: it re-enters the `flow` engine below, and the miss is announced (L5).
 - **Deterministic rotation (L1).** The found cycle is rotated to start at the ring node that appears earliest in IR order; that node sits at 12 o'clock (angle −π/2) and traversal order proceeds clockwise. Same IR ⇒ same ring, same start, same geometry.
 - **Radius formula.** `R = max(130, Σw/2π × 1.55 + 44, N × 44)`, where `Σw` is the summed box widths of the ring nodes and `N` the ring length: the circumference tracks total label width (×1.55 breathing factor, +44 padding), floored for tiny rings (130) and many-node rings (44 of arc per node). Boxes come from label wrapping at ~16 chars/line (`nodeBox`), so the radius is content-driven, never a constant.
 - **Satellites.** A non-ring node anchors to the first ring node it shares a node→node relation with (relations scanned in IR order, `from` endpoint checked before `to`). An anchor's satellites fan symmetrically around the anchor's angle in 0.42 rad steps, centered, at distance `R + anchor½h + 78 + satellite½h` — outside the ring, never on it.
 - **Parked row.** Non-ring nodes with no relation to any ring node park in a horizontal row below the ring (y ≈ R + 170, fixed pitch), and the layout emits a notice naming them (L5: degradation is loud, never silent).
 - **Edges.** A relation is a *ring edge* iff it is directed and joins consecutive ring nodes in traversal order; ring edges render as arcs of the ring circle, trimmed at each end by the node's half-width (+12 at the source, +16 at the target — arrowhead room), label at the arc midpoint just outside (R+16). All other edges are straight segments between rectangle exit points, label at the segment midpoint.
 - **Reserved space (L4).** Layout runs on the full all-revealed graph; visibility affects painting only. The ring never reflows during step navigation.
+
+**flow** (kernel in `packages/dsl-core`, v0.3.1):
+
+- **Cycle-breaking.** Directed node→node relations only; a DFS in IR order classifies any edge into the active stack as a *back-edge*. Back-edges stay visual but are ignored for ranking, so cyclic models are legal input (contract row). Deterministic: same IR ⇒ same back-edge set.
+- **Ranking.** Longest-path layering over the acyclic remainder: `rank(v) = max(rank(u) + 1)` over non-back in-edges, sources at rank 0. Rank order follows edge direction — every non-back edge points strictly downward (property-tested).
+- **Ordering.** Rows are seeded in IR order, then refined by two mean-field passes: each row sorts by the average position of its neighbours, ties keeping IR order. No randomness anywhere (L1).
+- **Lanes.** `group [kind lane]` becomes a declaration-ordered x-band; laneless nodes share one trailing band. A band's width is its widest row segment; each row's members are centered inside their band, so membership is geometrically provable. Band regions are exposed to the painter (`layout.lanes`).
+- **Back-edge routing.** A 6-point orthogonal path: drop into the corridor below the source row, run right to a per-edge staggered flank beyond the widest node, rise to the corridor above the target row, re-enter from the top. Corridors are node-free by construction, so the route never crosses a node box (tested with a segment-vs-box sweep). The straight endpoint segment is kept alongside `path` for painters that predate routing.
+- **Spacing.** `rowGap 84`, `colGap 46`, `laneGap 72`; boxes come from the shared `nodeBox` (label wrapping at ~16 chars/line), so geometry is content-driven.
+- **Reserved space (L4).** Full-graph layout; visibility affects painting only — reveals never reflow the ranks.
 
 ---
 

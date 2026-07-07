@@ -7,7 +7,7 @@ timestamp: 2026-07-07T00:00:00Z
 atomik:
   id: CP-DSL-002
   status: active
-  current_step: S04
+  current_step: S05
   base_commit: 5064ff7
 ---
 
@@ -60,7 +60,7 @@ Completeness rule: every document of this repository appears below at least once
 - [x] S01 Open the path: ledger with base commit, register D2 → active, ACTIVE.md pointer, orientation roadmap row, log entry. No code.
 - [x] S02 `layoutFlow` core in `src/render.js`: deterministic cycle-breaking (DFS in IR order → back-edge set), longest-path ranking of the acyclic remainder, deterministic within-rank ordering (barycenter pass over an IR-order seed, stable ties), coordinates from `nodeBox` with row/column gaps (L2 by construction); `layout()` dispatches `flow`; straight edges via `rectExit`; back-edges flagged. Tests: dispatch, rank-order property, single back-edge on a cycle-as-flow, determinism, no-overlap, L4 full-graph.
 - [x] S03 Lanes + back-edge routing: `[kind lane]` groups partition x into declaration-ordered bands (members constrained inside, ranks shared); back-edges routed around the diagram flank as paths with labels. Tests: lane bands, routed path clears node bounds.
-- [ ] S04 Contract fallback rewire: `layoutCycle` no-ring → `flow` + loud warning (replaces grid); `layout()` notices updated for two real archetypes; render-core §6.2 flow entry + cycle-entry update. Tests: `project as cycle` on an acyclic model lands in flow with a warning.
+- [x] S04 Contract fallback rewire: `layoutCycle` no-ring → `flow` + loud warning (replaces grid); `layout()` notices updated for two real archetypes; render-core §6.2 flow entry + cycle-entry update. Tests: `project as cycle` on an acyclic model lands in flow with a warning.
 - [ ] S05 Prototype + types: UI prefers `e.path` when present; rebuild; guide prototype-limits sentence; `index.d.ts` routed-edge variant; browser-branch smoke.
 - [ ] S06 Same-work-unit docs audit and close: register, ACTIVE.md, orientation, log, ledger; fixture-diff gate re-check.
 
@@ -68,17 +68,17 @@ Completeness rule: every document of this repository appears below at least once
 
 ```text
 base commit : 5064ff7 (branch master — CP-DSL-001 closed, 41/41 green)
-changed     : S03 — layoutFlow gains lanes (declaration-ordered x-bands with a
-              trailing laneless band; per-band centering; lane regions exposed
-              as layout.lanes) and back-edge routing (6-point orthogonal path:
-              corridor below source row → right flank, staggered per edge →
-              corridor above target row; straight coords kept alongside `path`
-              so the pre-S05 painter stays correct; viewBox includes flanks).
-              Suite 7 added: 8 assertions (band order/containment/disjointness,
-              L2 with lanes, path shape, box-clearance sweep, L1 with routing).
-tests       : 62 passing / 0 failed; fixture untouched
-next action : S04 — contractual fallback rewire (cycle no-ring → flow + warning),
-              layout() notices; render-core §6.2 flow entry + cycle-entry update
+changed     : S04 — layoutCycle no-ring case re-enters layoutFlow with the L5
+              warning "bascule contractuelle vers flow" (grid fallback retired
+              for that case, kept for unimplemented archetypes); render-core
+              §6.2 gains the flow entry (cycle-breaking, ranking, ordering,
+              lanes, routing, spacing, L4) and the cycle entry no longer says
+              "until flow exists". Suite 8: 3 assertions (fallback lands in
+              flow, announced, rank order holds).
+tests       : 65 passing / 0 failed; fixture untouched
+next action : S05 — prototype: painter prefers e.path; lane region painting if
+              cheap; guide limits sentence; index.d.ts flow types; rebuild +
+              browser smoke
 blockers    : none
 ```
 

@@ -972,7 +972,15 @@
   function layoutCycle(ir) {
     var notices = [];
     var ring = findLongestCycle(ir);
-    if (!ring) return { fallback: true, notices: ['aucun cycle trouvé — rendu de secours (graph)'], layout: layoutFallback(ir, 'no-cycle') };
+    if (!ring) {
+      /* contract row (§6): non-cyclic model → auto-fallback flow + warning */
+      var ff = layoutFlow(ir);
+      return {
+        fallback: true,
+        notices: ['aucun cycle trouvé — bascule contractuelle vers « flow » (§6)'].concat(ff.notices),
+        layout: ff.layout
+      };
+    }
 
     var boxes = {};
     ir.nodes.forEach(function (n) { boxes[n.id] = nodeBox(n); });

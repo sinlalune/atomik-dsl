@@ -51,7 +51,7 @@ generated scenes: claim status required, never stronger than the source,
 
 ```text
 packages/dsl-core/src/        the kernels (parse/validate/IR + present/layout)
-packages/dsl-core/test/       62-test harness (node, zero deps): `npm test`
+packages/dsl-core/test/       65-test harness (node, zero deps): `npm test`
 packages/dsl-core/fixtures/   golden north-star IR fixture + demo presets
 apps/prototype-cycle/         end-to-end browser prototype; `npm run build:prototype`
 docs/bedrock/                 language spec v0.3, pocket spec, render-core spec v0.1, guide (fr)

@@ -215,5 +215,20 @@ ok(clear, 'routed back-edge clears every node box (around, never through)');
 ok(JSON.stringify(Atomik.layout(flowDemo)) === JSON.stringify(Atomik.layout(flowDemo)),
   'L1 holds with lanes + routing');
 
+console.log('\n== 8. Contractual fallback: cycle without a cycle → flow (§6) ==');
+const acyclicSrc = [
+  'atomik 0.3', 'scene chain', 'claim "No loop here."',
+  'node a "A"', 'node b "B"', 'node c "C"',
+  'relation a -> b then', 'relation b -> c then',
+  'project as cycle'
+].join('\n');
+const aIr = clean(Atomik.parse(acyclicSrc));
+const AC = Atomik.layout(aIr);
+ok(AC.requested === 'cycle' && AC.layout.archetype === 'flow',
+  'non-cyclic model under project-as-cycle lands in flow');
+ok(AC.notices.some(n => n.includes('flow')), 'the fallback is announced (L5)');
+ok(aIr.relations.every(r => AC.layout.pos[r.from.id].y < AC.layout.pos[r.to.id].y),
+  'fallback flow still honors rank order');
+
 console.log('\n' + pass + ' passed, ' + fail + ' failed');
 process.exit(fail ? 1 : 0);
