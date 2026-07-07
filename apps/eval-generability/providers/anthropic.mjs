@@ -41,6 +41,21 @@ export function parseResultsJsonl(jsonl) {
   return map;
 }
 
+/* Single-shot (non-batch) generation for the interactive demo (CP-DSL-005).
+ * item = { system, user } (from prompt.build). Returns { text, model, error }. */
+export async function generateOne(item, model) {
+  try {
+    const { default: Anthropic } = await import('@anthropic-ai/sdk');
+    const client = new Anthropic();
+    const r = await client.messages.create({
+      model, max_tokens: MAX_TOKENS, system: item.system,
+      messages: [{ role: 'user', content: item.user }]
+    });
+    const text = (r.content || []).filter((b) => b.type === 'text').map((b) => b.text).join('');
+    return { text, model: r.model, error: null };
+  } catch (e) { return { text: null, model, error: (e.status ? e.status + ' ' : '') + (e.message || String(e)) }; }
+}
+
 /* live submit — used only at S04. Returns { text, error } keyed by custom_id. */
 export async function submit(items, model, { pollMs = 20000, log = () => {} } = {}) {
   const { default: Anthropic } = await import('@anthropic-ai/sdk');

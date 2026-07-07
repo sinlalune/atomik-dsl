@@ -7,7 +7,7 @@ timestamp: 2026-07-07T00:00:00Z
 atomik:
   id: CP-DSL-005
   status: active
-  current_step: S02
+  current_step: S03
   base_commit: 6d777be
 ---
 
@@ -57,7 +57,7 @@ The Anthropic/Gemini keys authenticate paid APIs; a browser page cannot hold the
 # Execution
 
 - [x] S01 Open the path: ledger, register (T1 → active), ACTIVE.md, orientation, log.
-- [ ] S02 Provider single-shot `generateOne` (Anthropic + Gemini), reusing `prompt.build` (R1); a tiny node harness proves each returns kernel-parseable atomik from a sample text.
+- [x] S02 Provider single-shot `generateOne` (Anthropic + Gemini), reusing `prompt.build` (R1); a tiny node harness proves each returns kernel-parseable atomik from a sample text.
 - [ ] S03 `server.mjs`: localhost http, static serving, `POST /api/generate`; manual curl check against both providers.
 - [ ] S04 `index.html` + client: textarea, provider select, Generate; render via kernel + adapted painter; editable source; diagnostics + notices; error states.
 - [ ] S05 README + `npm run demo`; end-to-end check; docs (module note, log, ledger); close.

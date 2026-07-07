@@ -83,6 +83,21 @@ export function parseInlineResponses(job, customIds) {
 
 export { textFromResponse };
 
+/* Single-shot (non-batch) generation for the interactive demo (CP-DSL-005).
+ * item = { system, user } (from prompt.build). Returns { text, model, error }. */
+export async function generateOne(item, model) {
+  try {
+    const { GoogleGenAI } = await import('@google/genai');
+    const ai = new GoogleGenAI({});
+    const r = await ai.models.generateContent({
+      model, contents: item.user,
+      config: { systemInstruction: { parts: [{ text: item.system }] }, maxOutputTokens: MAX_TOKENS }
+    });
+    const text = textFromResponse(r) || (typeof r.text === 'string' ? r.text : '');
+    return { text, model, error: null };
+  } catch (e) { return { text: null, model, error: (e.status ? e.status + ' ' : '') + (e.message || String(e)) }; }
+}
+
 /* live submit — used only at S04. Returns { text, error } keyed by custom_id. */
 export async function submit(items, model, { pollMs = 20000, log = () => {} } = {}) {
   const { GoogleGenAI } = await import('@google/genai');
