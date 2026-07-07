@@ -6,8 +6,9 @@ tags: [coding-path, dsl, tooling, t1]
 timestamp: 2026-07-07T00:00:00Z
 atomik:
   id: CP-DSL-005
-  status: active
-  current_step: S03
+  status: done
+  closed: 2026-07-07
+  current_step: none
   base_commit: 6d777be
 ---
 
@@ -58,19 +59,28 @@ The Anthropic/Gemini keys authenticate paid APIs; a browser page cannot hold the
 
 - [x] S01 Open the path: ledger, register (T1 → active), ACTIVE.md, orientation, log.
 - [x] S02 Provider single-shot `generateOne` (Anthropic + Gemini), reusing `prompt.build` (R1); a tiny node harness proves each returns kernel-parseable atomik from a sample text.
-- [ ] S03 `server.mjs`: localhost http, static serving, `POST /api/generate`; manual curl check against both providers.
-- [ ] S04 `index.html` + client: textarea, provider select, Generate; render via kernel + adapted painter; editable source; diagnostics + notices; error states.
-- [ ] S05 README + `npm run demo`; end-to-end check; docs (module note, log, ledger); close.
+- [x] S03 `server.mjs`: localhost http, `POST /api/generate`, `/health`; verified via curl against both providers.
+- [x] S04 Page + client — **design improvement vs the ledger's original "new index.html":** instead of duplicating the painter, the server injects a generate panel + wiring into the prototype's own `index.html`, reusing the entire tested renderer (parse/layout/present/paint, step nav, diagnostics, misconception strike, refutation ⊣, cycle arcs, flow lanes). The panel fills the prototype's `#src` and fires `input` to drive its compile. Editable source, model label, error states, ⌘/Ctrl-Enter.
+- [x] S05 README + `npm run demo`; end-to-end verified (generate → parse → layout → present, incl. a live-generated teaching scene whose prediction gate withholds evidence at step 2); module note, log, register, ledger; close.
 
 # Current checkpoint
 
-```text
-base commit : 6d777be (branch master — CP-DSL-003 closed, all D-paths done)
-changed     : S01 — path opened; register T1 → active; ACTIVE.md; orientation; log
-tests       : 65 + 39 + 16 green (unchanged); fixture untouched
-next action : S02 — generateOne per provider + parse-check harness
-blockers    : none (keys present in .env from CP-DSL-003 S04)
-```
+path closed 2026-07-07 — definition-of-done audit:
+  ✓ apps/generate-demo/{server.mjs, README.md}; `npm run demo` serves
+    http://127.0.0.1:4173 (localhost only)
+  ✓ POST /api/generate proxies a single model call (Haiku / Gemini), pocket
+    spec verbatim (R1), keys read server-side from .env — browser never sees one
+  ✓ renderer reused whole via injection into the prototype's index.html (no
+    painter duplication); generated source is editable and re-renders live
+  ✓ end-to-end verified against both real providers: generation (~0.6–1.5s),
+    kernel parse, layout, and present() runtime — incl. a live teaching scene
+    with a working prediction gate; error + partial-validity paths handled
+  ✓ kernels untouched (read-only consumer); dsl-core gains no dependency; zero
+    new deps (built-in http + installed SDKs + inlined kernel); fixture unmoved
+  ✓ module note, register (T1 → done), ACTIVE.md, orientation, log, ledger
+next        : the natural sequel is D4 (workbench integration) in the main repo;
+              this demo is the local proof that the generation→render chain works
+blockers    : none.
 
 # Blockers
 

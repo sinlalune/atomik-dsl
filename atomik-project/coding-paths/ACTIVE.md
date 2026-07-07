@@ -6,7 +6,8 @@ timestamp: 2026-07-07T00:00:00Z
 
 # Active coding path
 
-- [CP-DSL-005 — local generation demo: paste text → small model → rendered scene (T1)](./CP-DSL-005.md)
+- **None.** [CP-DSL-005](./CP-DSL-005.md) (T1 — local generation demo) closed 2026-07-07: `npm run demo` renders a pasted text into an atomik scene end-to-end. D1/D2/D3 (v0.3.1, `flow`, generability eval) and T1 are all closed.
+- **No milestone open.** Next substantive step is **D4** (workbench integration), which executes in the **main Atomik repository** (`~/projects/4tom1k`) after its S00 owner register amendment — not startable here. Any further in-repo work (acting on eval findings, more archetypes) opens just-in-time from the register.
 - Milestone → path register: [index.md](./index.md)
 
-Rule: exactly one active parent path at a time. Agents entering the repository follow `AGENTS.md` and resume from the Work Ledger of the path above. A tooling path (T1): a developer-facing demo that consumes the kernels read-only; it does not change the IR or the language.
+Rule: exactly one active parent path at a time. Agents entering the repository follow `AGENTS.md`; with no active path, do not start coding — propose a path from the register first.

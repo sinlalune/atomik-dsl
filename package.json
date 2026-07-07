@@ -15,7 +15,8 @@
     "eval:dry-run": "node apps/eval-generability/run.mjs --dry-run",
     "eval:build": "node apps/eval-generability/run.mjs build",
     "eval:live": "node --env-file-if-exists=.env apps/eval-generability/run.mjs live",
-    "eval:report": "node apps/eval-generability/report.mjs"
+    "eval:report": "node apps/eval-generability/report.mjs",
+    "demo": "node --env-file-if-exists=.env apps/generate-demo/server.mjs"
   },
   "devDependencies": {
     "@anthropic-ai/sdk": "^0.110.0",
