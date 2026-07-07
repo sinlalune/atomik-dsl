@@ -2,7 +2,7 @@
 
 Status: draft. Companion to `atomik_dsl_spec_v0_3.md` (the language spec). That document defines what scenes *say*; this one defines how they become pixels — and, more importantly, the **Scene IR**: the data structure everything else consumes. The IR is the expensive decision; layout algorithms can be iterated, the IR cannot be changed cheaply once consumers exist.
 
-Feedback loop: three places where writing this spec forced constraints back onto the language spec are flagged as **errata candidates (C1–C3)** for a v0.3.1.
+Feedback loop: four places where writing this spec — and shipping the first kernel — forced constraints back onto the language spec are flagged as **errata (C1–C4)**, folded into the language at v0.3.1 (§10).
 
 ---
 
@@ -170,14 +170,14 @@ interface Diagnostic { line: number; code: string; severity: "error" | "warning"
 - **D1 — The renderer never re-parses.** Everything visual-relevant is in the IR. If a future feature needs source access from the renderer, that is an IR design failure, not a shortcut to take.
 - **D2 — Endpoints are a discriminated union.** `node | relation | claim`. Relation-to-relation (argument maps, analogy boundaries) is legal in the IR; layout v0.1 attaches such edges at the target edge's midpoint. `claim` is a singleton endpoint with no id.
 - **D3 — References are grounded before the IR, with profile-dependent fallback.** Grounding runs in lang-core; the renderer contains zero link-resolution logic. In the **generated** profile, unresolvable links may not exist: the generator emits literals (language spec §10), so `unresolved` never appears. In the **authored** profile, a wikilink to a note that does not exist yet is *legitimate and preserved* as `{ kind: "unresolved" }` — linking to future notes is how a file-first vault grows. The renderer shows it as a broken-link affordance (§8); creating the note is the host app's action, not the renderer's.
-- **D4 — Initial visibility is computed by lang-core, not the renderer.** Rule: any id targeted by any `reveal` effect (in a **step or a rule**) has `initiallyHidden: true`; everything else starts visible; an id targeted by both `reveal` and `hide` starts hidden. Stored per element. → **Erratum candidate C1**: language spec §6 said "named in some `step n reveal`"; this generalizes to rule-reveals (otherwise a rule's reveal is meaningless) and resolves the reveal+hide conflict.
+- **D4 — Initial visibility is computed by lang-core, not the renderer.** Rule: any id targeted by any `reveal` effect (in a **step or a rule**) has `initiallyHidden: true`; everything else starts visible; an id targeted by both `reveal` and `hide` starts hidden. Stored per element. → **Erratum C1 (folded at v0.3.1)**: language spec §6 said "named in some `step n reveal`"; this generalizes to rule-reveals (otherwise a rule's reveal is meaningless) and resolves the reveal+hide conflict.
 - **D5 — Expressions are ASTs, never strings.** The runtime interprets `Expr` trees; there is no `eval`, no string execution, anywhere. This is the Electron security contract applied to the DSL: scene files are data even when they compute.
 - **D6 — Provenance on every entity.** `line` fields are what make diagnostics line-scoped and AI patches single-line-targetable. The canonical printer guarantees line stability for unedited statements.
 - **D7 — Relations always have ids.** Authored ids are preserved; missing ids are synthesized (`~r1`, `~r2`… prefix outside the identifier grammar so they can never collide with, or be referenced by, source text). Effects may target authored relation ids; synthetic ids are engine-internal.
 - **D8 — Unknown attributes survive into `extras`.** The forward-compatibility valve continues into the IR: the printer round-trips them, future renderers may read them, current ones ignore them.
 - **D9 — `evidence` is sugar, desugared here.** A node with `role: "evidence"` + `source`/`date`. No separate evidence entity; one less consumer concept.
 - **D10 — Canonical array order.** IR arrays mirror the canonical printer order (groups, nodes in first-mention order, relations, …). IR diffs are as stable as file diffs (G1 continued).
-- **D11 — Runtime purity (see §5).** Render state is a pure function of `(currentStep, inputValues)`. To guarantee this, `set` is **forbidden inside `rule`** (validator error, both profiles): a rule writing an input can loop. `set` remains legal in `step` (applied once on step entry). → **Erratum candidate C2** for the language grammar, which currently allows `set` in both.
+- **D11 — Runtime purity (see §5).** Render state is a pure function of `(currentStep, inputValues)`. To guarantee this, `set` is **forbidden inside `rule`** (validator error, both profiles): a rule writing an input can loop. `set` remains legal in `step` (applied once on step entry). → **Erratum C2 (folded at v0.3.1)** for the language grammar, which until v0.3 allowed `set` in both.
 
 ### 2.4 IR excerpt — the north-star scene
 
@@ -266,9 +266,9 @@ Only two hard rules here: every glyph carries **a11y text** (see §8), and every
 
 - **Visibility(id)**: start from `initiallyHidden`; apply step effects for steps `1..currentStep` in document order; then apply effects of rules whose condition is currently true, in document order. Reveal/hide/highlight from rules are **reactive**: they hold while the condition holds, release when it stops. (No latching — RS1.)
 - **Edge effective visibility**: a relation paints only when its own visibility is true **and** both endpoints are visible (for an endpoint of kind `relation`, that relation's effective visibility; for `claim`, always visible). Revealing a node therefore reveals its edges to already-visible nodes without any extra effect line.
-- **Notes** are transient: show the current step's notes + notes of currently-true rules. Earlier steps' notes are gone. → **Erratum candidate C3**: language spec §6 didn't state note lifetime.
+- **Notes** are transient: show the current step's notes + notes of currently-true rules. Earlier steps' notes are gone. → **Erratum C3 (folded at v0.3.1)**: language spec §6 didn't state note lifetime before v0.3.1.
 - **Derived values** recompute on any input change; reference cycles among `derive` are a validation error (lang-core detects).
-- **Gates — gated-step semantics (C4)**: a step with non-empty `requires` is a *gated step*. Two consequences, both pure (the committed set is part of runtime state): (1) **its own effects apply only while every required input is committed** — so `step 2 require guess` + `step 2 reveal vacuum` withholds the evidence until the learner has predicted, which is the intended predict-then-see shape (north-star scene) and the shape authors will write naturally; (2) advancing past it stays blocked until committed. `committed` = user has interacted, or `committedByDefault` (sliders/toggles, and choices with `[default]`). The step navigator shows a locked state with the input highlighted. *(C4: found while writing the golden fixture's runtime oracle — the earlier "blocks exit only" semantics let a same-step reveal spoil the prediction.)*
+- **Gates — gated-step semantics (C4)**: a step with non-empty `requires` is a *gated step*. Two consequences, both pure (the committed set is part of runtime state): (1) **its own effects apply only while every required input is committed** — so `step 2 require guess` + `step 2 reveal vacuum` withholds the evidence until the learner has predicted, which is the intended predict-then-see shape (north-star scene) and the shape authors will write naturally; (2) advancing past it stays blocked until committed. `committed` = user has interacted, or `committedByDefault` (sliders/toggles, and choices with `[default]`). The step navigator shows a locked state with the input highlighted. *(C4, folded at v0.3.1: found while writing the golden fixture's runtime oracle — the earlier "blocks exit only" semantics let a same-step reveal spoil the prediction.)*
 - **`set`** applies once, on step entry (D11). Forbidden in rules.
 - **Step navigation**: next/prev; prev never un-commits inputs; jumping forward past a gate is impossible, jumping backward is free.
 - **Export/print state**: the "all-revealed" state (every reveal applied, gates ignored) with step badges on step-revealed elements. A printed scene must not silently hide teaching content.
@@ -304,6 +304,20 @@ Global rules first:
 ### 6.1 Performance caps
 
 Beyond caps (table above), render the **outline card** (§8) rather than a degraded diagram. Caps are per-archetype constants, revisable; the invariant is that degradation is *explicit*, never a silently unreadable render.
+
+### 6.2 Per-archetype implementation notes (sub-contractual)
+
+The table above is the contract; these notes record how the shipped engine meets it — the decisions a re-implementation would otherwise re-derive. Notes may evolve with the engine (ordinary commit); a change to the table is a reviewed event.
+
+**cycle** (kernel in `packages/dsl-core`, v0.3.1):
+
+- **Ring selection.** The ring is the longest simple directed cycle over node→node relations, found by DFS from each node in IR order; ties resolve to the first cycle found in that order. A model with no directed cycle falls back per the table (contractually `flow`; until `flow` exists — roadmap D2 — the prototype announces the miss and renders the minimal grid).
+- **Deterministic rotation (L1).** The found cycle is rotated to start at the ring node that appears earliest in IR order; that node sits at 12 o'clock (angle −π/2) and traversal order proceeds clockwise. Same IR ⇒ same ring, same start, same geometry.
+- **Radius formula.** `R = max(130, Σw/2π × 1.55 + 44, N × 44)`, where `Σw` is the summed box widths of the ring nodes and `N` the ring length: the circumference tracks total label width (×1.55 breathing factor, +44 padding), floored for tiny rings (130) and many-node rings (44 of arc per node). Boxes come from label wrapping at ~16 chars/line (`nodeBox`), so the radius is content-driven, never a constant.
+- **Satellites.** A non-ring node anchors to the first ring node it shares a node→node relation with (relations scanned in IR order, `from` endpoint checked before `to`). An anchor's satellites fan symmetrically around the anchor's angle in 0.42 rad steps, centered, at distance `R + anchor½h + 78 + satellite½h` — outside the ring, never on it.
+- **Parked row.** Non-ring nodes with no relation to any ring node park in a horizontal row below the ring (y ≈ R + 170, fixed pitch), and the layout emits a notice naming them (L5: degradation is loud, never silent).
+- **Edges.** A relation is a *ring edge* iff it is directed and joins consecutive ring nodes in traversal order; ring edges render as arcs of the ring circle, trimmed at each end by the node's half-width (+12 at the source, +16 at the target — arrowhead room), label at the arc midpoint just outside (R+16). All other edges are straight segments between rectangle exit points, label at the segment midpoint.
+- **Reserved space (L4).** Layout runs on the full all-revealed graph; visibility affects painting only. The ring never reflows during step navigation.
 
 ---
 
@@ -344,11 +358,14 @@ Token families (non-exhaustive): `surface-*`, `glyph-*(role)`, `chip-*(status)`,
 
 ---
 
-## 10. Errata fed back to the language spec (v0.3 → v0.3.1 candidates)
+## 10. Errata fed back to the language spec — folded at v0.3.1
 
-- **C1** (§6 lang): initial-hidden rule generalized — any target of any `reveal` (step *or* rule) starts hidden; reveal+hide conflict resolves to hidden.
-- **C2** (§4 grammar): `set` is illegal inside `rule` (validator error, both profiles); legal in `step` only. Preserves runtime purity, prevents rule loops.
-- **C3** (§6 lang): note lifetime defined — transient: current step's notes + currently-true rules' notes.
+All four errata were folded into the language spec's normative sections at v0.3.1 (its §14 is the changelog of that fold). They stay listed here as the record of the spec↔implementation feedback loop.
+
+- **C1** (lang §6): initial-hidden rule generalized — any target of any `reveal` (step *or* rule) starts hidden; reveal+hide conflict resolves to hidden. From D4. **Folded.**
+- **C2** (lang §4 grammar): `set` is illegal inside `rule` (validator error, both profiles); legal in `step` only. Preserves runtime purity (D11), prevents rule loops. **Folded** — the v0.3.1 grammar splits the effect production by host and also records `require` as step-only, which the kernel always enforced.
+- **C3** (lang §6): note lifetime defined — transient: current step's notes + currently-true rules' notes. From §5. **Folded.**
+- **C4** (lang §5.7 + §6): gated-step semantics — a step with `require` withholds its *own effects* and blocks advancing until every required input is committed (§5 here; found while writing the golden fixture's runtime oracle). **Folded.**
 
 ---
 
