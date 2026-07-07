@@ -8,7 +8,7 @@ atomik:
   id: CP-DSL-001
   status: active
   current_step: S02
-  base_commit: null
+  base_commit: ba27ef9
 ---
 
 # Goal
@@ -64,7 +64,7 @@ Completeness rule: every document of this repository appears below at least once
 # Current checkpoint
 
 ```text
-base commit : (recorded at repository initialization — see frontmatter)
+base commit : ba27ef9 (ba27ef97060069d36d14c7da6674be29ce7d9e21, branch master — template init)
 changed     : none — S01 committed at init
 tests       : 41 passing / 0 failed (node, packages/dsl-core), fixture parity green
 next action : S02 — fold C1–C4 into the language spec (v0.3.1) + pocket spec
