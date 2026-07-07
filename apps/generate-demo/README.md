@@ -25,12 +25,20 @@ Flash**, **Gemini 3.5 Flash**, **Claude Haiku 4.5**, **Claude Sonnet 5**. Gemini
 `− 100% + ⌂` control (top-right of the scene) zooms and resets. The view persists
 while you edit the source and resets on each new generation.
 
+**Cost per generation.** Each run shows an **estimated cost** (`est. cost
+$0.00…`) plus the input/output token counts, computed from the response's token
+usage × the model's list price (Anthropic docs + ai.google.dev, 2026-07). It's
+an estimate, not a billed amount. Note the input tokens dominate — the pocket
+spec rides as the system prompt on every call — so a scene costs roughly
+$0.0005 on Flash-Lite up to ~$0.009 on Sonnet 5 (~17×).
+
 **Save library.** **Save** writes the current run to `apps/generate-demo/saved/`
-as one JSON file holding **model + metadata + the exact prompt (system + user) +
-input text + atomik source + parsed IR + diagnostics**. The **saved runs**
-dropdown lists everything in that folder and reloads any of them back into the
-page (source, model, input, teaching flag). The folder is git-ignored (local
-data); the demo reads it on load and after each save.
+as one JSON file holding **model + metadata (nodes, tokens, est. cost, price
+snapshot, latency) + the exact prompt (system + user) + input text + atomik
+source + parsed IR + diagnostics**. The **saved runs** dropdown lists everything
+in that folder (with its cost) and reloads any of them back into the page
+(source, model, input, teaching flag). The folder is git-ignored (local data);
+the demo reads it on load and after each save.
 
 Needs the two keys in `.env` at the repo root (same file the eval uses):
 

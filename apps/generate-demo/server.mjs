@@ -38,6 +38,22 @@ const MODELS = {
 };
 const DEFAULT_MODEL = 'haiku';
 
+/* List price in USD per 1M tokens (input, output). Verified 2026-07-07:
+ * Anthropic docs (Haiku $1/$5, Sonnet 5 $3/$15 list) and ai.google.dev/pricing.
+ * The demo labels the number "est." — it's an estimate from returned token
+ * usage × these rates, not a billed amount. */
+const PRICING = {
+  'haiku': { in: 1.00, out: 5.00 },
+  'gemini-3.5-flash': { in: 1.50, out: 9.00 },
+  'gemini-2.5-flash': { in: 0.30, out: 2.50 },
+  'gemini-3.1-flash-lite': { in: 0.25, out: 1.50 },
+  'sonnet': { in: 3.00, out: 15.00 }
+};
+function costUSD(key, usage) {
+  const p = PRICING[key]; if (!p || !usage) return null;
+  return (usage.inputTokens || 0) / 1e6 * p.in + (usage.outputTokens || 0) / 1e6 * p.out;
+}
+
 function detectLang(t) {
   const s = t.toLowerCase();
   const accents = (s.match(/[éèêëàâçîïôûùœ]/g) || []).length;
@@ -81,10 +97,12 @@ async function handleGenerate(req, res) {
   const atomik = extractScene(r.text || '');
   if (!atomik) return json(res, 502, { error: 'model returned no atomik source', model: m.label });
   const ir = A.parse(atomik);
+  const usage = r.usage || { inputTokens: 0, outputTokens: 0 };
   return json(res, 200, {
     atomik, model: m.label, took: Math.max(0, Date.now() - t0),
     nodes: ir.nodes.length, relations: ir.relations.length,
-    errorCount: ir.diagnostics.filter((d) => d.severity === 'error').length, renders: ir.nodes.length > 0
+    errorCount: ir.diagnostics.filter((d) => d.severity === 'error').length, renders: ir.nodes.length > 0,
+    inputTokens: usage.inputTokens, outputTokens: usage.outputTokens, cost: costUSD(key, usage)
   });
 }
 
@@ -107,7 +125,12 @@ async function handleSave(req, res) {
     id, savedAt,
     model: { key, label: m.label, id: m.modelId },
     teaching: !!p.teaching,
-    metadata: { nodes: ir.nodes.length, relations: ir.relations.length, errorCount: diagnostics.filter((d) => d.severity === 'error').length, took: p.took || null },
+    metadata: {
+      nodes: ir.nodes.length, relations: ir.relations.length,
+      errorCount: diagnostics.filter((d) => d.severity === 'error').length, took: p.took || null,
+      inputTokens: p.inputTokens || null, outputTokens: p.outputTokens || null,
+      cost: p.cost != null ? p.cost : null, pricePerMTok: PRICING[key] || null
+    },
     prompt: composeItem(text, !!p.teaching),   // exactly what was sent (system = pocket spec, user = instruction+source)
     inputText: text,
     source: atomik,
@@ -124,7 +147,7 @@ function listSaved() {
   return readdirSync(SAVE_DIR).filter((f) => f.endsWith('.json')).map((f) => {
     try {
       const r = JSON.parse(readFileSync(join(SAVE_DIR, f), 'utf8'));
-      return { id: r.id, savedAt: r.savedAt, model: r.model.label, teaching: r.teaching, nodes: r.metadata.nodes, errorCount: r.metadata.errorCount, inputPreview: (r.inputText || '').slice(0, 60) };
+      return { id: r.id, savedAt: r.savedAt, model: r.model.label, teaching: r.teaching, nodes: r.metadata.nodes, errorCount: r.metadata.errorCount, cost: r.metadata.cost, inputPreview: (r.inputText || '').slice(0, 60) };
     } catch { return null; }
   }).filter(Boolean).sort((a, b) => (a.savedAt < b.savedAt ? 1 : -1));
 }
@@ -194,6 +217,8 @@ const PANEL_SCRIPT = `
   var last = { nodes: 0, relations: 0, errorCount: 0 };
 
   function applySource(atomik) { var src = document.getElementById('src'); src.value = atomik; src.dispatchEvent(new Event('input')); var t = document.getElementById('tab-source'); if (t) t.click(); }
+  function fmtCost(c) { return (c == null) ? 'n/a' : '$' + (c < 0.001 ? c.toFixed(6) : c.toFixed(4)); }
+  function fmtInt(n) { return (n == null) ? '?' : Math.round(n).toLocaleString(); }
 
   async function gen() {
     var text = ta.value.trim();
@@ -205,10 +230,11 @@ const PANEL_SCRIPT = `
       var j = await res.json();
       if (j.error) { st.textContent = 'Generation error (' + (j.model || sel.value) + '): ' + j.error; btn.disabled = false; return; }
       resetZoom(); applySource(j.atomik);
-      last = { nodes: j.nodes, relations: j.relations, errorCount: j.errorCount, took: j.took };
+      last = { nodes: j.nodes, relations: j.relations, errorCount: j.errorCount, took: j.took, cost: j.cost, inputTokens: j.inputTokens, outputTokens: j.outputTokens };
       var summary = j.nodes + ' nodes, ' + j.relations + ' relations';
       if (j.errorCount) summary += ' — ' + j.errorCount + ' line(s) skipped (non-fatal; the scene still rendered — see Diagnostics)';
-      st.textContent = 'Rendered by ' + j.model + ' in ' + j.took + ' ms — ' + summary + '. Edit the source or Save it.';
+      var cost = '· est. cost ' + fmtCost(j.cost) + ' (' + fmtInt(j.inputTokens) + ' in / ' + fmtInt(j.outputTokens) + ' out tokens)';
+      st.textContent = 'Rendered by ' + j.model + ' in ' + j.took + ' ms — ' + summary + ' ' + cost + '. Edit the source or Save it.';
     } catch (e) { st.textContent = 'Request failed: ' + e.message; }
     btn.disabled = false;
   }
@@ -219,7 +245,7 @@ const PANEL_SCRIPT = `
     save.disabled = true;
     try {
       var res = await fetch('/api/save', { method: 'POST', headers: { 'content-type': 'application/json' },
-        body: JSON.stringify({ text: text, model: sel.value, teaching: teach.checked, atomik: atomik, took: last.took }) });
+        body: JSON.stringify({ text: text, model: sel.value, teaching: teach.checked, atomik: atomik, took: last.took, cost: last.cost, inputTokens: last.inputTokens, outputTokens: last.outputTokens }) });
       var j = await res.json();
       if (j.error) { st.textContent = 'Save failed: ' + j.error; }
       else { st.textContent = 'Saved → saved/' + j.id + '.json (model, prompt, source, IR, diagnostics).'; await loadList(); }
@@ -233,8 +259,9 @@ const PANEL_SCRIPT = `
       saved.innerHTML = '<option value="">— saved runs (' + arr.length + ') —</option>' +
         arr.map(function (r) {
           var when = (r.savedAt || '').replace('T', ' ').slice(0, 16);
+          var cost = (r.cost != null) ? ' · ' + fmtCost(r.cost) : '';
           return '<option value="' + r.id + '">' + when + ' · ' + r.model + (r.teaching ? ' · teach' : '') +
-                 ' · ' + (r.errorCount ? r.errorCount + ' diag' : 'clean') + ' · ' + esc(r.inputPreview) + '…</option>';
+                 ' · ' + (r.errorCount ? r.errorCount + ' diag' : 'clean') + cost + ' · ' + esc(r.inputPreview) + '…</option>';
         }).join('');
     } catch (e) { /* saved folder may not exist yet */ }
   }
@@ -247,9 +274,11 @@ const PANEL_SCRIPT = `
       if (r.error) { st.textContent = 'Load failed: ' + r.error; return; }
       ta.value = r.inputText || ''; teach.checked = !!r.teaching;
       if (r.model && MODELhas(r.model.key)) sel.value = r.model.key;
+      last = { nodes: r.metadata.nodes, relations: r.metadata.relations, errorCount: r.metadata.errorCount, took: r.metadata.took, cost: r.metadata.cost, inputTokens: r.metadata.inputTokens, outputTokens: r.metadata.outputTokens };
       resetZoom(); applySource(r.source);
       st.textContent = 'Loaded saved run · ' + r.model.label + ' · ' + r.metadata.nodes + ' nodes · ' +
-        (r.metadata.errorCount ? r.metadata.errorCount + ' diagnostics' : 'clean') + ' · ' + (r.savedAt || '').slice(0, 16).replace('T', ' ');
+        (r.metadata.errorCount ? r.metadata.errorCount + ' diagnostics' : 'clean') + ' · est. cost ' + fmtCost(r.metadata.cost) +
+        ' · ' + (r.savedAt || '').slice(0, 16).replace('T', ' ');
     } catch (e) { st.textContent = 'Load request failed: ' + e.message; }
   });
   function MODELhas(k) { return Array.prototype.some.call(sel.options, function (o) { return o.value === k; }); }

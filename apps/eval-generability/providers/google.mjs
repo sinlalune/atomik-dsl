@@ -101,7 +101,8 @@ export async function generateOne(item, model) {
       }
     });
     const text = textFromResponse(r) || (typeof r.text === 'string' ? r.text : '');
-    return { text, model, error: null };
+    const u = r.usageMetadata || {};
+    return { text, model, error: null, usage: { inputTokens: u.promptTokenCount || 0, outputTokens: u.candidatesTokenCount || 0 } };
   } catch (e) { return { text: null, model, error: (e.status ? e.status + ' ' : '') + (e.message || String(e)) }; }
 }
 

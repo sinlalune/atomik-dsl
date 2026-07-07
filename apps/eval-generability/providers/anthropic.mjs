@@ -52,7 +52,8 @@ export async function generateOne(item, model) {
       messages: [{ role: 'user', content: item.user }]
     });
     const text = (r.content || []).filter((b) => b.type === 'text').map((b) => b.text).join('');
-    return { text, model: r.model, error: null };
+    const u = r.usage || {};
+    return { text, model: r.model, error: null, usage: { inputTokens: u.input_tokens || 0, outputTokens: u.output_tokens || 0 } };
   } catch (e) { return { text: null, model, error: (e.status ? e.status + ' ' : '') + (e.message || String(e)) }; }
 }
 
