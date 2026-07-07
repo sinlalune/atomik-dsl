@@ -12,3 +12,6 @@ node_modules/
 # Live results (results/live-*/) are the real data and ARE committed (CP-DSL-003 S04).
 apps/eval-generability/results/dry-run/
 apps/eval-generability/results/batch-*/
+
+# Demo: saved generations are local user data (the demo reads them back).
+apps/generate-demo/saved/

@@ -21,6 +21,17 @@ Flash**, **Gemini 3.5 Flash**, **Claude Haiku 4.5**, **Claude Sonnet 5**. Gemini
 3.x Flash are reasoning models — the server disables thinking (`thinkingBudget:
 0`) so they emit the scene, not their chain of thought.
 
+**Zoom / pan.** Scroll-wheel to zoom toward the cursor, drag to pan, and the
+`− 100% + ⌂` control (top-right of the scene) zooms and resets. The view persists
+while you edit the source and resets on each new generation.
+
+**Save library.** **Save** writes the current run to `apps/generate-demo/saved/`
+as one JSON file holding **model + metadata + the exact prompt (system + user) +
+input text + atomik source + parsed IR + diagnostics**. The **saved runs**
+dropdown lists everything in that folder and reloads any of them back into the
+page (source, model, input, teaching flag). The folder is git-ignored (local
+data); the demo reads it on load and after each save.
+
 Needs the two keys in `.env` at the repo root (same file the eval uses):
 
 ```
