@@ -2,7 +2,7 @@
   "name": "atomik-dsl",
   "private": true,
   "version": "0.3.0",
-  "description": "atomik \u2014 the learning-visualization DSL for Atomik (lang-core + render-core kernels, M12 target).",
+  "description": "atomik — the learning-visualization DSL for Atomik (lang-core + render-core kernels, M12 target).",
   "type": "commonjs",
   "workspaces": [
     "packages/*"
@@ -14,6 +14,10 @@
     "eval:test": "node apps/eval-generability/test_harness.mjs",
     "eval:dry-run": "node apps/eval-generability/run.mjs --dry-run",
     "eval:build": "node apps/eval-generability/run.mjs build",
-    "eval:live": "node apps/eval-generability/run.mjs live"
+    "eval:live": "node --env-file-if-exists=.env apps/eval-generability/run.mjs live"
+  },
+  "devDependencies": {
+    "@anthropic-ai/sdk": "^0.110.0",
+    "@google/genai": "^2.10.0"
   }
 }

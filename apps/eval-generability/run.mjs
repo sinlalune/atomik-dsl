@@ -139,7 +139,8 @@ async function main() {
     const missing = chosen.map(getProvider).filter((p) => !process.env[p.envKey]);
     if (missing.length) {
       console.error('live mode is blocked — missing credentials for: ' + missing.map((p) => p.name + ' (' + p.envKey + ')').join(', '));
-      console.error('This is the CP-DSL-003 S04 blocker. Set the key(s) and `npm i -D @anthropic-ai/sdk @google/genai`, then rerun.');
+      console.error('CP-DSL-003 S04 blocker. Fix: `cp .env.example .env` and fill in the key(s), run `npm install`,');
+      console.error('then `npm run eval:live` (it auto-loads .env). Or run one provider: `npm run eval:live -- anthropic|google`.');
       process.exit(2);
     }
     const outDir = ensureDir(join(here, 'results', 'live-' + Date.now()));
