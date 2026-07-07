@@ -153,10 +153,12 @@ const PANEL_STYLE = `
   #genbar label{font-size:12px;color:var(--muted);display:flex;gap:6px;align-items:center}
   #genstatus{font-size:12px;color:var(--muted);flex-basis:100%;margin-top:2px}
   #genbar .hint{font-size:11px;color:var(--muted)}
-  #stage{position:relative}
-  #genzoom{position:absolute;right:22px;top:12px;z-index:10;display:flex;gap:4px;align-items:center;
+  /* fixed to the viewport — NOT inside #stage — so the render observer never
+     sees its text updates (that caused an infinite loop) and re-renders can't
+     wipe it. */
+  #genzoom{position:fixed;right:24px;bottom:22px;z-index:40;display:flex;gap:4px;align-items:center;
     background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:3px 5px;
-    box-shadow:0 1px 4px #0001}
+    box-shadow:0 1px 6px #0002}
   #genzoom button{font:inherit;width:26px;height:26px;padding:0;border:1px solid var(--line);
     border-radius:6px;background:#fff;color:var(--ink);cursor:pointer;line-height:1}
   #genzoom span{font-size:11px;color:var(--muted);min-width:38px;text-align:center}
@@ -273,12 +275,15 @@ const PANEL_SCRIPT = `
     stage.addEventListener('mousedown', function (e) { if (!curSvg() || e.button !== 0) return; dragging = true; lx = e.clientX; ly = e.clientY; curSvg().classList.add('grabbing'); e.preventDefault(); });
     window.addEventListener('mousemove', function (e) { if (!dragging) return; tx += e.clientX - lx; ty += e.clientY - ly; lx = e.clientX; ly = e.clientY; applyZoom(); });
     window.addEventListener('mouseup', function () { dragging = false; var s = curSvg(); if (s) s.classList.remove('grabbing'); });
-    // re-apply the current transform whenever the prototype replaces the SVG (live edits)
+    // re-apply the current transform whenever the prototype replaces the SVG on
+    // live edits. Safe from self-triggering: applyZoom only sets the svg's style
+    // (an attribute, not observed) and the zoom-level text (which lives OUTSIDE
+    // #stage, on document.body), so it never mutates the observed subtree.
     new MutationObserver(function () { applyZoom(); }).observe(stage, { childList: true, subtree: true });
     var zc = document.createElement('div'); zc.id = 'genzoom';
     zc.innerHTML = '<button id="genzoomout" title="zoom out">−</button><span id="genzoomlvl">100%</span>' +
       '<button id="genzoomin" title="zoom in">+</button><button id="genzoomreset" title="reset view">⌂</button>';
-    stage.appendChild(zc);
+    document.body.appendChild(zc);
     document.getElementById('genzoomin').addEventListener('click', function () { zoomBy(1.2); });
     document.getElementById('genzoomout').addEventListener('click', function () { zoomBy(1 / 1.2); });
     document.getElementById('genzoomreset').addEventListener('click', resetZoom);
