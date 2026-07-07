@@ -17,11 +17,18 @@ Batch-03 established the generation failure modes (G1–G6) by a large model *si
 
 # Owner decisions (scope freeze, 2026-07-07)
 
-- **Subject model:** Haiku 4.5 (`claude-haiku-4-5`) only — the cheap-small-model class the DSL targets.
-- **Confabulation:** scored by a Sonnet 5 (`claude-sonnet-5`) LLM-judge pass; reported separately from mechanical metrics, marked judged-not-proven.
-- **Scale:** full matrix — 16 tasks × 5 runs × 2 regimes (≈160 generations + 1 repair round + judge pass), all via the Message Batches API (50% pricing). Estimated spend $3–8.
+- **Subject models:** ~~Haiku 4.5 only~~ **amended 2026-07-07** → **Haiku 4.5 (`claude-haiku-4-5`) *and* Gemini 3.1 Flash-Lite (`gemini-3.1-flash-lite`)**. Rationale: batch-03 calls for "several real small models," and a non-Anthropic subject removes the single-vendor circularity (Anthropic language, Anthropic model, Anthropic judge) — cross-vendor agreement becomes a reported finding, and vendor sensitivity is itself measurable. Both are the cheap-small-model class the DSL targets. Judge stays Anthropic (independence from the subject).
+- **Confabulation:** scored by a Sonnet 5 (`claude-sonnet-5`) LLM-judge pass; reported separately from mechanical metrics, marked judged-not-proven. Judge model is fixed regardless of subject provider.
+- **Scale:** full matrix per provider — 16 tasks × 5 runs × 2 regimes (≈160 generations) × 2 providers, + repair rounds + judge pass, via each vendor's Batch API (50% pricing both sides). Estimated spend ≤ ~$15.
 - **Misconception-acceptance threshold (spec §13.4 "agreed threshold"):** ≥80% of runs on misconception tasks preserve the marked falsehood. Owner may amend before S05 concludes.
-- **Dependency decision:** the official `@anthropic-ai/sdk` enters as a **root devDependency** for the eval app only; `packages/dsl-core` stays dependency-free (the standing prohibition covers the kernels, and CP-DSL-004 vendors only `packages/dsl-core`).
+- **Dependency decision:** the official `@anthropic-ai/sdk` **and** `@google/genai` enter as **root devDependencies** for the eval app only; `packages/dsl-core` stays dependency-free (the standing prohibition covers the kernels, and CP-DSL-004 vendors only `packages/dsl-core`). Both SDKs are dynamically imported in their provider's submit path only, so the scoring/dry-run paths need neither.
+
+## Verified provider facts (Gemini, from ai.google.dev batch-api docs, 2026-07-07)
+
+- Model id `gemini-3.1-flash-lite` confirmed current (2.0 Flash-Lite retired 2026-06-01).
+- Batch: `ai.batches.create({ model, src: inlineRequests, config: { displayName } })`; inline request shape `{ contents: [{ parts: [{text}], role: "user" }], config: { systemInstruction: {parts:[{text}]}, maxOutputTokens } }`.
+- Poll `batchJob.state` until `JOB_STATE_SUCCEEDED | _FAILED | _CANCELLED | _EXPIRED`.
+- Results at `batchJob.dest.inlinedResponses[i]` → `.response.text` or `.error`. **No correlation key on inline requests — results are order-matched by index**, so the adapter keeps a parallel `customId` array and zips by position. Env key `GEMINI_API_KEY`.
 
 # Definition of done
 
@@ -77,31 +84,35 @@ Completeness rule: every document of this repository appears below at least once
 
 ```text
 base commit : e0dc2ef (branch master — CP-DSL-002 closed, 65/65 green)
-changed     : S03 — harness under apps/eval-generability/ as pure, dependency-
-              free ES modules: scorer.mjs (kernel-as-grader: parse under the
-              generated profile + vault resolver → validity, grounding,
-              status ceiling, choreography-rule, 15 property checks, structural
-              signatures), prompt.mjs (system = pocket spec VERBATIM; R1 model-
-              plane-only / R2 free; repair + judge builders), stability.mjs
-              (archetype mode share, node/relation Jaccard, pass/fabrication
-              rates), batch.mjs (custom-id-keyed body builders, scene
-              extraction, results parsing, and a dynamically-imported live
-              submit so dry-run needs no node_modules), run.mjs orchestrator
-              (--dry-run | build | live). test_harness.mjs = 24 assertions
-              (npm eval:test). Dry-run over synthetic fixtures scores 10 canned
-              runs end-to-end and correctly surfaces every failure mode: 1
-              parse failure, 1 G2 fabrication, 1 G4 ceiling breach, archetype
-              drift 0.67 on water-cycle. build mode assembles the real 160-
-              request matrix (16×2×5); live blocks cleanly without a key.
-              SDK stays out of the kernel (dynamic import in the submit path
-              only); dry-run/batch results gitignored, live results committable.
-tests       : 65 passing; eval:test 24/24; eval:validate 16/16; dry-run +
-              build green; fixture untouched; no dep added to dsl-core
-next action : S04 — install @anthropic-ai/sdk as root devDependency, run
-              `npm run eval:live` (generation → repair → judge), commit raw
-              results. BLOCKED on owner-provided ANTHROPIC_API_KEY.
-blockers    : S04 requires an Anthropic API key; environment has none
-              (ANTHROPIC_API_KEY unset, no ant CLI). Owner provides before S04.
+changed     : S03 — harness (pure, dependency-free) + multi-provider adapter
+              layer under apps/eval-generability/. Vendor-neutral core:
+              scorer.mjs (kernel-as-grader: generated-profile parse + vault
+              resolver → validity, grounding, status ceiling, choreography-rule,
+              15 property checks, structural signatures), prompt.mjs (system =
+              pocket spec VERBATIM; R1 model-plane-only / R2 free; repair +
+              judge builders), stability.mjs (archetype mode share, node/relation
+              Jaccard, pass/fabrication rates), batch.mjs (vendor-neutral
+              plan items + id scheme + scene extraction). Providers:
+              providers/anthropic.mjs (Batches, keyed by custom_id) +
+              providers/google.mjs (Gemini batch, inline requests, ORDER-zipped
+              by index — verified against ai.google.dev docs) + registry;
+              each dynamically imports its SDK in the submit path only, so
+              scoring/dry-run load no node_modules. run.mjs orchestrator
+              (--dry-run | build [provider] | live [provider]); judge always
+              routes through the anthropic provider (Sonnet 5) regardless of
+              subject. test_harness.mjs = 36 assertions incl. offline Gemini
+              body-shape + order-zipping. Dry-run scores 10 canned runs and
+              surfaces every failure mode (1 parse fail, 1 G2 fab, 1 G4 breach,
+              0.67 drift). build assembles both providers' 160-request matrices;
+              live pre-flights each chosen provider's key and blocks cleanly.
+tests       : 65 passing; eval:test 36/36; eval:validate 16/16; dry-run +
+              build(both) green; fixture untouched; no dep added to dsl-core
+next action : S04 — `npm i -D @anthropic-ai/sdk @google/genai`, set both keys,
+              `npm run eval:live` (per provider: generation → repair → judge),
+              commit raw results. BLOCKED on owner-provided keys.
+blockers    : S04 needs ANTHROPIC_API_KEY and GEMINI_API_KEY; environment has
+              neither. Owner provides before S04. (Either provider can run
+              alone via `eval:live anthropic|google` if only one key is ready.)
 ```
 
 # Blockers
