@@ -91,7 +91,14 @@ export async function generateOne(item, model) {
     const ai = new GoogleGenAI({});
     const r = await ai.models.generateContent({
       model, contents: item.user,
-      config: { systemInstruction: { parts: [{ text: item.system }] }, maxOutputTokens: MAX_TOKENS }
+      config: {
+        systemInstruction: { parts: [{ text: item.system }] },
+        maxOutputTokens: MAX_TOKENS,
+        // Gemini 3.x Flash are reasoning models: without this they spend the
+        // output budget "thinking" and leak/truncate the scene. For a strict
+        // format task we want the answer only. Harmless on non-thinking models.
+        thinkingConfig: { thinkingBudget: 0 }
+      }
     });
     const text = textFromResponse(r) || (typeof r.text === 'string' ? r.text : '');
     return { text, model, error: null };

@@ -62,6 +62,7 @@ The Anthropic/Gemini keys authenticate paid APIs; a browser page cannot hold the
 - [x] S03 `server.mjs`: localhost http, `POST /api/generate`, `/health`; verified via curl against both providers.
 - [x] S04 Page + client — **design improvement vs the ledger's original "new index.html":** instead of duplicating the painter, the server injects a generate panel + wiring into the prototype's own `index.html`, reusing the entire tested renderer (parse/layout/present/paint, step nav, diagnostics, misconception strike, refutation ⊣, cycle arcs, flow lanes). The panel fills the prototype's `#src` and fires `input` to drive its compile. Editable source, model label, error states, ⌘/Ctrl-Enter.
 - [x] S05 README + `npm run demo`; end-to-end verified (generate → parse → layout → present, incl. a live-generated teaching scene whose prediction gate withholds evidence at step 2); module note, log, register, ledger; close.
+- [x] S06 (reopened at owner feedback) **Models + prompt hardening from a real error investigation.** Owner observed Haiku "always errors" and asked for more Gemini tiers. Investigated live across models: Haiku's errors were 2 recurring, *non-fatal*, prompt-fixable patterns (unquoted `subject`, multi-word ids in relations — the scene rendered anyway via partial validity); Gemini 3.5 Flash is a *reasoning* model that leaked its chain-of-thought into the output and truncated the scene; Flash-Lite (lowest tier) was the cleanest. Fixes: (a) `generateOne` disables Gemini thinking (`thinkingBudget: 0`); (b) demo prompt hardened — keep source language, single-token ids + exact relation shape, quoted/`[[…]]` subject, and (teaching) claim = the truth not the misconception; (c) model menu now Haiku 4.5 / Sonnet 5 / Gemini 3.5·2.5 Flash / 3.1 Flash-Lite; (d) honest render summary (server-side parse → "N nodes, M lines skipped, non-fatal"). Verified: all 5 models render 0–1 errors, teaching claim never inverted, `took` clamped against VM clock skew.
 
 # Current checkpoint
 
@@ -78,6 +79,14 @@ path closed 2026-07-07 — definition-of-done audit:
   ✓ kernels untouched (read-only consumer); dsl-core gains no dependency; zero
     new deps (built-in http + installed SDKs + inlined kernel); fixture unmoved
   ✓ module note, register (T1 → done), ACTIVE.md, orientation, log, ledger
+post-close iteration (S06, 2026-07-07): 5-model menu + prompt hardening from a
+              live error investigation (see S06). Findings also useful upstream:
+              the demo prompt's clarifications (single-token ids, exact relation
+              shape, quoted subject, claim-is-truth) are candidates for the
+              pocket spec itself, and "misconception valid on nodes not claim"
+              is a spec rule the kernel does NOT currently enforce (a validation
+              gap worth its own path). Kept demo-local so the eval's measured
+              prompt stays frozen.
 next        : the natural sequel is D4 (workbench integration) in the main repo;
               this demo is the local proof that the generation→render chain works
 blockers    : none.
