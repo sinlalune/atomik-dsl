@@ -81,8 +81,8 @@ console.log('\n== provider: anthropic ==');
 const aReqs = anthropic.toRequests(items, 'claude-haiku-4-5');
 ok(aReqs.length === 10 && aReqs.every((r) => r.params.model === 'claude-haiku-4-5' && r.params.max_tokens > 0), 'anthropic bodies carry model + max_tokens');
 ok(aReqs[0].custom_id === items[0].customId && aReqs[0].params.messages[0].content === items[0].user, 'anthropic keys by custom_id, user as message content');
-const aParsed = anthropic.parseResultsJsonl(JSON.stringify({ custom_id: 'gen:t:R1:1', result: { type: 'succeeded', message: { content: [{ type: 'text', text: 'atomik 0.3' }] } } }) + '\n' + JSON.stringify({ custom_id: 'gen:t:R1:2', result: { type: 'errored' } }));
-ok(aParsed['gen:t:R1:1'].text === 'atomik 0.3' && aParsed['gen:t:R1:2'].error === 'errored', 'anthropic results JSONL parses success + error');
+const aParsed = anthropic.parseResultsJsonl(JSON.stringify({ custom_id: 'gen_t_R1_1', result: { type: 'succeeded', message: { content: [{ type: 'text', text: 'atomik 0.3' }] } } }) + '\n' + JSON.stringify({ custom_id: 'gen_t_R1_2', result: { type: 'errored' } }));
+ok(aParsed['gen_t_R1_1'].text === 'atomik 0.3' && aParsed['gen_t_R1_2'].error === 'errored', 'anthropic results JSONL parses success + error');
 
 console.log('\n== provider: google (offline shape + order-zipping) ==');
 const gReqs = google.toRequests(items);
@@ -91,16 +91,16 @@ ok(gReqs[0].contents[0].parts[0].text === items[0].user && gReqs[0].contents[0].
 ok(gReqs[0].config.systemInstruction.parts[0].text === items[0].system && gReqs[0].config.maxOutputTokens > 0, 'google inline request: systemInstruction + maxOutputTokens in config');
 ok(gReqs[0].model === undefined, 'google inline request omits model (set on the batch job)');
 // order-zipping: inline responses have no key — must match by index
-const cids = ['gen:a:R1:1', 'gen:b:R1:1', 'gen:c:R1:1'];
+const cids = ['gen_a_R1_1', 'gen_b_R1_1', 'gen_c_R1_1'];
 const fakeJob = { dest: { inlinedResponses: [
   { response: { text: 'atomik 0.3\nscene a' } },
   { error: 'quota' },
   { response: { text: 'atomik 0.3\nscene c' } }
 ] } };
 const gMap = google.parseInlineResponses(fakeJob, cids);
-ok(gMap['gen:a:R1:1'].text === 'atomik 0.3\nscene a' && gMap['gen:c:R1:1'].text === 'atomik 0.3\nscene c', 'google zips responses to custom_ids by position');
-ok(gMap['gen:b:R1:1'].text === null && gMap['gen:b:R1:1'].error === 'quota', 'google surfaces a per-request error by position');
-ok(google.parseInlineResponses({ dest: {} }, ['gen:x:R1:1'])['gen:x:R1:1'].error === 'missing', 'google marks a missing response');
+ok(gMap['gen_a_R1_1'].text === 'atomik 0.3\nscene a' && gMap['gen_c_R1_1'].text === 'atomik 0.3\nscene c', 'google zips responses to custom_ids by position');
+ok(gMap['gen_b_R1_1'].text === null && gMap['gen_b_R1_1'].error === 'quota', 'google surfaces a per-request error by position');
+ok(google.parseInlineResponses({ dest: {} }, ['gen_x_R1_1'])['gen_x_R1_1'].error === 'missing', 'google marks a missing response');
 
 console.log('\n== provider registry ==');
 ok(SUBJECT_PROVIDERS.length === 2 && getProvider('anthropic').name === 'anthropic' && getProvider('google').name === 'google', 'registry resolves both subject providers');
