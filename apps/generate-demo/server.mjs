@@ -323,6 +323,15 @@ const server = createServer(async (req, res) => {
   } catch (e) { json(res, 500, { error: String(e && e.message || e) }); }
 });
 
+server.on('error', (e) => {
+  if (e.code === 'EADDRINUSE') {
+    console.error('\nPort ' + PORT + ' is already in use — a demo is probably already running.');
+    console.error('  → open http://' + HOST + ':' + PORT + '  ·  or stop the other process  ·  or pick another port:  PORT=4180 npm run demo\n');
+    process.exit(1);
+  }
+  console.error(e); process.exit(1);
+});
+
 server.listen(PORT, HOST, () => {
   const keyed = Object.entries(MODELS).filter(([, m]) => process.env[m.provider.envKey]).map(([, m]) => m.label);
   console.log('atomik generate-demo → http://' + HOST + ':' + PORT);
