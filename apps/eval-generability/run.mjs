@@ -2,8 +2,11 @@
 /* Generability eval orchestrator (CP-DSL-003), multi-provider. Modes:
  *   --dry-run          score canned SYNTHETIC outputs end-to-end; no API, no deps.
  *   build [provider]   write real batch request bodies for inspection. No API.
- *   live  [provider]   S04: generation -> repair -> judge via each subject
- *                      provider's Batch API. Needs that provider's key + SDK.
+ *   live  [provider] [--into <dir>]
+ *                      S04: generation -> repair -> judge via each subject
+ *                      provider's Batch API. --into resumes into an existing
+ *                      results dir (e.g. re-run one provider without re-paying
+ *                      for the other). Needs that provider's key + SDK.
  * provider ∈ anthropic | google | all (default all). Judge always Anthropic.
  * Usage: node apps/eval-generability/run.mjs --dry-run   (npm run eval:dry-run)
  */
@@ -81,14 +84,17 @@ async function runGenRepairJudge(provider, tasks, pocket, outDir, log) {
   if (failed.length) {
     const rep = await p.submit(planRepair(pocket, failed), p.subjectModel, { log });
     writeFileSync(join(outDir, provider + '.repair.results.json'), JSON.stringify(rep.results, null, 2));
-  }
+  } else { log('[' + provider + '] no parse failures — repair skipped'); }
 
   // 3. judge pass (Sonnet 5 via anthropic) over parsed generations
   const parsed = records.filter((r) => r.score.parses).map((r) => ({
     taskId: r.taskId, regime: r.regime, run: r.run, task: byId[r.taskId], sceneText: r.sceneText
   }));
-  const judged = await anth.submit(planJudge(parsed), anth.judgeModel, { log });
-  writeFileSync(join(outDir, provider + '.judge.results.json'), JSON.stringify(judged.results, null, 2));
+  if (parsed.length) {
+    // never submit a 0-item batch (the API 400s on it) — guard both repair and judge
+    const judged = await anth.submit(planJudge(parsed), anth.judgeModel, { log });
+    writeFileSync(join(outDir, provider + '.judge.results.json'), JSON.stringify(judged.results, null, 2));
+  } else { log('[' + provider + '] WARNING: zero generations parsed — judge skipped (check the adapter/model output)'); }
   log('[' + provider + '] done: ' + records.length + ' generations, ' + failed.length + ' repairs, ' + parsed.length + ' judged');
 }
 
@@ -134,7 +140,12 @@ async function main() {
   }
 
   if (mode === 'live') {
-    const chosen = resolveProviders(providerArg);
+    // parse args: an optional provider positional + an optional `--into <dir>`
+    const args = process.argv.slice(3);
+    const intoIdx = args.indexOf('--into');
+    const intoDir = intoIdx >= 0 ? args[intoIdx + 1] : null;
+    const posArgs = args.filter((a, i) => a !== '--into' && (intoIdx < 0 || i !== intoIdx + 1));
+    const chosen = resolveProviders(posArgs[0]);
     // pre-flight: every chosen provider needs its key present
     const missing = chosen.map(getProvider).filter((p) => !process.env[p.envKey]);
     if (missing.length) {
@@ -143,14 +154,15 @@ async function main() {
       console.error('then `npm run eval:live` (it auto-loads .env). Or run one provider: `npm run eval:live -- anthropic|google`.');
       process.exit(2);
     }
-    const outDir = ensureDir(join(here, 'results', 'live-' + Date.now()));
+    const outDir = intoDir ? ensureDir(intoDir) : ensureDir(join(here, 'results', 'live-' + Date.now()));
     const log = (m) => console.log(m);
+    if (intoDir) log('resuming into ' + outDir + ' (providers: ' + chosen.join(', ') + ')');
     for (const name of chosen) await runGenRepairJudge(name, tasks, pocket, outDir, log);
     console.log('live run complete → ' + outDir + ' (score + report in S05)');
     return;
   }
 
-  console.error('unknown mode: ' + mode + '  (use --dry-run | build [provider] | live [provider])');
+  console.error('unknown mode: ' + mode + '  (use --dry-run | build [provider] | live [provider] [--into <dir>])');
   process.exit(1);
 }
 
