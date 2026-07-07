@@ -61,7 +61,7 @@ Mermaid/D2-class languages (no epistemic layer, layout semantics leak into sourc
 
 ## Example usage
 
-See `apps/prototype-cycle/atomik_ui.js` (paint + interaction over the kernel) and the presets in `fixtures/presets/`. `apps/eval-generability/` (CP-DSL-003) is a second read-only consumer: it uses `parse` under the `generated` profile with a vault-backed `resolver` as an automated grader — the kernel scores model-generated scenes (from Haiku 4.5 and Gemini 3.1 Flash-Lite) for validity, grounding, epistemic ceiling, and structural properties. It never imports internals and adds no dependency to `packages/dsl-core`; the provider SDKs live behind that app's own dynamic imports.
+See `apps/prototype-cycle/atomik_ui.js` (paint + interaction over the kernel) and the presets in `fixtures/presets/`. `apps/eval-generability/` (CP-DSL-003) is a second read-only consumer: it uses `parse` under the `generated` profile with a vault-backed `resolver` as an automated grader — the kernel scores model-generated scenes (from Haiku 4.5 and Gemini 3.1 Flash-Lite) for validity, grounding, epistemic ceiling, and structural properties. It never imports internals and adds no dependency to `packages/dsl-core`; the provider SDKs live behind that app's own dynamic imports. Results of the first run: `docs/evals/generability_eval_v0_3_1.md`.
 
 ## Future extension points
 

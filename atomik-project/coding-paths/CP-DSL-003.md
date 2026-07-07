@@ -6,8 +6,9 @@ tags: [coding-path, dsl, d3, eval]
 timestamp: 2026-07-07T00:00:00Z
 atomik:
   id: CP-DSL-003
-  status: active
-  current_step: S04
+  status: done
+  closed: 2026-07-07
+  current_step: none
   base_commit: e0dc2ef
 ---
 
@@ -76,9 +77,9 @@ Completeness rule: every document of this repository appears below at least once
 - [x] S01 Open the path: ledger with base commit and owner decisions; register D3 → active; ACTIVE.md; orientation roadmap; log. Record the credentials blocker (no ANTHROPIC_API_KEY in the environment yet — blocks S04 only).
 - [x] S02 Task corpus: 16 annotated tasks under `apps/eval-generability/tasks/` + a task-schema note; validate annotations mechanically (vault indexes well-formed, property checks executable, status ceilings in the closed vocabulary).
 - [x] S03 Harness: prompt builder (R1/R2), Batches API client (official SDK, root devDependency), kernel-as-grader scorer, repair round, stability aggregation, judge-pass builder, JSONL logging; dry-run mode (no API) proves the full pipeline on canned outputs; npm script.
-- [ ] S04 Execute: generation batch (Haiku 4.5, full matrix) → repair batch → judge batch (Sonnet 5); commit raw logs. **Blocked on owner-provided API key.**
-- [ ] S05 Score + report: aggregate, write the findings document (template check first), annotate spec §13, thresholds verdict; guide check if author-facing findings.
-- [ ] S06 Same-work-unit docs audit and close: register, ACTIVE.md, orientation, log, ledger; fixture-diff gate re-check.
+- [x] S04 Execute: generation → repair → judge, both providers (Haiku 4.5 + Gemini 3.1 Flash-Lite), Sonnet 5 judge; raw results committed. Three live API bugs found and fixed en route (custom_id pattern, Gemini candidates-path extraction, Gemini metadata.key correlation) — the last mislabeled every Gemini scene until fixed and re-run; verified by a probe + task-match spot-check.
+- [x] S05 Score + report: `report.mjs` → `docs/evals/generability_eval_v0_3_1.md` + `analysis.json` (adapts the bedrock-24 capability-eval template); spec §13 tests 2–4 annotated as executed; §13.4 threshold PASS both providers. Guide unchanged — findings validate existing author-facing behavior, they don't revise it.
+- [x] S06 Same-work-unit docs audit and close: register, ACTIVE.md, orientation, log, ledger; fixture-diff gate re-check.
 
 # Current checkpoint
 
@@ -126,12 +127,26 @@ S04 IN FLIGHT (2026-07-07): owner provided both keys (loaded from gitignored
               phases resuming into the same dir (batch egc3a...); Anthropic data
               preserved. Only Gemini generation (~5¢) re-run; nothing else
               re-paid. Self-test 37/37.
-next action : on background completion — S05: score both providers, write the
-              findings report (template check vs main-repo bedrock 24 first),
-              annotate spec §13, thresholds verdict. Raw results land in
-              apps/eval-generability/results/live-*/ (committable).
-blockers    : none (S04 executing). If the session ends mid-run, results are
-              file-durable per-phase; resume S05 from results/live-*/.
+path closed 2026-07-07 — definition-of-done audit:
+  ✓ 16-task annotated corpus + mechanical validator (eval:validate 16/16)
+  ✓ kernel-as-grader harness, multi-provider, dependency-free scoring paths;
+    self-test 39/39; dry-run proves the pipeline offline
+  ✓ full matrix executed: Haiku 4.5 + Gemini 3.1 Flash-Lite, 16×2×5 each,
+    + repair + Sonnet 5 judge; raw results committed (612K, reproducible)
+  ✓ findings report docs/evals/generability_eval_v0_3_1.md + analysis.json;
+    G1–G6 verdicts, cross-vendor comparison, §13.4 threshold PASS both
+  ✓ spec §13 tests 2–4 annotated executed; pocket spec used verbatim
+  ✓ kernels untouched (harness is a read-only consumer); dsl-core gains no
+    dependency; golden fixture byte-identical to base:
+    git diff e0dc2ef..HEAD -- packages/dsl-core/fixtures/ → empty
+  ✓ module note, register, log, ledger, orientation updated
+  three live bugs found+fixed with no fabricated results (custom_id pattern,
+  Gemini candidates-path, Gemini metadata.key correlation); each caught by
+  early verification before trusting numbers
+next        : findings feed future paths (spec/pipeline changes, broader eval
+              population) — each its own path; D4 (workbench integration)
+              executes in the main repo after its S00 owner amendment.
+blockers    : none.
 ```
 
 # Blockers
