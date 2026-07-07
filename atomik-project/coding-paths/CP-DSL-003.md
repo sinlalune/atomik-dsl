@@ -114,9 +114,18 @@ S04 IN FLIGHT (2026-07-07): owner provided both keys (loaded from gitignored
               cosmetic; (2) **custom_id contained ':' — Anthropic Batches API
               requires ^[a-zA-Z0-9_-]{1,64}$, so the first launch was rejected
               at batch creation with NO tokens billed**; separator changed to
-              '_' (commit 668dc39). Re-launched: anthropic generation batch
-              msgbatch_01KwhnnFSx59KY4EgehH4sfT created OK, 160 requests
-              processing. Runs gen→repair→judge per provider in the background.
+              '_' (commit 668dc39). Re-launched: **Anthropic side completed in
+              full** (generation 218KB / repair / judge all written) in
+              results/live-1783426556456/. Two more live bugs, both fixed
+              (commit 39db2dc): (3) Gemini batch text lives at
+              candidates[0].content.parts[].text, not the live-only .text getter
+              — all 160 Gemini generations were valid but scored 'missing';
+              verified fix re-parses the real SUCCEEDED job 160/160; (4) a
+              0-item repair/judge batch 400s — now skipped. Added `live --into
+              <dir>` to resume one provider without re-paying the other. Google
+              phases resuming into the same dir (batch egc3a...); Anthropic data
+              preserved. Only Gemini generation (~5¢) re-run; nothing else
+              re-paid. Self-test 37/37.
 next action : on background completion — S05: score both providers, write the
               findings report (template check vs main-repo bedrock 24 first),
               annotate spec §13, thresholds verdict. Raw results land in
