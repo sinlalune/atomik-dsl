@@ -12,7 +12,7 @@ The atomik DSL (language + kernels) for the Atomik workbench, maturing in its ow
 
 ## Current state
 
-Language **v0.3.1** (surface `atomik 0.3` unchanged) · Scene IR **0.1** · `cycle` archetype end-to-end (prototype in `apps/prototype-cycle/`) · **41/41 tests** green including golden-fixture byte parity and the A1–A7 runtime oracle · errata **C1–C4 folded** into the language spec at v0.3.1 and marked folded in render-core §10; render-core **§6.2** carries the cycle implementation notes · kernel internally split `lang.js`/`render.js`/`index.js`, public surface unchanged (CP-DSL-001 S02–S04) · `.d.ts` + guide cross-check pending (S05).
+Language **v0.3.1** (surface `atomik 0.3` unchanged) · Scene IR **0.1** · `cycle` archetype end-to-end (prototype in `apps/prototype-cycle/`) · **41/41 tests** green including golden-fixture byte parity and the A1–A7 runtime oracle · errata **C1–C4 folded** into the language spec at v0.3.1 and marked folded in render-core §10; render-core **§6.2** carries the cycle implementation notes · kernel internally split `lang.js`/`render.js`/`index.js` with typed surface (`index.d.ts`), public API unchanged · guide cross-references refreshed (CP-DSL-001 S02–S05; S06 closes the path).
 
 ## Canonical files
 

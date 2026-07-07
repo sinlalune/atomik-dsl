@@ -1,6 +1,6 @@
 # atomik v0.3 — Le guide accessible
 
-> **Ce guide n'est pas normatif.** C'est la couche d'apprentissage : elle simplifie volontairement. En cas de doute ou de conflit, `atomik_dsl_spec_v0_3.md` fait foi. La `pocket_spec` est la version destinée aux modèles générateurs ; ce guide-ci est pour les humains.
+> **Ce guide n'est pas normatif.** C'est la couche d'apprentissage : elle simplifie volontairement. En cas de doute ou de conflit, `atomik_dsl_spec_v0_3.md` (v0.3.1) fait foi. La `pocket_spec` est la version destinée aux modèles générateurs ; ce guide-ci est pour les humains.
 
 ---
 
@@ -197,7 +197,7 @@ group <id> "<label>" [kind cluster|lane|loop] place <id> at <v>  |  place <id> a
 data <id> cols "a" | "b"   data <id> row …    project as <archétype> [from d] [lo..hi] [suggested]
 input <id> = slider lo..hi | choice "a"|"b" | toggle     derive <id> = <expr>
 rule <expr> => <effet>                        step <n> <effet>
-mark meter "<label>" value <id> [max v]       effets : note reveal hide highlight require set(steps uniquement)
+mark meter "<label>" value <id> [max v]       effets : note reveal hide highlight · require et set : steps uniquement
 statuts : established supported contested hypothesis speculative reported misconception unspecified
 classes [as] : fact inference hypothesis analogy interpretation refutation boundary
 rôles : process decision start terminal question evidence assumption contradiction
@@ -231,15 +231,15 @@ Vous n'avez pas besoin de comprendre le moteur pour écrire. Mais savoir ce qu'i
 
 **Petites lois utiles du dessin.** Une flèche ne s'affiche que quand ses *deux* extrémités sont visibles — révéler un nœud fait donc apparaître ses liens vers ce qui est déjà là, sans effet supplémentaire. La mise en page est calculée sur la scène *complète* : les `reveal` font apparaître les éléments à leur place définitive, sans que rien ne saute. Et l'**export** (SVG/impression) montre toujours *tout*, portes ignorées, avec un petit badge d'étape sur les éléments révélés progressivement — une scène imprimée ne cache pas silencieusement son contenu pédagogique.
 
-**Le prototype à essayer** : `atomik_cycle_prototype.html` — un seul fichier, s'ouvre dans le navigateur, sans installation. À gauche la source (éditez, ça recompile en direct), avec deux autres onglets honnêtes : l'**IR** (la structure exacte que voit le moteur) et les **Diagnostics** (cliquez sur une erreur, la ligne se sélectionne). À droite le rendu : pastille de claim, scène SVG, notes, inputs, navigateur d'étapes avec verrou 🔒 (flèches ← → au clavier), jauges, et le sélecteur de projection — sur une projection `[suggested]`, le changer **réécrit la ligne `project` dans votre source** : le fichier reste la seule vérité. Quatre préréglages : la démo complète (cycle + méprise + porte), un explorable à curseur, la scène étoile-polaire du fixture, et une scène volontairement cassée. *Limites assumées du prototype : seul l'archétype `cycle` a son vrai layout (le reste tombe sur une grille de secours), et les `[[liens]]` sont résolus en simulé — pas encore branchés sur un vrai coffre de notes. Le cœur, lui, est testé : 41 tests, dont la reproduction à l'identique de l'IR du fixture doré et les sept assertions de l'oracle runtime.*
+**Le prototype à essayer** : `apps/prototype-cycle/index.html` — un seul fichier, s'ouvre dans le navigateur, sans installation. À gauche la source (éditez, ça recompile en direct), avec deux autres onglets honnêtes : l'**IR** (la structure exacte que voit le moteur) et les **Diagnostics** (cliquez sur une erreur, la ligne se sélectionne). À droite le rendu : pastille de claim, scène SVG, notes, inputs, navigateur d'étapes avec verrou 🔒 (flèches ← → au clavier), jauges, et le sélecteur de projection — sur une projection `[suggested]`, le changer **réécrit la ligne `project` dans votre source** : le fichier reste la seule vérité. Quatre préréglages : la démo complète (cycle + méprise + porte), un explorable à curseur, la scène étoile-polaire du fixture, et une scène volontairement cassée. *Limites assumées du prototype : seul l'archétype `cycle` a son vrai layout (le reste tombe sur une grille de secours), et les `[[liens]]` sont résolus en simulé — pas encore branchés sur un vrai coffre de notes. Le cœur, lui, est testé : 41 tests, dont la reproduction à l'identique de l'IR du fixture doré et les sept assertions de l'oracle runtime.*
 
 ---
 
 ## Où aller ensuite
 
-- **La spec formelle** (`atomik_dsl_spec_v0_3.md`) : §4 la grammaire exacte, §5 les vocabulaires complets, §6 les sémantiques fines (steps, groupes, visibilité), §7 ce que tout moteur de rendu doit garantir, §8 comment les scènes sont générées par IA, §11 la traçabilité vers le corpus de test, §12 ce qui est volontairement absent (tracé de fonctions, récursion, petits multiples).
-- **La spec du moteur** (`atomik_render_core_spec_v0_1.md`) : l'IR, les contrats de layout des onze archétypes, le runtime pur, les jetons de thème — et les errata C1–C4 que ce guide reflète déjà.
+- **La spec formelle** (`atomik_dsl_spec_v0_3.md`) : §4 la grammaire exacte, §5 les vocabulaires complets, §6 les sémantiques fines (steps, groupes, visibilité), §7 ce que tout moteur de rendu doit garantir, §8 comment les scènes sont générées par IA, §11 la traçabilité vers le corpus de test, §12 ce qui est volontairement absent (tracé de fonctions, récursion, petits multiples), §14 le journal des changements (v0.3 → v0.3.1).
+- **La spec du moteur** (`atomik_render_core_spec_v0_1.md`) : l'IR, les contrats de layout des onze archétypes, le runtime pur, les jetons de thème — et les errata C1–C4 (intégrés à la spec de langage en v0.3.1) que ce guide reflète déjà.
 - **Le fixture doré** (`atomik_scene_ir_golden_northstar_v0_1.json`) : la scène étoile-polaire en trois exemplaires — source canonique, IR attendu, oracle runtime. C'est le test d'acceptation vivant des deux specs.
-- **Le prototype** (`atomik_cycle_prototype.html`, cœur dans `atomik_core.js`, tests dans `test_atomik_core.js`) : la preuve par le geste.
-- **La pocket spec** (`atomik_pocket_spec_v0_3.md`) : la même chose compressée en ~1K tokens, pour le contexte des modèles.
+- **Le prototype** (`apps/prototype-cycle/index.html`, cœur dans `packages/dsl-core/src/` — `lang.js` / `render.js` / `index.js`, tests dans `test_atomik_core.js`) : la preuve par le geste.
+- **La pocket spec** (`atomik_pocket_spec_v0_3.md`) : la même chose compressée en ≈1,2K tokens, pour le contexte des modèles.
 - Un réflexe pour apprendre : **partez d'une recette, faites-la tourner en la lisant à voix haute.** Si le fichier ne se lit pas comme un plan sensé, il est mal écrit — c'est un invariant du langage, pas un conseil de style.

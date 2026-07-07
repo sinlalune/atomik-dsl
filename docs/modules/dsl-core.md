@@ -34,6 +34,8 @@ const L    = A.layout(ir);                  // { layout: geometry, notices: [], 
 
 `ir.diagnostics` carries line-scoped errors/warnings with repair hints. State shape is the whole runtime contract: `(currentStep, inputs, committed)` — nothing else may influence presentation.
 
+`src/index.d.ts` types the surface (package `types`): `SceneIR` mirrors render-core §2.2 verbatim (the frozen contract); presentation/geometry types describe the current emit (engine-internal, §4). In TS, the UMD global and `require` are both typed (`export as namespace Atomik`).
+
 ## Data flow
 
 ```text
@@ -63,7 +65,7 @@ See `apps/prototype-cycle/atomik_ui.js` (paint + interaction over the kernel) an
 
 ## Future extension points
 
-Canonical printer (`print`) for one-line rewrites and diff-stable formatting; remaining archetypes against the layout contracts table; real resolver semantics for `unresolved` refs; `.d.ts` types (CP-DSL-001 S05).
+Canonical printer (`print`) for one-line rewrites and diff-stable formatting; remaining archetypes against the layout contracts table; real resolver semantics for `unresolved` refs.
 
 ## Agent checklist
 
