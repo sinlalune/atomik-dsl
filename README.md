@@ -5,7 +5,7 @@ The **atomik** DSL — a human-readable, cheap-LLM-generatable visualization lan
 Quickstart:
 
 ```bash
-npm test                    # 41 tests: golden-IR parity + runtime oracle + layout geometry
+npm test                    # 54 tests: golden-IR parity + runtime oracle + layout geometry (cycle, flow)
 npm run build:prototype     # rebuilds apps/prototype-cycle/index.html from sources
 open apps/prototype-cycle/index.html   # end-to-end cycle prototype, no install
 ```

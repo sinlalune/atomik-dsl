@@ -131,5 +131,47 @@ const gen = 'atomik 0.3\nscene g [origin generated]\nclaim "Something."\nnode a 
 const gIr = Atomik.parse(gen);
 ok(gIr.diagnostics.some(x => x.code === 'claim-status-required'), 'generated profile: missing claim status is an error');
 
+console.log('\n== 6. Flow archetype: layered layout (CP-DSL-002) ==');
+function overlappingPair(g) {
+  const ids = Object.keys(g.pos);
+  for (let i = 0; i < ids.length; i++) for (let j = i + 1; j < ids.length; j++) {
+    const A = ids[i], B = ids[j];
+    if (Math.abs(g.pos[A].x - g.pos[B].x) < (g.boxes[A].w + g.boxes[B].w) / 2 &&
+        Math.abs(g.pos[A].y - g.pos[B].y) < (g.boxes[A].h + g.boxes[B].h) / 2) return A + '/' + B;
+  }
+  return null;
+}
+const flowSrc = [
+  'atomik 0.3', 'scene diamond', 'claim "Layered."',
+  'node a "A"', 'node b "B"', 'node c "C"', 'node d "D"',
+  'relation a -> b then', 'relation a -> c then',
+  'relation b -> d then', 'relation c -> d then',
+  'project as flow'
+].join('\n');
+const fIr = clean(Atomik.parse(flowSrc));
+ok(fIr.diagnostics.length === 0, 'diamond scene parses clean');
+const F = Atomik.layout(fIr);
+ok(F.requested === 'flow' && F.layout.archetype === 'flow', 'flow layout selected, no fallback');
+ok(F.layout.backEdges.length === 0, 'diamond DAG: no back-edges');
+ok(fIr.relations.every(r => F.layout.pos[r.from.id].y < F.layout.pos[r.to.id].y),
+  'rank order follows edge direction: every edge points downward (§6)');
+ok(F.layout.pos['b'].y === F.layout.pos['c'].y, 'siblings b and c share a rank');
+ok(JSON.stringify(Atomik.layout(clean(Atomik.parse(flowSrc)))) === JSON.stringify(F),
+  'L1: fresh parse + layout is byte-identical');
+ok(overlappingPair(F.layout) === null, 'L2: no node overlap (diamond)');
+
+const flowDemo = clean(Atomik.parse(demo.replace('project as cycle', 'project as flow')));
+const FD = Atomik.layout(flowDemo);
+ok(FD.layout.archetype === 'flow', 'cyclic model is legal flow input (cycles allowed)');
+ok(FD.layout.backEdges.length === 1, 'exactly one back-edge closes the water cycle');
+ok(flowDemo.relations
+    .filter(r => !FD.layout.backEdges.includes(r.id))
+    .every(r => FD.layout.pos[r.from.id].y < FD.layout.pos[r.to.id].y),
+  'all non-back edges point downward in the cyclic model');
+ok(overlappingPair(FD.layout) === null, 'L2: no node overlap (demo as flow)');
+ok(flowDemo.nodes.every(n => FD.layout.pos[n.id]), 'L4: hidden nodes positioned (full-graph layout)');
+const backGe = FD.layout.edges.find(e => e.back);
+ok(!!backGe && !backGe.skip, 'back-edge flagged in the geometry');
+
 console.log('\n' + pass + ' passed, ' + fail + ' failed');
 process.exit(fail ? 1 : 0);

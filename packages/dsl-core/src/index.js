@@ -14,6 +14,7 @@
     present: render.present,
     layout: render.layout,
     layoutCycle: render.layoutCycle,
+    layoutFlow: render.layoutFlow,
     wrapLabel: render.wrapLabel,
     nodeBox: render.nodeBox,
     constants: lang.constants
