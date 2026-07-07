@@ -54,6 +54,8 @@ D2  second archetype: flow                        CP-DSL-002 (done 2026-07-07)
 D3  generability evaluation (small models ×
     adversarial corpus from batch-03)             CP-DSL-003 (done 2026-07-07)
 D4  workbench integration = main-repo M12         CP-DSL-004 (draft; executes in main repo)
+T1  local generation demo (paste text → model →
+    kernel render), developer tooling             CP-DSL-005 (active)
 ```
 
 ## Deviations from the main-repo template, assumed

@@ -22,3 +22,6 @@ Exception on record: `CP-DSL-004` was drafted before its turn, at explicit owner
 | D2 | second archetype: `flow` (layered layout against the L-contracts) | [CP-DSL-002](./CP-DSL-002.md) | done (2026-07-07) |
 | D3 | generability evaluation: pocket spec × small models × adversarial corpus (batch-03) | [CP-DSL-003](./CP-DSL-003.md) | done (2026-07-07) |
 | D4 | workbench integration — fenced ` ```atomik ` blocks rendered in Atomik (= main-repo M12) | [CP-DSL-004](./CP-DSL-004.md) | draft (executes in main repo) |
+| T1 (tooling) | local generation demo — paste text → small model → kernel → rendered scene, in one page over a key-holding local server | [CP-DSL-005](./CP-DSL-005.md) | active |
+
+Tooling paths (`T*`) are developer-facing utilities that exercise the library end-to-end without being a language milestone; they consume the kernels read-only and never change the IR. T1 reuses the CP-DSL-003 generation code and the prototype renderer.
