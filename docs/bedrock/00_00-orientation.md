@@ -52,7 +52,7 @@ Locked design decisions are numbered inside the specs (D1–D11 in render-core �
 D1  v0.3.1 consolidation + package hardening      CP-DSL-001 (done 2026-07-07)
 D2  second archetype: flow                        CP-DSL-002 (done 2026-07-07)
 D3  generability evaluation (small models ×
-    adversarial corpus from batch-03)             next — not opened
+    adversarial corpus from batch-03)             CP-DSL-003 (active)
 D4  workbench integration = main-repo M12         CP-DSL-004 (draft; executes in main repo)
 ```
 
