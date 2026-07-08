@@ -392,9 +392,12 @@ const PANEL_SCRIPT = `
 
 function demoHtml() {
   let html = readFileSync(join(repo, 'apps', 'prototype-cycle', 'index.html'), 'utf8');
-  html = html.replace('</head>', PANEL_STYLE + '\n</head>');
-  html = html.replace('<body>', '<body>\n' + PANEL_HTML);
-  html = html.replace('</body>', PANEL_SCRIPT + '\n</body>');
+  // Function replacements, NOT strings: the injected JS/CSS contain `$` sequences
+  // (e.g. `'$' +` in fmtCost) and String.replace treats $' / $& / $` specially,
+  // which corrupts a string replacement. A function replacement is taken verbatim.
+  html = html.replace('</head>', () => PANEL_STYLE + '\n</head>');
+  html = html.replace('<body>', () => '<body>\n' + PANEL_HTML);
+  html = html.replace('</body>', () => PANEL_SCRIPT + '\n</body>');
   return html;
 }
 
