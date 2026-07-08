@@ -25,14 +25,34 @@ Flash**, **Gemini 3.5 Flash**, **Claude Haiku 4.5**, **Claude Sonnet 5**. Gemini
 `− 100% + ⌂` control (top-right of the scene) zooms and resets. The view persists
 while you edit the source and resets on each new generation.
 
+**Switch the system prompt (A/B).** The **system-prompt preset** dropdown (next to
+the model) picks *which* system prompt the model gets — the only variable that
+changes; the user instruction, demo hardening rules, and your source stay
+identical, so flipping it is a clean A/B test:
+
+- **Minimal (pocket spec)** — the terse `atomik_pocket_spec_v0_3.md` card (the
+  same prompt the generability eval measures). Compact, ~1.2K tokens.
+- **Guided (explained)** — `prompts/guided.md`: a fuller system prompt that
+  contextualizes atomik, glosses **every** statement / effect / vocabulary value
+  one line each, and states the generation rules explicitly. Bigger prompt, more
+  scaffolding for weaker models.
+
+Switch, hit Generate, and compare — same text, same model, only the prompt
+changed. The preset used is recorded in each saved run (and restored when you
+reload one). A key rule in the Guided prompt is deliberately **not** "include only
+what the source states": if you give it a single **term** or short seed (e.g. just
+`Photosynthesis`), it *expands* from well-established knowledge into a full,
+correct scene — while still marking uncertainty honestly and never fabricating
+specifics (fake dates, sources, or `[[links]]`).
+
 **See and edit the prompt.** The **Prompt ▸** button opens an editable view of the
-exact prompt sent to the model — the **system** prompt (the pocket spec + the
-demo's syntax rules) and the **user** prompt (instruction + your source). After a
+exact prompt sent to the model — the **system** prompt (the selected preset) and
+the **user** prompt (instruction + demo syntax rules + your source). After a
 normal generation it fills in with what was actually sent. Edit either textarea,
 tick **use this edited prompt**, and Generate runs your version verbatim (great
 for testing prompt/spec changes live without touching any file). `↻ Load default`
-recomposes the prompt from the text above. The saved record keeps whichever
-prompt actually produced the scene.
+recomposes the prompt from the text above (using the current preset). The saved
+record keeps whichever prompt actually produced the scene.
 
 **Cost per generation.** Each run shows an **estimated cost** (`est. cost
 $0.00…`) plus the input/output token counts, computed from the response's token

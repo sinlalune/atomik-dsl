@@ -28,6 +28,15 @@ const A = createRequire(import.meta.url)('../../packages/dsl-core'); // server-s
 const HOST = '127.0.0.1';
 const PORT = Number(process.env.PORT) || 4173;
 const POCKET = loadPocketSpec();
+const GUIDED = readFileSync(join(here, 'prompts', 'guided.md'), 'utf8');
+/* System-prompt presets — the A/B variable. Everything else (the user
+ * instruction + demo hardening rules + source) is identical across presets, so
+ * switching isolates "does a fuller explanation help". */
+const PRESETS = {
+  minimal: { label: 'Minimal (pocket spec)', system: POCKET },
+  guided: { label: 'Guided (explained)', system: GUIDED }
+};
+const DEFAULT_PRESET = 'minimal';
 
 const MODELS = {
   'haiku': { label: 'Claude Haiku 4.5', provider: anthropic, modelId: 'claude-haiku-4-5' },
@@ -65,9 +74,10 @@ function detectLang(t) {
 /* Compose the model prompt: pocket-spec R1 builder + demo-specific clarifications
  * learned from watching real generations (keep source language; single-token ids
  * + exact relation shape; quoted/[[…]] subject; teaching: claim = the truth). */
-function composeItem(text, teaching) {
+function composeItem(text, teaching, preset) {
+  const sys = (PRESETS[preset] || PRESETS[DEFAULT_PRESET]).system;
   const task = { passage: text, vaultIndex: [], teachingSequence: teaching, lang: detectLang(text) };
-  const item = build(POCKET, task, 'R1');
+  const item = build(sys, task, 'R1');   // build sets system = sys, user = instruction + source
   item.user += '\n\nWrite the claim text, every node/evidence label, and the relation KIND words in the SAME LANGUAGE as the SOURCE above. Keep atomik keywords (scene, claim, node, relation, project, as, …) and [attribute] names in English.';
   item.user += '\n\nSTRICT SYNTAX (follow exactly): every node/evidence/relation id is a SINGLE token — letters, digits, _ or - only, NO spaces (write `oxygen_release`, not `oxygen release`). Each relation line is exactly `relation <fromId> -> <toId> <kind>` with single-token ids; the kind word(s) come AFTER the second id. `subject` takes `[[Note]]` or a "quoted string", never a bare word.';
   if (teaching) item.user += '\n\nThe scene `claim` must state the CORRECT idea you are teaching (the truth) — never the misconception, and never with [status misconception]. Put the false belief in its own node with [status misconception] and refute it with a `[as refutation]` relation from the evidence.';
@@ -93,7 +103,7 @@ async function handleGenerate(req, res) {
   if (!process.env[m.provider.envKey]) return json(res, 500, { error: 'server missing ' + m.provider.envKey + ' (run `npm run demo` with keys in .env)' });
 
   // use the edited prompt verbatim if the client sent one, else compose it
-  const item = custom ? { system: payload.prompt.system || '', user: payload.prompt.user } : composeItem(text, !!payload.teaching);
+  const item = custom ? { system: payload.prompt.system || '', user: payload.prompt.user } : composeItem(text, !!payload.teaching, payload.preset);
   const t0 = Date.now();
   const r = await m.provider.generateOne(item, m.modelId);
   if (r.error) return json(res, 502, { error: r.error, model: m.label });
@@ -106,7 +116,8 @@ async function handleGenerate(req, res) {
     nodes: ir.nodes.length, relations: ir.relations.length,
     errorCount: ir.diagnostics.filter((d) => d.severity === 'error').length, renders: ir.nodes.length > 0,
     inputTokens: usage.inputTokens, outputTokens: usage.outputTokens, cost: costUSD(key, usage),
-    custom: !!custom, prompt: { system: item.system, user: item.user }   // reflect exactly what was sent
+    custom: !!custom, preset: custom ? null : (payload.preset || DEFAULT_PRESET),
+    prompt: { system: item.system, user: item.user }   // reflect exactly what was sent
   });
 }
 
@@ -116,7 +127,7 @@ async function handlePrompt(req, res) {
   try { p = JSON.parse(await readBody(req)); } catch { return json(res, 400, { error: 'bad JSON body' }); }
   const text = (p.text || '').trim();
   if (!text) return json(res, 400, { error: 'empty text' });
-  const item = composeItem(text, !!p.teaching);
+  const item = composeItem(text, !!p.teaching, p.preset);
   return json(res, 200, { system: item.system, user: item.user });
 }
 
@@ -141,6 +152,7 @@ async function handleSave(req, res) {
     model: { key, label: m.label, id: m.modelId },
     teaching: !!p.teaching,
     customPrompt: !!customPrompt,
+    preset: customPrompt ? null : (p.preset || DEFAULT_PRESET),
     metadata: {
       nodes: ir.nodes.length, relations: ir.relations.length,
       errorCount: diagnostics.filter((d) => d.severity === 'error').length, took: p.took || null,
@@ -148,7 +160,7 @@ async function handleSave(req, res) {
       cost: p.cost != null ? p.cost : null, pricePerMTok: PRICING[key] || null
     },
     // save the prompt actually used: the edited one if provided, else the composed default
-    prompt: customPrompt ? { system: p.prompt.system || '', user: p.prompt.user } : composeItem(text, !!p.teaching),
+    prompt: customPrompt ? { system: p.prompt.system || '', user: p.prompt.user } : composeItem(text, !!p.teaching, p.preset),
     inputText: text,
     source: atomik,
     ir,
@@ -164,7 +176,7 @@ function listSaved() {
   return readdirSync(SAVE_DIR).filter((f) => f.endsWith('.json')).map((f) => {
     try {
       const r = JSON.parse(readFileSync(join(SAVE_DIR, f), 'utf8'));
-      return { id: r.id, savedAt: r.savedAt, model: r.model.label, teaching: r.teaching, nodes: r.metadata.nodes, errorCount: r.metadata.errorCount, cost: r.metadata.cost, inputPreview: (r.inputText || '').slice(0, 60) };
+      return { id: r.id, savedAt: r.savedAt, model: r.model.label, teaching: r.teaching, preset: r.preset || null, nodes: r.metadata.nodes, errorCount: r.metadata.errorCount, cost: r.metadata.cost, inputPreview: (r.inputText || '').slice(0, 60) };
     } catch { return null; }
   }).filter(Boolean).sort((a, b) => (a.savedAt < b.savedAt ? 1 : -1));
 }
@@ -218,11 +230,15 @@ const PANEL_STYLE = `
 const MODEL_OPTIONS = Object.entries(MODELS)
   .map(([k, m]) => '<option value="' + k + '"' + (k === DEFAULT_MODEL ? ' selected' : '') + '>' + m.label + '</option>').join('');
 
+const PRESET_OPTIONS = Object.entries(PRESETS)
+  .map(([k, p]) => '<option value="' + k + '"' + (k === DEFAULT_PRESET ? ' selected' : '') + '>' + p.label + '</option>').join('');
+
 const PANEL_HTML = `
 <div id="genbar">
   <textarea id="gentext" placeholder="Paste an explanation or any text to teach — a paragraph on the water cycle, a misconception to correct, a process to show. A small model turns it into an atomik scene, rendered live below (⌘/Ctrl-Enter to generate)."></textarea>
   <div class="gencol">
     <select id="genmodel" title="which model generates the scene">${MODEL_OPTIONS}</select>
+    <select id="genpreset" title="which system prompt — the A/B variable (Minimal = terse pocket spec, Guided = fully explained)">${PRESET_OPTIONS}</select>
     <label><input type="checkbox" id="genteach"> teaching sequence <span class="hint">(steps + gate)</span></label>
     <div class="genrow">
       <button id="genbtn" class="primary">Generate &amp; render</button>
@@ -237,7 +253,7 @@ const PANEL_HTML = `
   <div class="prow">
     <button id="genpromptload">↻ Load default from text</button>
     <label><input type="checkbox" id="genpromptuse"> use this edited prompt when generating</label>
-    <span class="note">The exact prompt sent to the model. System = the pocket spec + demo rules; user = instruction + your source. Edit either and tick the box to generate from your version.</span>
+    <span class="note">The exact prompt sent to the model. System = the selected preset (Minimal = terse pocket spec, Guided = fully explained); user = instruction + demo rules + your source. Edit either and tick the box to generate from your version.</span>
   </div>
   <label class="h" for="genpromptsys">System prompt</label>
   <textarea id="genpromptsys" spellcheck="false"></textarea>
@@ -250,6 +266,7 @@ const PANEL_SCRIPT = `
 (function () {
   var btn = document.getElementById('genbtn'), save = document.getElementById('gensave'),
       ta = document.getElementById('gentext'), sel = document.getElementById('genmodel'),
+      preset = document.getElementById('genpreset'),
       teach = document.getElementById('genteach'), saved = document.getElementById('gensaved'),
       st = document.getElementById('genstatus'),
       pBox = document.getElementById('genprompt'), pToggle = document.getElementById('genprompttoggle'),
@@ -262,7 +279,7 @@ const PANEL_SCRIPT = `
     if (!text) { st.textContent = 'Type some text above, then load the prompt.'; return; }
     try {
       var res = await fetch('/api/prompt', { method: 'POST', headers: { 'content-type': 'application/json' },
-        body: JSON.stringify({ text: text, model: sel.value, teaching: teach.checked }) });
+        body: JSON.stringify({ text: text, model: sel.value, teaching: teach.checked, preset: preset.value }) });
       var j = await res.json();
       if (j.error) { st.textContent = 'Prompt error: ' + j.error; return; }
       pSys.value = j.system; pUsr.value = j.user;
@@ -275,6 +292,13 @@ const PANEL_SCRIPT = `
   });
   pLoad.addEventListener('click', loadPrompt);
 
+  // Switching the system-prompt preset is the A/B knob: refresh the prompt view
+  // (if open and not hand-edited) so you see the new default, and hint the change.
+  preset.addEventListener('change', function () {
+    if (pBox.classList.contains('open') && !pUse.checked) loadPrompt();
+    st.textContent = 'System prompt → ' + preset.options[preset.selectedIndex].text + '. Generate to compare (same text, same model, only the prompt changed).';
+  });
+
   function applySource(atomik) { var src = document.getElementById('src'); src.value = atomik; src.dispatchEvent(new Event('input')); var t = document.getElementById('tab-source'); if (t) t.click(); }
   function fmtCost(c) { return (c == null) ? 'n/a' : '$' + (c < 0.001 ? c.toFixed(6) : c.toFixed(4)); }
   function fmtInt(n) { return (n == null) ? '?' : Math.round(n).toLocaleString(); }
@@ -283,9 +307,9 @@ const PANEL_SCRIPT = `
     var text = ta.value.trim();
     var useCustom = pUse.checked && (pSys.value.trim() || pUsr.value.trim());
     if (!text && !useCustom) { st.textContent = 'Paste some text first (or edit the prompt and tick “use this edited prompt”).'; return; }
-    var body = { model: sel.value, text: text, teaching: teach.checked };
+    var body = { model: sel.value, text: text, teaching: teach.checked, preset: preset.value };
     if (useCustom) body.prompt = { system: pSys.value, user: pUsr.value };
-    btn.disabled = true; st.textContent = 'Generating with ' + sel.options[sel.selectedIndex].text + (useCustom ? ' (edited prompt)' : '') + '…';
+    btn.disabled = true; st.textContent = 'Generating with ' + sel.options[sel.selectedIndex].text + (useCustom ? ' (edited prompt)' : ' · ' + preset.options[preset.selectedIndex].text) + '…';
     try {
       var res = await fetch('/api/generate', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify(body) });
       var j = await res.json();
@@ -296,7 +320,8 @@ const PANEL_SCRIPT = `
       var summary = j.nodes + ' nodes, ' + j.relations + ' relations';
       if (j.errorCount) summary += ' — ' + j.errorCount + ' line(s) skipped (non-fatal; the scene still rendered — see Diagnostics)';
       var cost = '· est. cost ' + fmtCost(j.cost) + ' (' + fmtInt(j.inputTokens) + ' in / ' + fmtInt(j.outputTokens) + ' out tokens)';
-      st.textContent = 'Rendered by ' + j.model + (j.custom ? ' (edited prompt)' : '') + ' in ' + j.took + ' ms — ' + summary + ' ' + cost + '. Edit the source or Save it.';
+      var via = j.custom ? ' (edited prompt)' : (j.preset ? ' · ' + preset.options[preset.selectedIndex].text : '');
+      st.textContent = 'Rendered by ' + j.model + via + ' in ' + j.took + ' ms — ' + summary + ' ' + cost + '. Edit the source or Save it.';
     } catch (e) { st.textContent = 'Request failed: ' + e.message; }
     btn.disabled = false;
   }
@@ -306,7 +331,7 @@ const PANEL_SCRIPT = `
     var hasPrompt = pSys.value.trim() || pUsr.value.trim();
     if (!atomik || (!text && !hasPrompt)) { st.textContent = 'Generate something first, then Save.'; return; }
     save.disabled = true;
-    var body = { text: text, model: sel.value, teaching: teach.checked, atomik: atomik, took: last.took, cost: last.cost, inputTokens: last.inputTokens, outputTokens: last.outputTokens };
+    var body = { text: text, model: sel.value, teaching: teach.checked, preset: preset.value, atomik: atomik, took: last.took, cost: last.cost, inputTokens: last.inputTokens, outputTokens: last.outputTokens };
     if (hasPrompt) body.prompt = { system: pSys.value, user: pUsr.value };  // save the prompt currently shown
     try {
       var res = await fetch('/api/save', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify(body) });
@@ -338,6 +363,7 @@ const PANEL_SCRIPT = `
       if (r.error) { st.textContent = 'Load failed: ' + r.error; return; }
       ta.value = r.inputText || ''; teach.checked = !!r.teaching;
       if (r.model && MODELhas(r.model.key)) sel.value = r.model.key;
+      if (r.preset && PRESEThas(r.preset)) preset.value = r.preset;
       if (r.prompt) { pSys.value = r.prompt.system || ''; pUsr.value = r.prompt.user || ''; pUse.checked = !!r.customPrompt; }
       last = { nodes: r.metadata.nodes, relations: r.metadata.relations, errorCount: r.metadata.errorCount, took: r.metadata.took, cost: r.metadata.cost, inputTokens: r.metadata.inputTokens, outputTokens: r.metadata.outputTokens };
       resetZoom(); applySource(r.source);
@@ -347,6 +373,7 @@ const PANEL_SCRIPT = `
     } catch (e) { st.textContent = 'Load request failed: ' + e.message; }
   });
   function MODELhas(k) { return Array.prototype.some.call(sel.options, function (o) { return o.value === k; }); }
+  function PRESEThas(k) { return Array.prototype.some.call(preset.options, function (o) { return o.value === k; }); }
 
   /* ---- zoom / pan on the rendered scene ---- */
   var scale = 1, tx = 0, ty = 0, stage = document.getElementById('stage');
